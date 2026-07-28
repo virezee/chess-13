@@ -1,3 +1,3 @@
-# chess-2
+# Chess 2: Epoch
 
 ## STHGAEPMAGHTS
