@@ -1,4 +1,4 @@
-# Chess 2 Concept
+# Chess 13 Concept
 
 ## Tech
 - Next.js, static export (GitHub Pages / Vercel)
