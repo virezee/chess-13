@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --bg: #0b0d10;
+  --bg-glow: #171b23;
+  --surface: #14171d;
+  --surface-2: #1a1e26;
+  --track: #07090c;
+  --line: #252a34;
+  --line-strong: #343b49;
+  --ink: #e4e7ec;
+  --ink-dim: #939bab;
+  --ink-faint: #636c7c;
+  --brass: #d0a350;
+  --brass-deep: #7d5f27;
+  --army-white: #ebe5d6;
+  --army-black: #79818f;
+  --alert: #c8604c;
+  --good: #6f9e6a;
+  --square-light: #a3967f;
+  --square-dark: #5e5649;
+  --square-edge: #2b303a;
+  --square-command: #000000;
+  --square-command-ink: #ffffff;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #e5e2d8;
+  --bg-glow: #f1efe9;
+  --surface: #fbfaf7;
+  --surface-2: #efece4;
+  --track: #d8d2c4;
+  --line: #dbd5c7;
+  --line-strong: #bbb3a1;
+  --ink: #1d1c19;
+  --ink-dim: #545049;
+  --ink-faint: #7c766a;
+  --brass: #8a6100;
+  --brass-deep: #b8934f;
+  --army-white: #ffffff;
+  --army-black: #3d434f;
+  --alert: #a1382a;
+  --good: #46743f;
+  --square-light: #ded3b6;
+  --square-dark: #9e8b6a;
+  --square-edge: #857a63;
+  --square-command: #ffffff;
+  --square-command-ink: #000000;
+}
+@custom-variant light (&:where([data-theme="light"] *));
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-track: var(--track);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-ink-faint: var(--ink-faint);
+  --color-brass: var(--brass);
+  --color-brass-deep: var(--brass-deep);
+  --color-army-white: var(--army-white);
+  --color-army-black: var(--army-black);
+  --color-alert: var(--alert);
+  --color-good: var(--good);
+  --color-square-light: var(--square-light);
+  --color-square-dark: var(--square-dark);
+  --color-square-edge: var(--square-edge);
+  --color-square-command: var(--square-command);
+  --color-square-command-ink: var(--square-command-ink);
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-unifraktur-maguntia);
+  --font-notation: var(--font-tinos);
+  --font-command: var(--font-cinzel);
+  --font-display: var(--font-cloister-black);
+}
+@layer base {
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(110% 80% at 50% -10%,
+        var(--bg-glow) 0%,
+        var(--bg) 62%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--font-archivo), system-ui, sans-serif;
+  }
+  ::selection {
+    background-color: color-mix(in oklab, var(--brass) 30%, transparent);
+  }
+}
+@utility scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--line-strong);
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+}

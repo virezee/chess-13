@@ -14,7 +14,7 @@ function Cell({
     return (
       <span
         className={cn(
-          "rounded-[2px] px-1.5 py-1 font-mono text-[12px]",
+          "rounded-xs px-1.5 py-1 font-notation font-bold text-[12px]",
           pending ? "text-ink-faint" : "text-transparent",
         )}
       >
@@ -26,7 +26,7 @@ function Cell({
   return (
     <span
       className={cn(
-        "rounded-[2px] px-1.5 py-1 font-mono text-[12px]",
+        "rounded-xs px-1.5 py-1 font-notation font-bold text-[12px]",
         latest ? "bg-brass/12 text-brass" : "text-ink-dim",
       )}
     >
@@ -55,14 +55,14 @@ export function MoveLog({
         </span>
       </header>
 
-      <div className="scroll-thin max-h-[19rem] min-h-0 flex-1 overflow-y-auto px-2 py-2">
+      <div className="scroll-thin max-h-76 min-h-0 flex-1 overflow-y-auto px-2 py-2">
         <ol>
           {turns.map((turn, i) => {
             const isLast = i === lastIndex;
             return (
               <li
                 key={turn.number}
-                className="grid grid-cols-[2rem_1fr_1fr] items-center gap-1 rounded-[2px] px-1 py-0.5 hover:bg-surface-2"
+                className="grid grid-cols-[2rem_1fr_1fr] items-center gap-1 rounded-xs px-1 py-0.5 hover:bg-surface-2"
               >
                 <span className="font-mono text-[11px] text-ink-faint">
                   {turn.number}

@@ -1,4 +1,5 @@
 import { cn } from "@/lib/cn";
+import { ThemeToggle } from "./ThemeToggle";
 
 function IconButton({
   label,
@@ -34,7 +35,9 @@ export function AppHeader() {
             13
           </span>
           <div className="flex items-baseline gap-2.5">
-            <span className="text-[13px] font-semibold uppercase tracking-[0.22em] text-ink">
+            {/* Blackletter needs size and normal tracking. Squeezed and letter
+                spaced, it turns to mush. */}
+            <span className="font-display text-[21px] leading-none text-ink">
               Chess 13
             </span>
             <span className="hidden text-[10px] uppercase tracking-[0.18em] text-ink-faint sm:inline">
@@ -67,24 +70,7 @@ export function AppHeader() {
               />
             </svg>
           </IconButton>
-          <IconButton label="Settings">
-            <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden>
-              <circle
-                cx="8"
-                cy="8"
-                r="2.2"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.1"
-              />
-              <path
-                d="M8 1.6v1.7M8 12.7v1.7M14.4 8h-1.7M3.3 8H1.6M12.5 3.5l-1.2 1.2M4.7 11.3l-1.2 1.2M12.5 12.5l-1.2-1.2M4.7 4.7 3.5 3.5"
-                stroke="currentColor"
-                strokeWidth="1.1"
-                strokeLinecap="round"
-              />
-            </svg>
-          </IconButton>
+          <ThemeToggle />
         </div>
       </div>
     </header>

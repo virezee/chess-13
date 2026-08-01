@@ -7,6 +7,38 @@ const RANKS = [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 const COMMAND_FILE = 6;
 const COMMAND_RANK = 7;
 
+/**
+ * The M sits inside an SVG so it scales with the square instead of with a font
+ * size. Width is the binding dimension for this glyph, so FONT_SIZE fills the
+ * box horizontally, and BASELINE puts the cap exactly halfway down: half of the
+ * cap height below the centre line. Tune CAP_HEIGHT if the glyph reads high or
+ * low.
+ */
+const CAP_HEIGHT = 0.7;
+const FONT_SIZE = 80;
+const BASELINE = 50 + (FONT_SIZE * CAP_HEIGHT) / 2;
+
+function CommandGlyph() {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      preserveAspectRatio="xMidYMid meet"
+      className="absolute inset-0 h-full w-full"
+      aria-hidden
+    >
+      <text
+        x="50"
+        y={BASELINE}
+        textAnchor="middle"
+        fontSize={FONT_SIZE}
+        className="fill-square-command-ink font-command"
+      >
+        M
+      </text>
+    </svg>
+  );
+}
+
 function Square({
   file,
   rank,
@@ -23,15 +55,11 @@ function Square({
       data-square={`${FILES[file]}${rank}`}
       className={cn(
         "relative",
-        isLight ? "bg-square-light" : "bg-square-dark",
+        isCommand && "bg-square-command",
+        !isCommand && (isLight ? "bg-square-light" : "bg-square-dark"),
       )}
     >
-      {isCommand && (
-        <span
-          aria-hidden
-          className="absolute inset-[18%] rotate-45 rounded-[1px] border border-brass/70 bg-brass/25"
-        />
-      )}
+      {isCommand && <CommandGlyph />}
     </div>
   );
 }

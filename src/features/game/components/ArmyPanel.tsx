@@ -58,7 +58,7 @@ function AuraMeter({ army }: { army: ArmyState }) {
         </span>
       </div>
 
-      <div className="mt-2 h-1 w-full overflow-hidden rounded-[1px] bg-bg">
+      <div className="mt-2 h-1 w-full overflow-hidden rounded-[1px] bg-track">
         <div
           className={cn(
             "h-full transition-[width] duration-300",
@@ -95,10 +95,10 @@ export function ArmyPanel({
           <span
             aria-hidden
             className={cn(
-              "h-2.5 w-2.5 rounded-full",
-              army.side === "white"
-                ? "bg-army-white"
-                : "border border-line-strong bg-army-black",
+              // Both dots carry a ring. Without it the white dot vanishes on a
+              // light surface and the black dot vanishes on a dark one.
+              "h-2.5 w-2.5 rounded-full border border-line-strong",
+              army.side === "white" ? "bg-army-white" : "bg-army-black",
             )}
           />
           <div className="leading-tight">
@@ -110,7 +110,7 @@ export function ArmyPanel({
         </div>
 
         {active && (
-          <span className="rounded-[2px] border border-brass-deep bg-brass/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-brass">
+          <span className="rounded-xs border border-brass-deep bg-brass/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-brass">
             To move
           </span>
         )}
@@ -142,7 +142,7 @@ export function ArmyPanel({
             {army.lost.map((letter, i) => (
               <span
                 key={`${letter}-${i}`}
-                className="grid h-6 w-6 place-items-center rounded-[2px] border border-line-strong bg-surface-2 font-mono text-[11px] text-ink-dim"
+                className="grid h-6 w-6 place-items-center rounded-xs border border-line-strong bg-surface-2 font-notation font-bold text-[11px] text-ink-dim"
               >
                 {letter}
               </span>
@@ -161,8 +161,10 @@ export function ArmyPanel({
                 key={slot.piece}
                 className="flex items-center justify-between gap-3"
               >
-                <span className="text-[12px] text-ink">{slot.piece}</span>
-                <span className="font-mono text-[11px] text-ink-dim">
+                <span className="font-mono text-[12px] text-ink">
+                  {slot.piece}
+                </span>
+                <span className="font-notation text-[11px] text-ink-dim">
                   files {slot.files}
                 </span>
               </li>

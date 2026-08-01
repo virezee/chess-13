@@ -33,7 +33,7 @@ function RepetitionGauge({
             key={i}
             className={cn(
               "h-1 flex-1 rounded-[1px]",
-              i >= value && "bg-bg",
+              i >= value && "bg-track",
               i < value && !critical && "bg-ink-faint",
               i < value && critical && "bg-alert",
             )}
@@ -81,7 +81,7 @@ function NoProgressGauge({
         </span>
       </div>
 
-      <div className="mt-2 h-1 w-full overflow-hidden rounded-[1px] bg-bg">
+      <div className="mt-2 h-1 w-full overflow-hidden rounded-[1px] bg-track">
         <div
           className={cn(
             "h-full transition-[width] duration-300",
