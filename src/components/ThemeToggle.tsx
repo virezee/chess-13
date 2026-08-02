@@ -1,6 +1,7 @@
 'use client'
 
-import { THEME_STORAGE_KEY } from '@/lib/theme'
+import { THEME_STORAGE_KEY } from '@/constants/constants'
+import { IconButton } from '@/components/ui/IconButton'
 
 function toggle() {
   const root = document.documentElement
@@ -14,12 +15,7 @@ function toggle() {
 }
 export function ThemeToggle() {
   return (
-    <button
-      type='button'
-      onClick={toggle}
-      aria-label='Switch between light and dark theme'
-      title='Switch theme'
-      className='grid h-8 w-8 place-items-center rounded border border-transparent text-ink-faint transition-colors hover:border-line hover:bg-surface hover:text-ink'>
+    <IconButton label='Switch theme' onClick={toggle}>
       <svg viewBox='0 0 16 16' className='h-4 w-4 light:hidden' aria-hidden>
         <circle cx='8' cy='8' r='3' fill='none' stroke='currentColor' strokeWidth='1.1' />
         <path
@@ -39,6 +35,6 @@ export function ThemeToggle() {
           strokeLinejoin='round'
         />
       </svg>
-    </button>
+    </IconButton>
   )
 }

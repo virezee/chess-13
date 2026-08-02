@@ -1,5 +1,3 @@
-export const THEME_STORAGE_KEY = 'theme'
-
 /**
  * Runs in the document head before the first paint, so the page never renders
  * in one theme and then jumps to the other on hydration.

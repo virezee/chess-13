@@ -8,6 +8,7 @@
     "suspicious": "warn"
   },
   "rules": {
+    "import/exports-last": "error",
     "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
     "react/react-in-jsx-scope": "allow"
   },

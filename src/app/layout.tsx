@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
+import { AppHeader } from '@/components/AppHeader'
 import { themeScript } from '@/lib/theme'
 import { fontVariables } from '@/styles/typography'
-import '../styles/globals.css'
+import '@/styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'Chess 13 (Chess 2: Epoch)',
@@ -13,7 +14,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className='min-h-full flex flex-col'>{children}</body>
+      <body className='min-h-full flex flex-col'>
+        <AppHeader />
+        {children}
+      </body>
     </html>
   )
 }
