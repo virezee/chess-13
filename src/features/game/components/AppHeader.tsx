@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import { ThemeToggle } from "./ThemeToggle";
+import { ThemeToggle } from "../../../components/ThemeToggle";
 
 function IconButton({
   label,
@@ -22,7 +22,6 @@ function IconButton({
     </button>
   );
 }
-
 export function AppHeader() {
   return (
     <header className="sticky top-0 z-10 border-b border-line bg-bg/85 backdrop-blur">
@@ -45,7 +44,6 @@ export function AppHeader() {
             </span>
           </div>
         </div>
-
         <div className="flex items-center gap-1">
           <IconButton label="Rules">
             <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden>

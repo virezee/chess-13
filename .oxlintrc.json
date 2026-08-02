@@ -1,14 +1,16 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "typescript",
-    "unicorn",
-    "oxc"
-  ],
+  "plugins": ["typescript", "unicorn", "react", "nextjs", "oxc", "import", "vitest"],
   "categories": {
-    "correctness": "error"
+    "correctness": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "suspicious": "warn"
   },
-  "rules": {},
+  "rules": {
+    "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
+    "react/react-in-jsx-scope": "allow"
+  },
   "env": {
     "builtin": true
   }
