@@ -8,7 +8,7 @@
  * why the storage key is written out literally here instead of using
  * THEME_STORAGE_KEY.
  */
-function applyStoredTheme() {
+function applyStoredTheme(): void {
   try {
     const stored = localStorage.getItem('theme')
     const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches

@@ -7,6 +7,14 @@
     "perf": "error",
     "suspicious": "warn"
   },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "typescript/explicit-function-return-type": "error"
+      }
+    }
+  ],
   "rules": {
     "import/exports-last": "error",
     "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
