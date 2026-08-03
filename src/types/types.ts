@@ -1,6 +1,29 @@
 export type Side = "white" | "black";
 
 /**
+ * The nine piece types. Each slug is also the artwork filename, so a piece
+ * resolves to `/pieces/{side}/{type}.png` with no lookup table in between.
+ */
+export type PieceType =
+  | 'sentinel'
+  | 'templar'
+  | 'herald'
+  | 'mage'
+  | 'assassin'
+  | 'emperor'
+  | 'pope'
+  | 'marshal'
+  | 'legionary'
+
+export interface Piece {
+  side: Side
+  type: PieceType
+}
+
+/** Occupied squares only, keyed by algebraic square such as `a1`. */
+export type Position = Record<string, Piece>
+
+/**
  * Where the army stands relative to its own Marshal.
  * - `command` the Marshal holds g7, so the whole army is strong
  * - `active`  pieces within Chebyshev distance 4 are strong

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import type { LoggedTurn, Side } from "../types";
+import type { LoggedTurn, Side } from "../../../types/types";
 
 function Cell({
   move,

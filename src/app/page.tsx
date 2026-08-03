@@ -6,6 +6,7 @@ import {
   blackArmy,
   counters,
   moveLog,
+  position,
   swapAvailable,
   turnToMove,
   whiteArmy
@@ -20,7 +21,7 @@ export default function Home() {
         <ArmyPanel army={whiteArmy} active={turnToMove === 'white'} delta={materialGap} />
       </aside>
       <div className='order-1 flex justify-center lg:col-span-2 xl:order-2 xl:col-span-1'>
-        <Board />
+        <Board position={position} />
       </div>
       <aside className='order-3 flex flex-col gap-4'>
         <MoveLog turns={moveLog} toMove={turnToMove} />
