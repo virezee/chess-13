@@ -24,6 +24,20 @@ export interface Piece {
 export type Position = Record<string, Piece>
 
 /**
+ * One candidate move, produced before legality has been checked.
+ *
+ * `captures` names the square the victim stands on instead of being a boolean,
+ * because in this game that square is not always `to`. The Assassin lands behind
+ * its victim, the Mage does not move at all, and en passant takes a piece the
+ * capturer never steps on.
+ */
+export interface Move {
+  from: string
+  to: string
+  captures?: string
+}
+
+/**
  * Where the army stands relative to its own Marshal.
  * - `command` the Marshal holds g7, so the whole army is strong
  * - `active`  pieces within Chebyshev distance 4 are strong

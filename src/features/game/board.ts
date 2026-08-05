@@ -1,11 +1,14 @@
-/**
- * Board geometry. Shared because the view and the position data have to agree on
- * what a square is called, and a second copy of these arrays would let them
- * disagree.
- */
+import { FILES, SIZE } from '@/constants/board'
 
-/** Files a to m, left to right. */
-export const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm']
-
-/** Ranks 13 down to 1, which is the order the board renders them in. */
-export const RANKS = [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+export function toSquare(file: number, rank: number): string {
+  return `${FILES[file]}${rank}`
+}
+export function fromSquare(square: string): { file: number; rank: number } {
+  return {
+    file: FILES.indexOf(square[0]),
+    rank: Number(square.slice(1))
+  }
+}
+export function isOnBoard(file: number, rank: number): boolean {
+  return file >= 0 && file < SIZE && rank >= 1 && rank <= SIZE
+}

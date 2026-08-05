@@ -12,8 +12,6 @@ export function AppHeader() {
             13
           </span>
           <div className='flex items-baseline gap-2.5'>
-            {/* Blackletter needs size and normal tracking. Squeezed and letter
-                spaced, it turns to mush. */}
             <span className='font-display text-[21px] leading-none text-ink'>Chess 13</span>
             <span className='hidden text-[10px] uppercase tracking-[0.18em] text-ink-faint sm:inline'>
               Hotseat

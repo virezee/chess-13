@@ -1,9 +1,9 @@
 'use client'
 
-import { THEME_STORAGE_KEY } from '@/constants/constants'
+import { THEME_STORAGE_KEY } from '@/constants/theme'
 import { IconButton } from '@/components/ui/IconButton'
 
-function toggle() {
+const toggle = () => {
   const root = document.documentElement
   const next = root.dataset.theme === 'light' ? 'dark' : 'light'
   root.dataset.theme = next

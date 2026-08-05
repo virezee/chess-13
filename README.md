@@ -84,8 +84,10 @@ The weak version never carries an advantage of its own. The owner decides which 
 - The path must be clear. The Legionary does not jump. Two pieces never share a tile, so a Legionary stopped in front of an enemy Legionary on rank 7 stands on rank 6 facing it.
 - **From rank 7 onward.** 1 tile per move up to rank 13. While strong, it may choose either 1 or 2 tiles.
 - Captures one tile diagonally forward, exactly as in chess.
-- **En passant** applies only to a move that lands on rank 7, and only against an enemy Legionary already standing on rank 7. Landing on rank 5 or rank 6 never triggers it.
-  - The geometry matches chess. Black stands on e7. White advances from d3 to d7. Black replies by moving diagonally to d6 and removes the white Legionary on d7.
+- **En passant** applies to an advance of 2 tiles or more. Such a move passes over one or more squares, and any enemy Legionary that guards one of those squares may move onto it and remove the Legionary that passed. An advance of 1 tile passes over nothing and never triggers it.
+  - The principle is the one chess uses. En passant compensates for a square the piece was allowed to skip, so a move that skips nothing needs no compensation. The trigger is the skip itself, not the rank the move ends on.
+  - Black stands on e7 and guards d6. White advances from d3 to d7, passing over d4, d5 and d6. Black replies by moving to d6 and removes the white Legionary on d7.
+  - The longest advance passes over 3 squares, so it may be intercepted on any one of them, and by more than one Legionary. The strong 2-tile advance past rank 7 passes over 1 square and is open to the same reply.
   - The right is lost if it is not used on the immediate reply.
 
 ### Sentinel (S)

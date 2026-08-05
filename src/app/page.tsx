@@ -4,12 +4,12 @@ import { MoveLog } from '@/features/game/components/MoveLog'
 import { GameStatus } from '@/features/game/components/GameStatus'
 import {
   blackArmy,
-  counters,
-  moveLog,
+  whiteArmy,
   position,
+  moveLog,
+  counters,
   swapAvailable,
-  turnToMove,
-  whiteArmy
+  turnToMove
 } from '@/features/game/mock'
 
 export default function Home() {
