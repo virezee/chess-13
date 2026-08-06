@@ -1,24 +1,19 @@
 import { SIZE, CENTRE } from '@/constants/board'
-import type { Move, Position, Side } from '@/types/types'
-import { fromSquare, isOnBoard, toSquare } from '../../board'
+import type { Side, Position, Move } from '@/types/types'
+import { toSquare, fromSquare, isOnBoard } from '../../board'
+import { WHITE } from '@/constants/colour'
 
-const step = (side: Side): number => (side === 'white' ? 1 : -1)
-const beforeCentre = (rank: number, side: Side): boolean =>
+const step = (side: Side): number => (side === WHITE ? 1 : -1)
+const beforeCentre = (side: Side, rank: number): boolean =>
   side === 'white' ? rank < CENTRE : rank > CENTRE
-
-/**
- * Straight advances. These never capture, so an occupied tile ends the run rather
- * than becoming a target, and the Legionary simply stops short and keeps the right
- * to advance again later.
- */
-const advances = (position: Position, from: string, side: Side, isStrong: boolean): Move[] => {
+const advances = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
   const { file, rank } = fromSquare(from)
   const forward = step(side)
-  const stride = isStrong ? 2 : 1
-  const reach = beforeCentre(rank, side) ? Math.abs(CENTRE - rank) : stride
+  const stride = isEnhanced ? 2 : 1
+  const reach = beforeCentre(side, rank) ? Math.abs(CENTRE - rank) : stride
   const moves: Move[] = []
-  for (let tiles = 1; tiles <= reach; tiles += 1) {
-    const rankAhead = rank + forward * tiles
+  for (let squares = 1; squares <= reach; squares += 1) {
+    const rankAhead = rank + forward * squares
     if (rankAhead < 1 || rankAhead > SIZE) break
     const to = toSquare(file, rankAhead)
     if (position[to]) break
@@ -26,7 +21,6 @@ const advances = (position: Position, from: string, side: Side, isStrong: boolea
   }
   return moves
 }
-/** One tile diagonally forward, on either side, and only onto an enemy piece. */
 const captures = (position: Position, from: string, side: Side): Move[] => {
   const { file, rank } = fromSquare(from)
   const rankAhead = rank + step(side)
@@ -36,11 +30,10 @@ const captures = (position: Position, from: string, side: Side): Move[] => {
     if (!isOnBoard(fileBeside, rankAhead)) continue
     const to = toSquare(fileBeside, rankAhead)
     const victim = position[to]
-    if (victim && victim.side !== side) moves.push({ from, to, captures: to })
+    if (victim && victim.side !== side) moves.push({ from, to, captures: [to] })
   }
   return moves
 }
-
 /**
  * Every move a Legionary can make from `from`, before legality is judged.
  *
@@ -53,7 +46,7 @@ export function legionaryMoves(
   position: Position,
   from: string,
   side: Side,
-  isStrong: boolean
+  isEnhanced: boolean
 ): Move[] {
-  return [...advances(position, from, side, isStrong), ...captures(position, from, side)]
+  return [...advances(side, position, from, isEnhanced), ...captures(position, from, side)]
 }

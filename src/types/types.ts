@@ -1,4 +1,6 @@
-export type Side = 'white' | 'black'
+import type { WHITE, BLACK } from '@/constants/colour'
+
+export type Side = typeof WHITE | typeof BLACK
 export type PieceName =
   | 'sentinel'
   | 'templar'
