@@ -1,4 +1,5 @@
-import type { Side, PieceName, Position, Move, EnPassant, PromotionSlot } from '@/types/types'
+import type { Side, PieceName, Position } from '@/types/piece'
+import type { Move, EnPassant, PromotionSlot } from '@/types/move'
 import { SIZE, CENTRE } from '@/constants/board'
 import { WHITE } from '@/constants/colour'
 import { toSquare, fromSquare, isOnBoard } from '@/features/game/board'

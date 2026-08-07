@@ -1,5 +1,5 @@
 import { FILES } from '@/constants/board'
-import type { ArmyState, GameCounters, LoggedTurn, PieceName, Position, Side } from '../../types/types'
+import type { ArmyState, GameCounters, LoggedTurn, PieceName, Position, Side } from '../../types/panel'
 
 /**
  * Placeholder state so the shell can be judged before the engine exists.

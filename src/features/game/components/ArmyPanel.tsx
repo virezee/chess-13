@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn'
 import { FILES } from '@/constants/board'
-import type { ArmyState, AuraState } from '@/types/types'
+import type { ArmyState, AuraState } from '@/types/panel'
 
 const AURA_COPY: Record<AuraState, { label: string; note: string }> = {
   command: { label: 'Command square', note: 'Whole army strong' },

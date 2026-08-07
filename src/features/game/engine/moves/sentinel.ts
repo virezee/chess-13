@@ -1,1 +1,1 @@
-package sentinel
+export const sentinel = (): null => null

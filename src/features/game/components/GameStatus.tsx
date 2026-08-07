@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import type { GameCounters } from "../../../types/types";
+import type { GameCounters } from "../../../types/panel";
 
 function RepetitionGauge({
   value,
