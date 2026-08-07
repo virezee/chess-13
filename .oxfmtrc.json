@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "arrowParens": "avoid",
   "bracketSameLine": true,
   "insertFinalNewline": false,
   "jsxSingleQuote": true,

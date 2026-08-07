@@ -84,11 +84,12 @@ The weak version never carries an advantage of its own. The owner decides which 
 - The path must be clear. The Legionary does not jump. Two pieces never share a tile, so a Legionary stopped in front of an enemy Legionary on rank 7 stands on rank 6 facing it.
 - **From rank 7 onward.** 1 tile per move up to rank 13. While strong, it may choose either 1 or 2 tiles.
 - Captures one tile diagonally forward, exactly as in chess.
-- **En passant** applies to an advance of 2 tiles or more. Such a move passes over one or more squares, and any enemy Legionary that guards one of those squares may move onto it and remove the Legionary that passed. An advance of 1 tile passes over nothing and never triggers it.
-  - The principle is the one chess uses. En passant compensates for a square the piece was allowed to skip, so a move that skips nothing needs no compensation. The trigger is the skip itself, not the rank the move ends on.
-  - Black stands on e7 and guards d6. White advances from d3 to d7, passing over d4, d5 and d6. Black replies by moving to d6 and removes the white Legionary on d7.
-  - The longest advance passes over 3 squares, so it may be intercepted on any one of them, and by more than one Legionary. The strong 2-tile advance past rank 7 passes over 1 square and is open to the same reply.
+- **En passant** applies to one move only: the full 4-tile advance from the starting rank onto rank 7. White plays rank 3 to rank 7, black plays rank 11 to rank 7. An enemy Legionary standing beside the arriving piece, on rank 7 and on an adjacent file, may capture it by moving to the square directly behind it on rank 6 and removing it from rank 7.
+  - Black stands on d7. White advances from e3 to e7. Black replies by moving to e6 and removes the white Legionary on e7.
+  - The geometry is the one chess uses. The capturing piece is level with its victim, and it lands on the square the victim would have stopped on had it advanced one tile short.
+  - No other move triggers it. An advance of 3 tiles or fewer does not, a Legionary that reaches rank 7 in stages does not, and the 2-tile advance past rank 7 does not.
   - The right is lost if it is not used on the immediate reply.
+  - Only the burst is answerable this way, so the burst can be avoided by advancing in stages, at the cost of the tempo it was worth.
 
 ### Sentinel (S)
 The rook of this game. Straight lines only, and the path must be clear.

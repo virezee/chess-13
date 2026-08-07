@@ -1,12 +1,13 @@
+import type { Side, PieceName, Position, Move, EnPassant, PromotionSlot } from '@/types/types'
 import { SIZE, CENTRE } from '@/constants/board'
-import type { Side, Position, Move } from '@/types/types'
-import { toSquare, fromSquare, isOnBoard } from '../../board'
 import { WHITE } from '@/constants/colour'
+import { toSquare, fromSquare, isOnBoard } from '@/features/game/board'
 
 const step = (side: Side): number => (side === WHITE ? 1 : -1)
 const beforeCentre = (side: Side, rank: number): boolean =>
-  side === 'white' ? rank < CENTRE : rank > CENTRE
-const advances = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
+  side === WHITE ? rank < CENTRE : rank > CENTRE
+const lastRank = (side: Side): number => (side === WHITE ? SIZE : 1)
+const quiets = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
   const { file, rank } = fromSquare(from)
   const forward = step(side)
   const stride = isEnhanced ? 2 : 1
@@ -21,7 +22,12 @@ const advances = (side: Side, position: Position, from: string, isEnhanced: bool
   }
   return moves
 }
-const captures = (position: Position, from: string, side: Side): Move[] => {
+const captures = (
+  side: Side,
+  position: Position,
+  from: string,
+  enPassant: EnPassant | null
+): Move[] => {
   const { file, rank } = fromSquare(from)
   const rankAhead = rank + step(side)
   const moves: Move[] = []
@@ -29,24 +35,46 @@ const captures = (position: Position, from: string, side: Side): Move[] => {
     const fileBeside = file + offset
     if (!isOnBoard(fileBeside, rankAhead)) continue
     const to = toSquare(fileBeside, rankAhead)
-    const victim = position[to]
-    if (victim && victim.side !== side) moves.push({ from, to, captures: [to] })
+    const occupant = position[to]
+    if (occupant) {
+      if (occupant.side !== side) moves.push({ from, to, captures: [to] })
+      continue
+    }
+    if (enPassant?.behind !== to) continue
+    const passer = position[enPassant.victim]
+    if (passer && passer.side !== side) moves.push({ from, to, captures: [enPassant.victim] })
   }
   return moves
 }
-/**
- * Every move a Legionary can make from `from`, before legality is judged.
- *
- * Two rules are deliberately absent. En passant needs to know which square an
- * enemy Legionary landed on last turn, which `position` alone cannot say, so it
- * waits until that field exists. Promotion is not a move at all here, it costs a
- * turn of its own, so a Legionary on the far rank correctly has nothing to do.
- */
-export function legionaryMoves(
+const claimables = (side: Side, square: string, slots: PromotionSlot[]): PieceName[] => {
+  const { file, rank } = fromSquare(square)
+  if (rank !== lastRank(side)) return []
+  return [...new Set(slots.filter(slot => Math.abs(slot.file - file) <= 1).map(slot => slot.piece))]
+}
+const withPromotions = (side: Side, move: Move, slots: PromotionSlot[]): Move[] => {
+  const claimable = claimables(side, move.to, slots)
+  if (claimable.length === 0) return [move]
+  return claimable.map(piece => {
+    const promoted: Move = { from: move.from, to: move.to, promotesTo: piece }
+    if (move.captures) promoted.captures = move.captures
+    return promoted
+  })
+}
+const transforms = (side: Side, from: string, slots: PromotionSlot[]): Move[] =>
+  claimables(side, from, slots).map(piece => ({ from, to: from, promotesTo: piece }))
+export const legionary = (
+  side: Side,
   position: Position,
   from: string,
-  side: Side,
-  isEnhanced: boolean
-): Move[] {
-  return [...advances(side, position, from, isEnhanced), ...captures(position, from, side)]
+  isEnhanced: boolean,
+  enPassant: EnPassant | null,
+  slots: PromotionSlot[]
+): Move[] => {
+  return [
+    ...[
+      ...quiets(side, position, from, isEnhanced),
+      ...captures(side, position, from, enPassant)
+    ].flatMap(move => withPromotions(side, move, slots)),
+    ...transforms(side, from, slots)
+  ]
 }

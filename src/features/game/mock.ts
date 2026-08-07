@@ -1,5 +1,5 @@
-import { FILES } from './board'
-import type { ArmyState, GameCounters, LoggedTurn, PieceType, Position, Side } from '../../types/types'
+import { FILES } from '@/constants/board'
+import type { ArmyState, GameCounters, LoggedTurn, PieceName, Position, Side } from '../../types/types'
 
 /**
  * Placeholder state so the shell can be judged before the engine exists.
@@ -16,7 +16,7 @@ export const blackArmy: ArmyState = {
   strongCount: 24,
   pieceCount: 24,
   lost: ['L', 'G'],
-  promotionSlots: [{ piece: 'Mage', files: 'i-k' }],
+  promotionSlots: [{ piece: 'mage', file: 9 }],
   material: 88.5
 }
 
@@ -28,7 +28,7 @@ export const whiteArmy: ArmyState = {
   strongCount: 17,
   pieceCount: 23,
   lost: ['L', 'L', 'T'],
-  promotionSlots: [{ piece: 'Templar', files: 'c-e' }],
+  promotionSlots: [{ piece: 'templar', file: 3 }],
   material: 81.0
 }
 
@@ -61,7 +61,7 @@ export const swapAvailable = false
  * The back rank, read from file a to file m: `S T H G A E P M A G H T S`. The
  * layout is a palindrome, so one array serves both sides.
  */
-const BACK_RANK: PieceType[] = [
+const BACK_RANK: PieceName[] = [
   'sentinel',
   'templar',
   'herald',

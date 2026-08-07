@@ -16,15 +16,20 @@ export interface Piece {
   piece: PieceName
 }
 export type Position = Record<string, Piece>
+export type AuraState = 'full' | 'partial' | 'none'
 export interface Move {
   from: string
   to: string
   captures?: string[]
+  promotesTo?: PieceName
 }
-export type AuraState = 'full' | 'partial' | 'none'
+export interface EnPassant {
+  behind: string
+  victim: string
+}
 export interface PromotionSlot {
-  piece: string
-  files: string
+  piece: PieceName
+  file: number
 }
 export interface ArmyState {
   side: Side

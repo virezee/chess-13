@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn'
-import { FILES, RANKS } from '../board'
+import { FILES, RANKS } from '@/constants/board'
 import type { Piece, Position } from '../../../types/types'
 
 /** The Marshal's command square, at the exact centre of the board. */

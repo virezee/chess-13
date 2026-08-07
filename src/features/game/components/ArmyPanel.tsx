@@ -1,10 +1,21 @@
 import { cn } from '@/lib/cn'
+import { FILES } from '@/constants/board'
 import type { ArmyState, AuraState } from '@/types/types'
 
 const AURA_COPY: Record<AuraState, { label: string; note: string }> = {
   command: { label: 'Command square', note: 'Whole army strong' },
   active: { label: 'Aura active', note: 'Chebyshev 4' },
   down: { label: 'Marshal down', note: 'Whole army weak' }
+}
+
+/**
+ * A slot is claimable on the file its piece fell on and one file to either side,
+ * so the range is worked out here rather than stored twice.
+ */
+function claimableFiles(file: number) {
+  const first = Math.max(0, file - 1)
+  const last = Math.min(FILES.length - 1, file + 1)
+  return `${FILES[first]}-${FILES[last]}`
 }
 
 function Field({
@@ -144,8 +155,10 @@ export function ArmyPanel({
           <ul className='space-y-1.5'>
             {army.promotionSlots.map((slot) => (
               <li key={slot.piece} className='flex items-center justify-between gap-3'>
-                <span className='font-mono text-[12px] text-ink'>{slot.piece}</span>
-                <span className='font-notation text-[11px] text-ink-dim'>files {slot.files}</span>
+                <span className='font-mono text-[12px] text-ink capitalize'>{slot.piece}</span>
+                <span className='font-notation text-[11px] text-ink-dim'>
+                  files {claimableFiles(slot.file)}
+                </span>
               </li>
             ))}
           </ul>
