@@ -1,14 +1,14 @@
-export const ORTHOGONAL = [
-  [0, 1],
-  [1, 0],
-  [0, -1],
-  [-1, 0]
-] as const
 export const DIAGONAL = [
   [1, 1],
   [1, -1],
   [-1, -1],
   [-1, 1]
+] as const
+export const ORTHOGONAL = [
+  [0, 1],
+  [1, 0],
+  [0, -1],
+  [-1, 0]
 ] as const
 export const LEAP_3_2 = [
   [2, 3],

@@ -6,6 +6,10 @@ export const REACH = {
     restricted: { quiet: 1 },
     enhanced: { quiet: 2 }
   },
+  herald: {
+    restricted: { diagonal: 6 },
+    enhanced: { diagonal: SIZE }
+  },
   sentinel: {
     restricted: { quiet: 3, capture: 6 },
     enhanced: { quiet: 6, capture: SIZE }

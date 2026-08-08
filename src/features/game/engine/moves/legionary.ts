@@ -7,14 +7,12 @@ import { RESTRICTED, ENHANCED } from '@/constants/aura'
 import { toSquare, fromSquare, isOnBoard } from '@/features/game/board'
 
 const step = (side: Side): number => (side === WHITE ? 1 : -1)
-const beforeCentre = (side: Side, rank: number): boolean =>
-  side === WHITE ? rank < CENTRE : rank > CENTRE
-const lastRank = (side: Side): number => (side === WHITE ? SIZE : 1)
 const quiets = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
   const { file, rank } = fromSquare(from)
   const forward = step(side)
   const { quiet } = REACH.legionary[isEnhanced ? ENHANCED : RESTRICTED]
-  const reach = beforeCentre(side, rank) ? Math.abs(CENTRE - rank) : quiet
+  const beforeCentre = side === WHITE ? rank < CENTRE : rank > CENTRE
+  const reach = beforeCentre ? Math.abs(CENTRE - rank) : quiet
   const moves: Move[] = []
   for (let squares = 1; squares <= reach; squares += 1) {
     const rankAhead = rank + forward * squares
@@ -51,7 +49,8 @@ const captures = (
 }
 const claimables = (side: Side, square: string, slots: PromotionSlot[]): PieceName[] => {
   const { file, rank } = fromSquare(square)
-  if (rank !== lastRank(side)) return []
+  const lastRank = side === WHITE ? SIZE : 1
+  if (rank !== lastRank) return []
   return [...new Set(slots.filter(slot => Math.abs(slot.file - file) <= 1).map(slot => slot.piece))]
 }
 const withPromotions = (side: Side, move: Move, slots: PromotionSlot[]): Move[] => {

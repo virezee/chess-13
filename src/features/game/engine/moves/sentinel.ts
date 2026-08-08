@@ -5,10 +5,6 @@ import { ORTHOGONAL } from '@/constants/direction'
 import { RESTRICTED, ENHANCED } from '@/constants/aura'
 import { toSquare, fromSquare, isOnBoard } from '@/features/game/board'
 
-const axisOf = (square: string, isFile: boolean): number => {
-  const { file, rank } = fromSquare(square)
-  return isFile ? file : rank
-}
 const line = (
   side: Side,
   position: Position,
@@ -21,9 +17,12 @@ const line = (
   const origin = fromSquare(from)
   const isFile = df !== 0
   const start = isFile ? origin.file : origin.rank
-  const marshalAxis = marshal === null ? null : axisOf(marshal, isFile)
   const towards = isFile ? df : dr
-  const isTowardMarshal = marshalAxis !== null && (marshalAxis - start) * towards > 0
+  let isTowardMarshal = false
+  if (marshal !== null) {
+    const { file: marshalFile, rank: marshalRank } = fromSquare(marshal)
+    isTowardMarshal = ((isFile ? marshalFile : marshalRank) - start) * towards > 0
+  }
   const { quiet, capture } = REACH.sentinel[isEnhanced ? ENHANCED : RESTRICTED]
   const moves: Move[] = []
   let through = false

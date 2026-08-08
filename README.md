@@ -238,7 +238,9 @@ Caps for the whole game:
 
 Where your pieces die therefore matters as much as which pieces die, and a Legionary has a reason to choose its file early instead of marching straight forward.
 
-With no slot available, the Legionary waits on the last rank for as long as it takes and remains a Legionary. The chance is never lost. As soon as a slot opens on a file it can reach, it may take that piece. **Promotion costs a full turn**, spent instead of a move.
+**Arriving on an open slot promotes at once.** A Legionary that reaches the last rank on a file where a slot is already open changes type as part of that same move, at no extra cost. Where more than one slot is within reach it chooses between them, but it cannot decline: the move exists only as a promotion.
+
+With no slot available the Legionary waits on the last rank for as long as it takes and remains a Legionary. The chance is never lost. As soon as a slot opens on a file it can reach it may take that piece, and claiming it from a standstill **costs a full turn**, spent instead of a move.
 
 Because slots depend on **your own** losses, the side that is behind always has more promotion options than the side ahead, which may have nothing to promote into at all. This is the design's counterweight to snowballing.
 
