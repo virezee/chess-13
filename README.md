@@ -70,7 +70,7 @@ g7 is the centre of the board and sits 6 ranks from either back rank, so both si
 |---|---|---|
 | Legionary | 1 or 2 tiles per move past rank 7 | 1 tile |
 | Sentinel | 6 tiles without capturing, unlimited when capturing, and passes through its own pieces when closing on the Marshal | 3 tiles without capturing, 6 tiles when capturing, blocked by any piece |
-| Templar | 1 or 2 L-jumps plus an optional 1-tile step that cannot capture, or stay in place and capture one enemy piece standing next to it | 1 L-jump plus an optional 1-tile step that cannot capture |
+| Templar | Leaps 3 and 2, or 2 and 1 | Leaps 3 and 2 only |
 | Herald | Unlimited diagonal, and the 1-tile straight step can capture | Diagonal up to 6 tiles, and the 1-tile straight step cannot capture |
 | Mage | The blast destroys its own pieces as well, and the Mage survives it | The blast spares its own pieces, and the Mage dies with it |
 | Assassin | Unlimited range | Range 6, counting the landing tile |
@@ -105,28 +105,25 @@ Because its capture reach covers the whole line, the Sentinel defends squares th
 
 These are plain distances and have no connection to the centre rank. A Sentinel on rank 5 may move 6 tiles to rank 11. Only the Legionary is stopped by rank 7.
 
-**Passing through its own pieces** applies only to a move that does not capture, and only while the Sentinel is closing on its own Marshal. A direction counts as closing when it shortens the gap on the axis being travelled. With the Sentinel on e5 and the Marshal on h8, moving up shortens the rank gap and moving right shortens the file gap, so both directions qualify. Moving down or left does not. If the Marshal stands on the same file, only vertical moves qualify. The destination must be strictly closer than the starting square on that axis, so the Sentinel cannot travel past the Marshal and still claim the privilege. Enemy pieces always block.
+**Passing through its own pieces** applies only to a move that does not capture. The direction is judged once, from the square the Sentinel starts on: the Marshal must lie ahead on the axis being travelled. With the Sentinel on e5 and the Marshal on h8, moving up and moving right both qualify, because the Marshal stands above and to the right. Moving down or left does not. A Marshal on the Sentinel's own rank disqualifies both vertical directions, and a Marshal on its own file disqualifies both horizontal ones, because there is no gap on the axis being travelled.
+
+Once a direction qualifies it stays qualified for the whole of that direction's range. Any number of its own pieces may be passed, the Marshal included, and the squares beyond the Marshal are still reachable. The landing square must be empty. Enemy pieces always block, and a line that has passed through anything cannot capture for the rest of that direction. A weak Sentinel never passes through, and neither does any Sentinel whose Marshal has been captured.
 
 ### Templar (T)
-The knight of this game. The L-shape never changes: 2 and 1, always jumping over whatever lies in between.
+The leaper of this game. It jumps to a fixed set of squares, and whatever lies in between is irrelevant: nothing on those squares is captured, and nothing on them blocks the jump.
 
-| Version | A single turn consists of exactly one of these |
+| Version | Leap |
 |---|---|
-| **Strong** | 1 or 2 L-jumps, plus an optional 1-tile step in any of the 8 directions that cannot capture. Alternatively, stay in place and capture one enemy piece standing next to it. |
-| **Weak** | 1 L-jump, plus an optional 1-tile step in any of the 8 directions that cannot capture. |
+| **Strong** | 3 and 2, or 2 and 1 |
+| **Weak** | 3 and 2 only |
 
-The optional step may be taken before or after the jumps, and it moves the Templar only. It can never capture.
+Capturing works exactly as a knight's does in chess. The Templar lands on the enemy square and takes what stands there, and a square held by one of its own pieces cannot be entered. Moving and capturing use the same landing squares, because a leap has no path that can be closed. One capture per turn, always on the square it lands on.
 
-A knight's leap cannot reach an adjacent square, so capturing in place is how a Templar answers a piece pressed against it. Nothing can recapture, because the Templar never enters the square it emptied. The price is the whole turn's movement: position or a kill, never both.
+The weak Templar is deliberately not a chess knight. A 3-and-2 leap belongs to no orthodox piece, so a Templar outside the aura has to be read on its own terms. The aura does not lengthen the leap either. It adds a second shape: inside the aura the Templar keeps the long leap and gains the short one, taking it from 8 landing squares to 16.
 
-**A strong Templar standing next to the enemy Pope gives check.** The reasoning matches the Mage. On its next turn it captures the Pope without moving.
+Both leaps change square colour on every jump, so neither confines the Templar to one colour of square. A 3-and-1 leap would, which is why it is not used.
 
-The strong version is better on both counts. It has two jumps instead of one, and it has the standing capture, which the weak version does not have at all. Capturing without moving is the central mechanic of Rifle Chess (1921). Here it reaches one tile only, and only inside the aura.
-
-Rules for a double jump:
-- The square passed over is ignored entirely. It does not need to be empty, nothing on it is captured, and nothing on it blocks the jump.
-- Only the final square may capture. **Two captures in one turn are never allowed.**
-- The Templar may not finish on the square it started from, which would amount to a skipped turn.
+Averaged over the whole board the weak Templar reaches 5.2 squares and the strong one 11.5, against 13.2 and 19.1 for the Herald. A leaper keeps its full count in a crowded position while a slider loses most of its own, so the gap on paper is wider than the gap in play. This is the relationship the knight and the bishop have in chess, where mobility differs by 40 per cent and value by 8.
 
 ### Herald (H)
 The bishop of this game, plus one straight step of a single tile. That extra step lets it change square colour, so it is not confined to one colour on an odd board.
@@ -222,7 +219,7 @@ These estimates are built from average mobility on a 13 × 13 board, adjusted by
 | Sentinel | 8.5 | 5 |
 | Mage | 8 | 4 |
 | Herald | 6.5 | 4.5 |
-| Templar | 6.5 | 4.5 |
+| Templar | 6.5 | 3.5 |
 | Legionary | 1 | 0.9 |
 
 Two warnings apply to this table. The error on each number is roughly ±1.5, so placing the Marshal above the Assassin is an ordering choice supported by a rule difference, not a measured fact. In addition, the aura is positional value rather than material. Like space or king safety, it is not priced into the Marshal. Capturing the Marshal is worth its 11.5 plus whatever the aura was contributing at that moment.

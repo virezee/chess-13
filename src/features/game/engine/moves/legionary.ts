@@ -2,6 +2,8 @@ import type { Side, PieceName, Position } from '@/types/piece'
 import type { Move, EnPassant, PromotionSlot } from '@/types/move'
 import { SIZE, CENTRE } from '@/constants/board'
 import { WHITE } from '@/constants/colour'
+import { REACH } from '@/constants/piece'
+import { RESTRICTED, ENHANCED } from '@/constants/aura'
 import { toSquare, fromSquare, isOnBoard } from '@/features/game/board'
 
 const step = (side: Side): number => (side === WHITE ? 1 : -1)
@@ -11,8 +13,8 @@ const lastRank = (side: Side): number => (side === WHITE ? SIZE : 1)
 const quiets = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
   const { file, rank } = fromSquare(from)
   const forward = step(side)
-  const stride = isEnhanced ? 2 : 1
-  const reach = beforeCentre(side, rank) ? Math.abs(CENTRE - rank) : stride
+  const { quiet } = REACH.legionary[isEnhanced ? ENHANCED : RESTRICTED]
+  const reach = beforeCentre(side, rank) ? Math.abs(CENTRE - rank) : quiet
   const moves: Move[] = []
   for (let squares = 1; squares <= reach; squares += 1) {
     const rankAhead = rank + forward * squares

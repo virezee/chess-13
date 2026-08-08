@@ -1,4 +1,4 @@
-import { FILES, SIZE } from '@/constants/board'
+import { SIZE, FILES } from '@/constants/board'
 
 export function toSquare(file: number, rank: number): string {
   return `${FILES[file]}${rank}`

@@ -1,0 +1,28 @@
+import type { Side, Position } from '@/types/piece'
+import type { Move } from '@/types/move'
+import { LEAP } from '@/constants/piece'
+import { RESTRICTED, ENHANCED } from '@/constants/aura'
+import { toSquare, fromSquare, isOnBoard } from '@/features/game/board'
+
+export const templar = (
+  side: Side,
+  position: Position,
+  from: string,
+  isEnhanced: boolean
+): Move[] => {
+  const origin = fromSquare(from)
+  const moves: Move[] = []
+  for (const [fileStep, rankStep] of LEAP.templar[isEnhanced ? ENHANCED : RESTRICTED]) {
+    const file = origin.file + fileStep
+    const rank = origin.rank + rankStep
+    if (!isOnBoard(file, rank)) continue
+    const to = toSquare(file, rank)
+    const occupant = position[to]
+    if (!occupant) {
+      moves.push({ from, to })
+      continue
+    }
+    if (occupant.side !== side) moves.push({ from, to, captures: [to] })
+  }
+  return moves
+}
