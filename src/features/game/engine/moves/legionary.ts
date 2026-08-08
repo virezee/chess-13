@@ -42,8 +42,8 @@ const captures = (
       continue
     }
     if (enPassant?.behind !== to) continue
-    const passer = position[enPassant.victim]
-    if (passer && passer.side !== side) moves.push({ from, to, captures: [enPassant.victim] })
+    const passer = position[enPassant.enemy]
+    if (passer && passer.side !== side) moves.push({ from, to, captures: [enPassant.enemy] })
   }
   return moves
 }

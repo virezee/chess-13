@@ -8,7 +8,7 @@ export interface Move {
 }
 export interface EnPassant {
   behind: string
-  victim: string
+  enemy: string
 }
 export interface PromotionSlot {
   piece: PieceName
