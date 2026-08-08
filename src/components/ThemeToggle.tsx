@@ -1,6 +1,6 @@
 'use client'
 
-import { THEME_STORAGE_KEY } from '@/constants/theme'
+import { THEME } from '@/constants/storage'
 import { IconButton } from '@/components/ui/IconButton'
 
 const toggle = () => {
@@ -8,7 +8,7 @@ const toggle = () => {
   const next = root.dataset.theme === 'light' ? 'dark' : 'light'
   root.dataset.theme = next
   try {
-    localStorage.setItem(THEME_STORAGE_KEY, next)
+    localStorage.setItem(THEME, next)
   } catch (e) {
     console.warn('Theme preference could not be saved.', e)
   }

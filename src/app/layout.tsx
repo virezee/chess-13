@@ -5,7 +5,7 @@ import { fontVariables } from '@/styles/typography'
 import '@/styles/globals.css'
 
 export const metadata: Metadata = {
-  title: 'Chess 13 (Chess 2: Epoch)',
+  title: 'Chess 13 (Chess II: Epoch)',
   description: 'A 13 x 13 chess variant played hotseat on one screen.'
 }
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
