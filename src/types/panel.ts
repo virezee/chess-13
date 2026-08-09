@@ -3,12 +3,12 @@ import type { PromotionSlot } from './move'
 
 export type AuraState = 'full' | 'partial' | 'none'
 export interface ArmyState {
-  side: Side
   player: string
+  side: Side
+  pieceCount: number
   marshalSquare: string | null
   aura: AuraState
   enhancedCount: number
-  pieceCount: number
   lost: string[]
   promotionSlots: PromotionSlot[]
   material: number
