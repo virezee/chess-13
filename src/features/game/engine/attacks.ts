@@ -1,19 +1,28 @@
-import type { Side, Position, PieceName } from '@/types/piece'
+import type { Side, PieceName, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
-import { CENTRE } from '@/constants/board'
-import { toSquare, fromSquare } from '@/features/game/board'
+import { COMMAND_SQUARE } from '@/constants/board'
+import { AURA_RANGE } from '@/constants/aura'
+import { fromSquare } from '@/features/game/board'
+import {
+  // POPE,
+  // EMPEROR,
+  MARSHAL,
+  // ASSASSIN,
+  SENTINEL,
+  MAGE,
+  HERALD,
+  TEMPLAR,
+  LEGIONARY
+} from '@/constants/piece'
 import { legionary } from './moves/legionary'
-import { sentinel } from './moves/sentinel'
 import { templar } from './moves/templar'
 import { herald } from './moves/herald'
 import { mage } from './moves/mage'
+import { sentinel } from './moves/sentinel'
 
-const AURA_RANGE = 4
-const COMMAND_SQUARE = toSquare(CENTRE - 1, CENTRE)
-
-const marshalSquare = (position: Position, side: Side): string | null => {
+const marshalSquare = (side: Side, position: Position): string | null => {
   for (const [square, piece] of Object.entries(position)) {
-    if (piece.side === side && piece.piece === 'marshal') return square
+    if (piece.side === side && piece.piece === MARSHAL) return square
   }
   return null
 }
@@ -26,33 +35,33 @@ const isEnhanced = (marshal: string | null, square: string): boolean => {
 }
 const generate = (
   side: Side,
-  position: Position,
-  square: string,
   piece: PieceName,
-  marshal: string | null
+  position: Position,
+  marshal: string | null,
+  square: string
 ): Move[] => {
   const enhanced = isEnhanced(marshal, square)
   switch (piece) {
-    case 'legionary':
-      return legionary(side, position, square, enhanced, null, [])
-    case 'sentinel':
+    case SENTINEL:
       return sentinel(side, position, square, enhanced, marshal)
-    case 'templar':
-      return templar(side, position, square, enhanced)
-    case 'herald':
-      return herald(side, position, square, enhanced)
-    case 'mage':
+    case MAGE:
       return mage(side, position, square, enhanced)
+    case HERALD:
+      return herald(side, position, square, enhanced)
+    case TEMPLAR:
+      return templar(side, position, square, enhanced)
+    case LEGIONARY:
+      return legionary(side, position, square, enhanced, null, [])
     default:
       return []
   }
 }
-export const attacks = (position: Position, side: Side): Set<string> => {
-  const marshal = marshalSquare(position, side)
+export const attacks = (side: Side, position: Position): Set<string> => {
+  const marshal = marshalSquare(side, position)
   const attacked = new Set<string>()
   for (const [square, piece] of Object.entries(position)) {
     if (piece.side !== side) continue
-    for (const move of generate(side, position, square, piece.piece, marshal)) {
+    for (const move of generate(side, piece.piece, position, marshal, square)) {
       for (const target of move.captures ?? []) attacked.add(target)
     }
   }

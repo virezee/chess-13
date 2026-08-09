@@ -2,8 +2,8 @@ import type { Side, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
 import { REACH } from '@/constants/piece'
 import { ORTHOGONAL } from '@/constants/direction'
-import { RESTRICTED, ENHANCED } from '@/constants/aura'
-import { toSquare, fromSquare, isOnBoard } from '@/features/game/board'
+import { ENHANCED, RESTRICTED } from '@/constants/aura'
+import { fromSquare, toSquare, isOnBoard } from '@/features/game/board'
 
 const line = (
   side: Side,

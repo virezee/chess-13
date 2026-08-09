@@ -3,8 +3,8 @@ import type { Move, EnPassant, PromotionSlot } from '@/types/move'
 import { SIZE, CENTRE } from '@/constants/board'
 import { WHITE } from '@/constants/colour'
 import { REACH } from '@/constants/piece'
-import { RESTRICTED, ENHANCED } from '@/constants/aura'
-import { toSquare, fromSquare, isOnBoard } from '@/features/game/board'
+import { ENHANCED, RESTRICTED } from '@/constants/aura'
+import { fromSquare, toSquare, isOnBoard } from '@/features/game/board'
 
 const step = (side: Side): number => (side === WHITE ? 1 : -1)
 const quiets = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
