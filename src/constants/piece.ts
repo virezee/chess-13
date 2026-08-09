@@ -11,6 +11,10 @@ export const HERALD = 'herald'
 export const TEMPLAR = 'templar'
 export const LEGIONARY = 'legionary'
 export const REACH = {
+  assassin: {
+    restricted: { reach: 6 },
+    enhanced: { reach: SIZE }
+  },
   sentinel: {
     restricted: { quiet: 3, capture: 6 },
     enhanced: { quiet: 6, capture: SIZE }

@@ -109,7 +109,7 @@ export function Board({ position }: { position: Position }) {
         <div
           className='grid font-mono text-[10px] text-ink-faint'
           style={{ gridTemplateRows: `repeat(13, ${TILE})` }}>
-          {RANKS.map((rank) => (
+          {RANKS.toReversed().map(rank => (
             <span key={rank} className='flex items-center justify-end pr-2'>
               {rank}
             </span>
@@ -121,7 +121,7 @@ export function Board({ position }: { position: Position }) {
             gridTemplateColumns: `repeat(13, ${TILE})`,
             gridTemplateRows: `repeat(13, ${TILE})`
           }}>
-          {RANKS.map((rank) =>
+          {RANKS.toReversed().map(rank =>
             FILES.map((file, index) => {
               const square = `${file}${rank}`
               return (
@@ -140,7 +140,7 @@ export function Board({ position }: { position: Position }) {
         <div
           className='grid font-mono text-[10px] text-ink-faint'
           style={{ gridTemplateColumns: `repeat(13, ${TILE})` }}>
-          {FILES.map((file) => (
+          {FILES.map(file => (
             <span key={file} className='flex justify-center pt-2'>
               {file}
             </span>
