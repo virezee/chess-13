@@ -172,7 +172,26 @@ Both conditions apply to the strong and weak versions alike.
 **Corners are the exception.** Against a piece on a1, m1, a13 or m13, the Assassin captures by occupying the corner square itself, in the ordinary way, because there is nowhere behind the victim to land. The watching rule still applies. A watched corner square means no capture.
 
 ### Emperor (E)
-The queen of chess 1.0, unchanged. The aura does not affect it.
+The queen of chess 1.0, unchanged. The aura does not affect it. What is not unchanged is when it may be used at all.
+
+**The Emperor starts dormant and stays dormant while its own Marshal is alive.** A dormant Emperor cannot move, cannot capture, does not guard any square, and cannot be captured. It still occupies its square, so it blocks lines like any other piece.
+
+It wakes in either of two ways, and once awake it stays awake for the rest of the game. A promoted Marshal does not put it back to sleep.
+
+- Its own Marshal is captured.
+- It is under attack at the start of its owner's turn.
+
+**The waking check is made once, at the start of its owner's turn.** That timing matters. An Emperor that comes under attack during the opponent's turn is still dormant for the rest of that turn, so it cannot be captured on the spot. The opponent always gets the chance to withdraw the attacker first, and if the attacker is withdrawn the Emperor never wakes.
+
+**Attacked here means attacked legally.** A pinned enemy piece cannot capture, so it does not wake the Emperor, exactly as it does not count as watching for the Assassin. This is the opposite of the rule for the Pope, where a pinned attacker does count. The dividing line is whether the capture would end the game: nothing punishes a pinned piece for taking the Pope, because there is no next move, while taking an Emperor costs it its own Pope on the reply.
+
+Three consequences are worth stating outright.
+
+A dormant Emperor is an unremovable shield. It can stand in front of the Pope and no capture will ever clear it. Hiding behind it is not free, though: attacking that line wakes the piece being hidden behind.
+
+An Assassin may land on a square next to a dormant Emperor, including directly beside it, because a dormant Emperor guards nothing. If the Assassin's arrival attacks the Emperor, the Emperor wakes on its owner's turn and may take it. This is the only situation in the game where an Assassin can be recaptured.
+
+Waking your own Emperor early is possible and costs a tempo. Move a piece of your own out of the way, let an enemy line fall on the Emperor, and it wakes at the start of your next turn. The opponent's only answer is to withdraw the attacker, which costs a tempo of their own. So the Marshal's death is the default road to an active Emperor, not the only one.
 
 ### Pope (P)
 The king of chess 1.0. It is the central piece of this game and stands outside the aura mechanic.
@@ -190,11 +209,14 @@ Castling works as in chess. The partner is the **Sentinel**, and the Pope travel
 ### Marshal (M)
 Moves like a queen. Its captures are conditional. It may capture only a piece that one of its own pieces is already attacking. Without a friendly attacker on the target, there is no capture. The Marshal finishes what the army already threatens.
 
-- The friendly attacker must be attacking **legally**. A pinned friendly piece does not count as support.
+- The friendly attacker must be attacking **legally**. A pinned friendly piece does not count, with one exception: a pinned piece still attacks along its own pin line, so it still supports a target standing on that line.
 - The blast ring of a friendly Mage counts as an attack.
 - **The Pope is exempt.** A Marshal aiming at the enemy Pope gives check on its own and can deliver mate on its own. Support is required only against ordinary pieces.
-- **Answering a capture in its own lines is exempt.** The trigger is *where* the opponent captured, not which piece died. If the opponent's last move captured one of your pieces **on a square that lies on one of the Marshal's eight lines, with a clear path from the Marshal to that square**, then for that one turn the Marshal may capture any enemy piece standing on its lines, with no support required. If the capture happened off its lines, nothing changes and the support rule applies as usual. The right expires if it is not used on your immediate reply.
+- **The riposte.** Answering a capture in its own lines is exempt. The trigger is *where* the opponent captured, not which piece died. If the opponent's last move captured one of your pieces **on a square that lies on one of the Marshal's eight lines, with a clear path from the Marshal to that square**, then for that one turn the Marshal may capture any enemy piece standing on its lines, with no support required. If the capture happened off its lines, nothing changes and the support rule applies as usual. The right expires if it is not used on your immediate reply.
   - The square that counts is the one your captured piece was standing on, not the square the capturing piece ended on. The two differ for an Assassin, which lands one tile beyond, for a Mage blast, where the Mage never moves, and for en passant, where the capturing Legionary ends up one rank short of its victim.
+  - The line is judged at the moment your piece died, on the board the opponent's move produced. Whether the opponent closes it again afterwards does not matter, because the reply comes immediately.
+  - **The killer has to be an enemy piece.** Your own strong Mage destroying your own pieces, and your own weak Mage dying on its own square, do not arm the riposte. Without that condition a Legionary fed to your own blast would buy a free capture.
+  - One enemy move arms one riposte, including a blast that kills several of your pieces at once, because the Marshal moves only once.
 
 Worked example. The Marshal stands on d4. The opponent's Herald captures your Legionary on d8 and now occupies that square. An enemy Sentinel sits on g4 and has done nothing.
 
@@ -264,7 +286,7 @@ Because slots depend on **your own** losses, the side that is behind always has 
 
 **Repeating a position for the third time loses the game for whoever does it.** This removes endless checking as an escape. A losing side can no longer check forever, because the move that completes the third repetition loses. The move remains legal, it is simply fatal, and a player left with nothing but repetitions has to play one.
 
-A position is identified as in chess 1.0: piece placement, side to move, castling rights and en passant rights. The aura needs no separate term, because it follows from where the Marshal stands.
+A position is identified as in chess 1.0: piece placement, side to move, castling rights and en passant rights, plus the Marshal's riposte right, which is a one-reply right of the same kind. The aura needs no separate term, because it follows from where the Marshal stands.
 
 **Only two genuine draws exist: insufficient material and the no-progress rule.**
 

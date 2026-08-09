@@ -25,5 +25,6 @@ export type PieceName =
 export interface Piece {
   side: Side
   piece: PieceName
+  awake?: boolean
 }
 export type Position = Record<string, Piece>
