@@ -4,7 +4,7 @@ import { CORNERS } from '@/constants/board'
 import { REACH } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/board'
+import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
 
 export const assassin = (
   side: Side,

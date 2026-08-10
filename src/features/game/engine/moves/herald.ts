@@ -3,7 +3,7 @@ import type { Move } from '@/types/move'
 import { REACH } from '@/constants/piece'
 import { DIAGONAL, ORTHOGONAL } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/board'
+import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
 
 const diagonals = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
   const origin = fromSquare(from)

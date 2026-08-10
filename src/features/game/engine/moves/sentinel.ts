@@ -3,7 +3,7 @@ import type { Move } from '@/types/move'
 import { REACH } from '@/constants/piece'
 import { ORTHOGONAL } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/board'
+import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
 
 const line = (
   side: Side,

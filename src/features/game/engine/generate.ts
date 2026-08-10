@@ -13,7 +13,7 @@ import {
   LEGIONARY
 } from '@/constants/piece'
 import { AURA_RANGE } from '@/constants/aura'
-import { fromSquare } from '@/features/game/board'
+import { fromSquare } from '@/features/game/lib/coordinate'
 import { marshal, assassin, sentinel, mage, herald, templar, legionary } from './moves'
 
 export const isEnhanced = (marshalSquare: string | null, square: string): boolean => {

@@ -2,7 +2,7 @@ import type { Side, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
 import { SIZE } from '@/constants/board'
 import { EVERY } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/board'
+import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
 
 export const riposteSquares = (side: Side, position: Position, move: Move): string[] =>
   (move.captures ?? []).filter(square => position[square].side !== side)

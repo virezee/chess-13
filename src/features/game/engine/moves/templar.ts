@@ -2,7 +2,7 @@ import type { Side, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
 import { LEAP } from '@/constants/piece'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/board'
+import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
 
 export const templar = (
   side: Side,

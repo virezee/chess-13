@@ -25,7 +25,7 @@ const cinzel = Cinzel({
   subsets: ['latin'],
   weight: '500'
 })
-export const fontVariables = [
+export const typography = [
   cloisterBlack.variable,
   unifrakturMaguntia.variable,
   archivo.variable,

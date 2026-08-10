@@ -213,7 +213,7 @@ Castling works as in chess. The partner is the **Sentinel**, and the Pope travel
 ### Marshal (M)
 Moves like a queen. Its captures are conditional. It may capture only a piece that one of its own pieces is already attacking. Without a friendly attacker on the target, there is no capture. The Marshal finishes what the army already threatens.
 
-- The friendly attacker must be attacking **legally**. A pinned friendly piece does not count, with one exception: a pinned piece still attacks along its own pin line, so it still supports a target standing on that line.
+- The friendly attacker only has to be attacking the target square. A pinned friendly piece counts in full, in every direction it attacks, because support asks where the army's attacks fall and not which of them could be played. The pin still binds the pinned piece itself, which may not leave its own line.
 - The blast ring of a friendly Mage counts as an attack.
 - **The Pope is exempt.** A Marshal aiming at the enemy Pope gives check on its own and can deliver mate on its own. Support is required only against ordinary pieces.
 - **The riposte.** Answering a capture in its own lines is exempt. The trigger is *where* the opponent captured, not which piece died. If the opponent's last move captured one of your pieces **on a square that lies on one of the Marshal's eight lines, with a clear path from the Marshal to that square**, then for that one turn the Marshal may capture any enemy piece standing on its lines, with no support required. If the capture happened off its lines, nothing changes and the support rule applies as usual. The right expires if it is not used on your immediate reply.

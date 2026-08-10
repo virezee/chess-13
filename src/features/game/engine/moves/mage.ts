@@ -1,7 +1,7 @@
 import type { Side, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
 import { EVERY } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/board'
+import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
 
 const ring = (from: string): string[] => {
   const origin = fromSquare(from)
