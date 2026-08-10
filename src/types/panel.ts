@@ -1,8 +1,8 @@
 import type { Side } from './piece'
 import type { PromotionSlot } from './move'
 
-export type AuraState = 'full' | 'partial' | 'none'
 export type EmperorState = { square: string; awake: boolean } | null
+export type AuraState = 'full' | 'partial' | 'none'
 export interface ArmyState {
   player: string
   side: Side
