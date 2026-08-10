@@ -3,6 +3,8 @@ import type { Move } from '@/types/move'
 import { POPE } from '@/constants/piece'
 import { squareOf } from '@/features/game/board'
 import { apply } from './apply'
+import { attacks, opponent, pseudoLegal } from './attacks'
+import { riposteSquares } from './moves'
 
 const survives = (side: Side, position: Position, move: Move): boolean => {
   const after = apply(position, move)

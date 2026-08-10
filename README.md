@@ -171,6 +171,10 @@ Both conditions apply to the strong and weak versions alike.
 
 **Corners are the exception.** Against a piece on a1, m1, a13 or m13, the Assassin captures by occupying the corner square itself, in the ordinary way, because there is nowhere behind the victim to land. The watching rule still applies. A watched corner square means no capture.
 
+**The enemy Marshal is the second exception.** Capturing a piece on one of the Marshal's lines arms its riposte, and a riposte lets it capture on those lines without support. The riposte is created by the Assassin's own capture, so it does not guard the landing tile beforehand and never counts as watching. The capture is legal, the Assassin lands, and the Marshal recaptures on the reply. The dormant Emperor behaves the same way, and these are the only two recaptures an Assassin ever faces.
+
+Both squares must lie on the Marshal's lines, and the landing tile is always one tile past the victim, so the pattern is confined to close quarters. With the Marshal on e5, an Assassin arriving along the long diagonal takes f6 and lands on e7, where the Marshal recaptures up the e-file. The same victim taken along the rank, from a6, is safe, because the landing tile g6 stands on none of the Marshal's lines.
+
 ### Emperor (E)
 The queen of chess 1.0, unchanged. The aura does not affect it. What is not unchanged is when it may be used at all.
 
@@ -189,7 +193,7 @@ Three consequences are worth stating outright.
 
 A dormant Emperor is an unremovable shield. It can stand in front of the Pope and no capture will ever clear it. Hiding behind it is not free, though: attacking that line wakes the piece being hidden behind.
 
-An Assassin may land on a square next to a dormant Emperor, including directly beside it, because a dormant Emperor guards nothing. If the Assassin's arrival attacks the Emperor, the Emperor wakes on its owner's turn and may take it. This is the only situation in the game where an Assassin can be recaptured.
+An Assassin may land on a square next to a dormant Emperor, including directly beside it, because a dormant Emperor guards nothing. If the Assassin's arrival attacks the Emperor, the Emperor wakes on its owner's turn and may take it. This is one of the two ways an Assassin can be recaptured. The other is the Marshal's riposte, described under the Assassin.
 
 Waking your own Emperor early is possible and costs a tempo. Move a piece of your own out of the way, let an enemy line fall on the Emperor, and it wakes at the start of your next turn. The opponent's only answer is to withdraw the attacker, which costs a tempo of their own. So the Marshal's death is the default road to an active Emperor, not the only one.
 

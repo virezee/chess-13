@@ -3,15 +3,13 @@ import type { Move } from '@/types/move'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, MARSHAL, ASSASSIN } from '@/constants/piece'
 import { squareOf } from '@/features/game/board'
-import { apply } from './apply'
 import { generate } from './generate'
-import { onMarshalLine, marshal } from './moves'
+import { apply } from './apply'
+import { riposteSquares, onMarshalLine, marshal } from './moves'
 
-const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
-const riposteSquares = (side: Side, position: Position, move: Move): string[] =>
-  (move.captures ?? []).filter(square => position[square].side !== side)
 const isEnPrise = (side: Side, position: Position, move: Move): boolean =>
   attacks(opponent(side), apply(position, move), riposteSquares(side, position, move)).has(move.to)
+export const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
 export const pseudoLegal = (side: Side, position: Position, riposte: string[] = []): Move[] => {
   const marshalSquare = squareOf(side, MARSHAL, position)
   const moves: Move[] = []

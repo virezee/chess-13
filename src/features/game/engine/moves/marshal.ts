@@ -4,7 +4,9 @@ import { SIZE } from '@/constants/board'
 import { EVERY } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard } from '@/features/game/board'
 
-export function onMarshalLine(position: Position, from: string, to: string): boolean {
+export const riposteSquares = (side: Side, position: Position, move: Move): string[] =>
+  (move.captures ?? []).filter(square => position[square].side !== side)
+export const onMarshalLine = (position: Position, from: string, to: string): boolean => {
   if (from === to) return false
   const origin = fromSquare(from)
   const target = fromSquare(to)
