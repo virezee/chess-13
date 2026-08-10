@@ -41,19 +41,3 @@ export const onLine = (
     Math.sign(ranks) === rankStep
   )
 }
-export const blocks = (pope: string, checker: string, square: string): boolean => {
-  const origin = fromSquare(pope)
-  const target = fromSquare(checker)
-  const files = target.file - origin.file
-  const ranks = target.rank - origin.rank
-  if (files !== 0 && ranks !== 0 && Math.abs(files) !== Math.abs(ranks)) return false
-  const fileStep = Math.sign(files)
-  const rankStep = Math.sign(ranks)
-  const distance = Math.max(Math.abs(files), Math.abs(ranks))
-  const at = fromSquare(square)
-  for (let step = 1; step < distance; step += 1) {
-    if (at.file === origin.file + fileStep * step && at.rank === origin.rank + rankStep * step)
-      return true
-  }
-  return false
-}

@@ -5,6 +5,7 @@ export interface Move {
   to: string
   captures?: string[]
   promotesTo?: PieceName
+  partner?: { from: string; to: string }
 }
 export interface View {
   vacated?: readonly string[]
@@ -13,6 +14,10 @@ export interface View {
 export interface EnPassant {
   behind: string
   enemy: string
+}
+export interface Castling {
+  left: boolean
+  right: boolean
 }
 export interface PromotionSlot {
   piece: PieceName
