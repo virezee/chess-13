@@ -1,5 +1,5 @@
 export { pope } from './pope'
-export { isDormant, emperor } from './emperor'
+export { emperor } from './emperor'
 export { riposteSquares, onMarshalLine, marshal } from './marshal'
 export { assassin } from './assassin'
 export { sentinel } from './sentinel'
