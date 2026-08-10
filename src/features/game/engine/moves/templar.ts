@@ -3,6 +3,7 @@ import type { Move } from '@/types/move'
 import { LEAP } from '@/constants/piece'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
 import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { isDormant } from './emperor'
 
 export const templar = (
   side: Side,
@@ -22,7 +23,7 @@ export const templar = (
       moves.push({ from, to })
       continue
     }
-    if (occupant.side !== side) moves.push({ from, to, captures: [to] })
+    if (occupant.side !== side && !isDormant(occupant)) moves.push({ from, to, captures: [to] })
   }
   return moves
 }

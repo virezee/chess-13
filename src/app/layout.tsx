@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { AppHeader } from '@/components/AppHeader'
 import { themeScript } from '@/lib/theme'
-import { fontVariables } from '@/styles/typography'
+import { typography } from '@/styles/typography'
 import '@/styles/globals.css'
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 }
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang='en' suppressHydrationWarning className={`${fontVariables} h-full antialiased`}>
+    <html lang='en' suppressHydrationWarning className={`${typography} h-full antialiased`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

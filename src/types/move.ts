@@ -26,6 +26,7 @@ export interface PromotionSlot {
 export interface Turn {
   side: Side
   position: Position
+  castling: Castling
   checkers: string[]
   pinned: Map<string, readonly [number, number]>
   riposte: boolean

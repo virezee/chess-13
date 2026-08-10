@@ -5,6 +5,7 @@ import { REACH } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
 import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { isDormant } from './emperor'
 
 export const assassin = (
   side: Side,
@@ -26,7 +27,7 @@ export const assassin = (
         moves.push({ from, to: square })
         continue
       }
-      if (occupant.side === side) break
+      if (occupant.side === side || isDormant(occupant)) break
       if (CORNERS.includes(square)) {
         moves.push({ from, to: square, captures: [square] })
         break

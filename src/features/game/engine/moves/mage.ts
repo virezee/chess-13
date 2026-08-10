@@ -1,7 +1,9 @@
 import type { Side, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
+import { POPE } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { isDormant } from './emperor'
 
 const ring = (from: string): string[] => {
   const origin = fromSquare(from)
@@ -20,17 +22,23 @@ const steps = (position: Position, from: string): Move[] =>
 const blast = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
   const victims: string[] = []
   let hasEnemy = false
+  let ownPope = false
+  let enemyPope = false
   for (const to of ring(from)) {
     const occupant = position[to]
     if (!occupant) continue
     if (occupant.side !== side) {
+      if (isDormant(occupant)) continue
       hasEnemy = true
+      if (occupant.piece === POPE) enemyPope = true
       victims.push(to)
       continue
     }
-    if (isEnhanced) victims.push(to)
+    if (occupant.piece === POPE) ownPope = true
+    if (isEnhanced && !isDormant(occupant)) victims.push(to)
   }
   if (!hasEnemy) return []
+  if (ownPope && (isEnhanced || enemyPope)) return []
   if (!isEnhanced) victims.push(from)
   return [{ from, to: from, captures: victims }]
 }

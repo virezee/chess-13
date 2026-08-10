@@ -5,6 +5,7 @@ import { WHITE } from '@/constants/colour'
 import { REACH } from '@/constants/piece'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
 import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { isDormant } from './emperor'
 
 const step = (side: Side): number => (side === WHITE ? 1 : -1)
 const quiets = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
@@ -38,7 +39,7 @@ const captures = (
     const to = toSquare(fileBeside, rankAhead)
     const occupant = position[to]
     if (occupant) {
-      if (occupant.side !== side) moves.push({ from, to, captures: [to] })
+      if (occupant.side !== side && !isDormant(occupant)) moves.push({ from, to, captures: [to] })
       continue
     }
     if (enPassant?.behind !== to) continue
@@ -70,13 +71,13 @@ export const legionary = (
   from: string,
   isEnhanced: boolean,
   enPassant: EnPassant | null,
-  slots: PromotionSlot[]
+  promotionSlots: PromotionSlot[]
 ): Move[] => {
   return [
     ...[
       ...quiets(side, position, from, isEnhanced),
       ...captures(side, position, from, enPassant)
-    ].flatMap(move => withPromotions(side, move, slots)),
-    ...transforms(side, from, slots)
+    ].flatMap(move => withPromotions(side, move, promotionSlots)),
+    ...transforms(side, from, promotionSlots)
   ]
 }

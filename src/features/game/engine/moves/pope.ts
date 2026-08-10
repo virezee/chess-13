@@ -5,6 +5,7 @@ import { WHITE } from '@/constants/colour'
 import { SENTINEL } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { isDormant } from './emperor'
 
 const HOME_FILE = 6
 const LEFT = { pope: 3, sentinel: 0, lands: 4, between: [1, 2, 3, 4, 5] }
@@ -46,7 +47,7 @@ export const pope = (
       moves.push({ from, to })
       continue
     }
-    if (occupant.side !== side) moves.push({ from, to, captures: [to] })
+    if (occupant.side !== side && !isDormant(occupant)) moves.push({ from, to, captures: [to] })
   }
   for (const [available, wing] of [
     [castling.left, LEFT],

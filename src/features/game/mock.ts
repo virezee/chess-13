@@ -12,9 +12,10 @@ export const blackArmy: ArmyState = {
   side: 'black',
   player: 'Player 2',
   marshalSquare: 'g7',
-  aura: 'command',
-  strongCount: 24,
+  aura: 'full',
+  enhancedCount: 24,
   pieceCount: 24,
+  emperor: { square: 'f13', awake: false },
   lost: ['L', 'G'],
   promotionSlots: [{ piece: 'mage', file: 9 }],
   material: 88.5
@@ -24,9 +25,10 @@ export const whiteArmy: ArmyState = {
   side: 'white',
   player: 'Player 1',
   marshalSquare: 'h5',
-  aura: 'active',
-  strongCount: 17,
+  aura: 'partial',
+  enhancedCount: 17,
   pieceCount: 23,
+  emperor: { square: 'f1', awake: true },
   lost: ['L', 'L', 'T'],
   promotionSlots: [{ piece: 'templar', file: 3 }],
   material: 81.0
@@ -81,7 +83,8 @@ function army(side: Side, backRank: number, legionaryRank: number): Position {
   const squares: Position = {}
   BACK_RANK.forEach((type, index) => {
     const file = FILES[index]
-    squares[`${file}${backRank}`] = { side, type }
+    squares[`${file}${backRank}`] =
+      type === 'emperor' ? { side, type, awake: false } : { side, type }
     squares[`${file}${legionaryRank}`] = { side, type: 'legionary' }
   })
   return squares

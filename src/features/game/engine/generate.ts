@@ -1,5 +1,5 @@
 import type { Side, PieceName, Position } from '@/types/piece'
-import type { Move, EnPassant, PromotionSlot } from '@/types/move'
+import type { Move, Castling, EnPassant, PromotionSlot } from '@/types/move'
 import { COMMAND_SQUARE } from '@/constants/board'
 import {
   POPE,
@@ -14,7 +14,17 @@ import {
 } from '@/constants/piece'
 import { AURA_RANGE } from '@/constants/aura'
 import { fromSquare } from '@/features/game/lib/coordinate'
-import { marshal, assassin, sentinel, mage, herald, templar, legionary } from './moves'
+import {
+  pope,
+  emperor,
+  marshal,
+  assassin,
+  sentinel,
+  mage,
+  herald,
+  templar,
+  legionary
+} from './moves'
 
 export const isEnhanced = (marshalSquare: string | null, square: string): boolean => {
   if (marshalSquare === null) return false
@@ -29,17 +39,15 @@ export const generate = (
   position: Position,
   marshalSquare: string | null,
   square: string,
+  castling: Castling,
   enPassant: EnPassant | null,
-  slots: PromotionSlot[]
+  promotionSlots: PromotionSlot[]
 ): Move[] => {
+  if (piece === POPE) return pope(side, position, square, castling)
+  if (piece === EMPEROR) return emperor(side, position, square)
+  if (piece === MARSHAL) return marshal(side, position, square)
   const enhanced = isEnhanced(marshalSquare, square)
   switch (piece) {
-    case POPE:
-      return []
-    case EMPEROR:
-      return []
-    case MARSHAL:
-      return marshal(side, position, square)
     case ASSASSIN:
       return assassin(side, position, square, enhanced)
     case SENTINEL:
@@ -51,8 +59,11 @@ export const generate = (
     case TEMPLAR:
       return templar(side, position, square, enhanced)
     case LEGIONARY:
-      return legionary(side, position, square, enhanced, enPassant, slots)
-    default:
-      return []
+      return legionary(side, position, square, enhanced, enPassant, promotionSlots)
+    default: {
+      // Every piece name has a branch. A new one has to be wired in here or this fails to compile.
+      const unwired: never = piece
+      return unwired
+    }
   }
 }

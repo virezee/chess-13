@@ -3,6 +3,7 @@ import type { Move } from '@/types/move'
 import { SIZE } from '@/constants/board'
 import { EVERY } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { isDormant } from './emperor'
 
 export const riposteSquares = (side: Side, position: Position, move: Move): string[] =>
   (move.captures ?? []).filter(square => position[square].side !== side)
@@ -36,7 +37,7 @@ export const marshal = (side: Side, position: Position, from: string): Move[] =>
         moves.push({ from, to })
         continue
       }
-      if (occupant.side !== side) moves.push({ from, to, captures: [to] })
+      if (occupant.side !== side && !isDormant(occupant)) moves.push({ from, to, captures: [to] })
       break
     }
   }

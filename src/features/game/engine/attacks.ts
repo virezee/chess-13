@@ -1,4 +1,4 @@
-import type { Move } from '@/types/move'
+import type { Move, Turn } from '@/types/move'
 import type { Piece } from '@/types/piece'
 import { POPE, MARSHAL } from '@/constants/piece'
 import { fromSquare, squareOf } from '@/features/game/lib/square'
@@ -56,7 +56,8 @@ export const pseudoLegal = (turn: Turn): Move[] => {
       marshalSquare,
       square,
       turn.enPassant,
-      turn.slots
+      turn.promotionSlots,
+      turn.castling
     )) {
       if (pin && pope !== null && !onLine(pope, pin, move.to)) continue
       if (turn.checkers.length > 0 && !couldAnswer(turn, pope, piece, move)) continue

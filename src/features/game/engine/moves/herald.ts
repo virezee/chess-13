@@ -4,6 +4,7 @@ import { REACH } from '@/constants/piece'
 import { DIAGONAL, ORTHOGONAL } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
 import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { isDormant } from './emperor'
 
 const diagonals = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
   const origin = fromSquare(from)
@@ -20,7 +21,7 @@ const diagonals = (side: Side, position: Position, from: string, isEnhanced: boo
         moves.push({ from, to })
         continue
       }
-      if (occupant.side !== side) moves.push({ from, to, captures: [to] })
+      if (occupant.side !== side && !isDormant(occupant)) moves.push({ from, to, captures: [to] })
       break
     }
   }
@@ -39,7 +40,8 @@ const steps = (side: Side, position: Position, from: string, isEnhanced: boolean
       moves.push({ from, to })
       continue
     }
-    if (isEnhanced && occupant.side !== side) moves.push({ from, to, captures: [to] })
+    if (isEnhanced && occupant.side !== side && !isDormant(occupant))
+      moves.push({ from, to, captures: [to] })
   }
   return moves
 }

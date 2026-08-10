@@ -3,9 +3,9 @@ import { FILES } from '@/constants/board'
 import type { ArmyState, AuraState } from '@/types/panel'
 
 const AURA_COPY: Record<AuraState, { label: string; note: string }> = {
-  command: { label: 'Command square', note: 'Whole army strong' },
-  active: { label: 'Aura active', note: 'Chebyshev 4' },
-  down: { label: 'Marshal down', note: 'Whole army weak' }
+  full: { label: 'Command square', note: 'Whole army enhanced' },
+  partial: { label: 'Aura active', note: 'Chebyshev 4' },
+  none: { label: 'Marshal down', note: 'Whole army restricted' }
 }
 
 /**
@@ -42,15 +42,15 @@ function Field({
 
 function AuraMeter({ army }: { army: ArmyState }) {
   const copy = AURA_COPY[army.aura]
-  const ratio = army.pieceCount === 0 ? 0 : army.strongCount / army.pieceCount
+  const ratio = army.pieceCount === 0 ? 0 : army.enhancedCount / army.pieceCount
 
   return (
     <div
       className={cn(
         'rounded-[3px] border px-3 py-2.5',
-        army.aura === 'command' && 'border-brass-deep bg-brass/8',
-        army.aura === 'active' && 'border-line-strong bg-surface-2',
-        army.aura === 'down' && 'border-alert/40 bg-alert/8'
+        army.aura === 'full' && 'border-brass-deep bg-brass/8',
+        army.aura === 'partial' && 'border-line-strong bg-surface-2',
+        army.aura === 'none' && 'border-alert/40 bg-alert/8'
       )}>
       <div className='flex items-baseline justify-between gap-3'>
         <span
@@ -128,6 +128,30 @@ export function ArmyPanel({
           <span className='font-mono text-[12px] text-ink'>{army.marshalSquare ?? '--'}</span>
         }>
         <AuraMeter army={army} />
+      </Field>
+
+      <Field
+        label='Emperor'
+        trailing={
+          <span className='font-mono text-[12px] text-ink'>{army.emperor?.square ?? '--'}</span>
+        }>
+        {army.emperor === null ? (
+          <p className='text-[12px] text-ink-faint'>Captured</p>
+        ) : (
+          <div
+            className={cn(
+              'rounded-[3px] border px-3 py-2.5',
+              army.emperor.awake ? 'border-line-strong bg-surface-2' : 'border-line bg-surface-2'
+            )}>
+            <span
+              className={cn(
+                'text-[11px] font-semibold uppercase tracking-[0.12em]',
+                army.emperor.awake ? 'text-brass' : 'text-ink-faint'
+              )}>
+              {army.emperor.awake ? 'Awake' : 'Dormant'}
+            </span>
+          </div>
+        )}
       </Field>
 
       <Field

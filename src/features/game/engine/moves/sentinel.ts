@@ -4,6 +4,7 @@ import { REACH } from '@/constants/piece'
 import { ORTHOGONAL } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
 import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { isDormant } from './emperor'
 
 const line = (
   side: Side,
@@ -37,7 +38,8 @@ const line = (
       continue
     }
     if (occupant.side !== side) {
-      if (!through && distance <= capture) moves.push({ from, to, captures: [to] })
+      if (!through && distance <= capture && !isDormant(occupant))
+        moves.push({ from, to, captures: [to] })
       break
     }
     if (!isEnhanced || !isTowardMarshal) break

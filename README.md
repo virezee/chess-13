@@ -148,6 +148,7 @@ Conditions for a legal blast:
 - **At least one enemy piece must stand in the ring.** An empty ring is not allowed, because that amounts to a skipped turn. A ring holding only friendly pieces is not allowed either, because that is damage for no gain.
 - A blast that would destroy your own Pope is not allowed.
 - A Mage standing next to the enemy Pope **already gives check**, because its next turn blasts. If both Popes stand in the ring, the blast is not allowed, so there is no check and no real threat.
+- **A dormant Emperor survives the blast**, whether it belongs to the Mage's own side or to the opponent. It stays on its square and the blast passes around it. A sleeping enemy Emperor therefore does not satisfy the condition above, because a ring holding nothing else is a ring the blast cannot touch.
 - **Blasts do not chain.** A Mage that dies, whether to another blast or to an ordinary capture, does not explode.
 
 ### Assassin (A)
@@ -178,7 +179,7 @@ Both squares must lie on the Marshal's lines, and the landing tile is always one
 ### Emperor (E)
 The queen of chess 1.0, unchanged. The aura does not affect it. What is not unchanged is when it may be used at all.
 
-**The Emperor starts dormant and stays dormant while its own Marshal is alive.** A dormant Emperor cannot move, cannot capture, does not guard any square, and cannot be captured. It still occupies its square, so it blocks lines like any other piece.
+**The Emperor starts dormant and stays dormant while its own Marshal is alive.** A dormant Emperor cannot move, cannot capture, does not guard any square, and cannot be captured. Nothing removes it while it sleeps, a Mage's blast included, and that holds for its own side's Mage as much as the opponent's. It still occupies its square, so it blocks lines like any other piece.
 
 It wakes in either of two ways, and once awake it stays awake for the rest of the game. A promoted Marshal does not put it back to sleep.
 
