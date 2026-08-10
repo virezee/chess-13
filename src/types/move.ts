@@ -11,13 +11,13 @@ export interface View {
   vacated?: readonly string[]
   moved?: { square: string; piece: Piece }
 }
-export interface EnPassant {
-  behind: string
-  enemy: string
-}
 export interface Castling {
   left: boolean
   right: boolean
+}
+export interface EnPassant {
+  behind: string
+  enemy: string
 }
 export interface PromotionSlot {
   piece: PieceName
