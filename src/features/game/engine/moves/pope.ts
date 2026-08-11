@@ -4,7 +4,7 @@ import { SIZE } from '@/constants/board'
 import { WHITE } from '@/constants/colour'
 import { SENTINEL } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
 const HOME_FILE = 6

@@ -13,7 +13,7 @@ import {
   LEGIONARY
 } from '@/constants/piece'
 import { AURA_RANGE } from '@/constants/aura'
-import { fromSquare } from '@/features/game/lib/coordinate'
+import { fromSquare } from '../lib/coordinate'
 import {
   pope,
   emperor,

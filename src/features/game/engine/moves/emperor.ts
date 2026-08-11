@@ -3,7 +3,7 @@ import type { Move } from '@/types/move'
 import { SIZE } from '@/constants/board'
 import { EMPEROR } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 
 export const isDormant = (piece: Piece): boolean => piece.piece === EMPEROR && piece.awake !== true
 export const emperor = (side: Side, position: Position, from: string): Move[] => {

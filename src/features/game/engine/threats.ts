@@ -2,8 +2,6 @@ import type { Side, Piece, Position } from '@/types/piece'
 import type { View } from '@/types/move'
 import { SIZE, CORNERS } from '@/constants/board'
 import { WHITE } from '@/constants/colour'
-import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
-import { ENHANCED, RESTRICTED } from '@/constants/aura'
 import {
   POPE,
   EMPEROR,
@@ -16,16 +14,22 @@ import {
   LEGIONARY,
   REACH
 } from '@/constants/piece'
+import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
+import { ENHANCED, RESTRICTED } from '@/constants/aura'
 import { fromSquare, toSquare, isOnBoard, squareOf } from '../lib/coordinate'
-import { occupantAt } from '../lib/view'
 import { isEnhanced } from './generate'
 
-const reaches = (
+export const occupantAt = (position: Position, view: View, square: string): Piece | undefined => {
+  if (view.moved && view.moved.square === square) return view.moved.piece
+  if (view.vacated?.includes(square)) return
+  return position[square]
+}
+export const reaches = (
   piece: Piece,
-  enhanced: boolean,
   isDiagonal: boolean,
   rankStep: number,
-  distance: number
+  distance: number,
+  enhanced: boolean
 ): boolean => {
   switch (piece.piece) {
     case EMPEROR:
@@ -45,7 +49,7 @@ const reaches = (
       return false
   }
 }
-const assassinReaches = (
+export const assassinReaches = (
   position: Position,
   view: View,
   target: string,
@@ -63,32 +67,16 @@ const assassinReaches = (
   if (!isOnBoard(file, rank)) return false
   return !occupantAt(position, view, toSquare(file, rank))
 }
-/**
- * The squares `side` bears on `square` from, found by standing on the square and
- * looking outward rather than by generating moves. The Marshal is left out
- * unless the square holds a Pope, because against anything else it needs a
- * friendly attacker already there, and that attacker turns up in this same scan.
- * A dormant Emperor is left out because it guards nothing.
- */
-
-/** Whether `to` sits on the ray that leaves `from` in the given direction. */
-
-export interface PopeScan {
-  /** Enemy pieces giving check right now. */
-  checkers: string[]
-  /** Own pieces that may not leave their line, and the line they stand on. */
-  pinned: Map<string, readonly [number, number]>
-}
-
 export const threats = (
   side: Side,
   position: Position,
   square: string,
-  view: View = {},
-  againstPope = false
+  view: View = {}
 ): string[] => {
   const marshalSquare = squareOf(side, MARSHAL, position)
   const origin = fromSquare(square)
+  const target = occupantAt(position, view, square)
+  const marshalCounts = target?.piece === POPE && target.side !== side
   const found: string[] = []
   for (const [fileStep, rankStep] of EVERY) {
     const isDiagonal = fileStep !== 0 && rankStep !== 0
@@ -102,14 +90,11 @@ export const threats = (
       if (occupant.side !== side) break
       const enhanced = isEnhanced(marshalSquare, at)
       if (occupant.piece === MARSHAL) {
-        if (againstPope) found.push(at)
+        if (marshalCounts) found.push(at)
       } else if (occupant.piece === ASSASSIN) {
-        if (assassinReaches(position, view, square, fileStep, rankStep, distance, enhanced)) {
+        if (assassinReaches(position, view, square, fileStep, rankStep, distance, enhanced))
           found.push(at)
-        }
-      } else if (reaches(occupant, enhanced, isDiagonal, rankStep, distance)) {
-        found.push(at)
-      }
+      } else if (reaches(occupant, isDiagonal, rankStep, distance, enhanced)) found.push(at)
       break
     }
   }

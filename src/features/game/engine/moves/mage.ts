@@ -2,7 +2,7 @@ import type { Side, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
 import { POPE } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
 const ring = (from: string): string[] => {

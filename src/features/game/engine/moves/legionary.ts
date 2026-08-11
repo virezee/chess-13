@@ -4,7 +4,7 @@ import { SIZE, CENTRE } from '@/constants/board'
 import { WHITE } from '@/constants/colour'
 import { REACH } from '@/constants/piece'
 import { ENHANCED, RESTRICTED } from '@/constants/aura'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
 const step = (side: Side): number => (side === WHITE ? 1 : -1)

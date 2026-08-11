@@ -2,7 +2,7 @@ import type { Side, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
 import { SIZE } from '@/constants/board'
 import { EVERY } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard } from '@/features/game/lib/coordinate'
+import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
 export const riposteSquares = (side: Side, position: Position, move: Move): string[] =>
