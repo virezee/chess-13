@@ -4,8 +4,8 @@ export interface Move {
   from: string
   to: string
   captures?: string[]
+  sentinel?: { from: string; to: string }
   promotesTo?: PieceName
-  partner?: { from: string; to: string }
 }
 export interface View {
   vacated?: readonly string[]
@@ -14,6 +14,12 @@ export interface View {
 export interface Castling {
   left: boolean
   right: boolean
+}
+export interface Wing {
+  to: string
+  sentinel: string
+  lands: string
+  between: readonly string[]
 }
 export interface EnPassant {
   behind: string

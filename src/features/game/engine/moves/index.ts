@@ -1,6 +1,6 @@
 export { pope } from './pope'
 export { emperor } from './emperor'
-export { riposteSquares, onMarshalLine, marshal } from './marshal'
+export { riposteSquares, marshal } from './marshal'
 export { assassin } from './assassin'
 export { sentinel } from './sentinel'
 export { mage } from './mage'

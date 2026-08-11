@@ -4,23 +4,6 @@ import { POPE, MARSHAL } from '@/constants/piece'
 import { fromSquare, squareOf } from '../lib/coordinate'
 import { generate } from './generate'
 
-const onLine = (
-  [fileStep, rankStep]: readonly [number, number],
-  from: string,
-  to: string
-): boolean => {
-  const origin = fromSquare(from)
-  const target = fromSquare(to)
-  const files = target.file - origin.file
-  const ranks = target.rank - origin.rank
-  if (fileStep === 0) return files === 0 && Math.sign(ranks) === rankStep
-  if (rankStep === 0) return ranks === 0 && Math.sign(files) === fileStep
-  return (
-    Math.abs(files) === Math.abs(ranks) &&
-    Math.sign(files) === fileStep &&
-    Math.sign(ranks) === rankStep
-  )
-}
 const blocks = (pope: string, checker: string, square: string): boolean => {
   const origin = fromSquare(pope)
   const target = fromSquare(checker)
@@ -42,6 +25,23 @@ const isEvasion = (turn: Turn, pope: string | null, piece: Piece, move: Move): b
   if (turn.checkers.every(square => move.captures?.includes(square))) return true
   if (turn.checkers.length !== 1 || pope === null) return false
   return blocks(pope, turn.checkers[0], move.to)
+}
+export const onLine = (
+  [fileStep, rankStep]: readonly [number, number],
+  from: string,
+  to: string
+): boolean => {
+  const origin = fromSquare(from)
+  const target = fromSquare(to)
+  const files = target.file - origin.file
+  const ranks = target.rank - origin.rank
+  if (fileStep === 0) return files === 0 && Math.sign(ranks) === rankStep
+  if (rankStep === 0) return ranks === 0 && Math.sign(files) === fileStep
+  return (
+    Math.abs(files) === Math.abs(ranks) &&
+    Math.sign(files) === fileStep &&
+    Math.sign(ranks) === rankStep
+  )
 }
 export const candidate = (turn: Turn): Move[] => {
   const { side, position } = turn
