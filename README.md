@@ -164,7 +164,7 @@ Both conditions apply to the strong and weak versions alike.
 
 - The path up to the victim must be clear. The Assassin slides and does not jump.
 - The landing tile is always exactly one tile past the victim. **One kill per turn.** There are no chains as in checkers.
-- "Watched" means any tile where the enemy could **legally** capture the Assassin on the following move, including the blast ring of an enemy Mage. A pinned enemy piece cannot capture legally, so it does not count as watching, and the capture stands.
+- "Watched" means any tile where the enemy could **legally** capture the Assassin on the following move, including the blast ring of an enemy Mage. A pinned enemy piece still captures along its own pin line, so it watches the tiles on that line and no others. Anywhere else it does not count as watching, and the capture stands.
 - Watching is judged on the board **after** the move, with the Assassin already on the landing tile and the victim already removed. Lines that open because the Assassin left its square, or because the victim disappeared, do count, and they make the capture illegal.
 - Check follows the same rule. An Assassin aiming at the enemy Pope does not give check when the tile behind the Pope is occupied or watched.
 

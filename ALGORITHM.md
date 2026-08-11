@@ -60,9 +60,17 @@ While in check, only three kinds of move are worth keeping:
 - the move removes every checker at once
 - the move blocks the line of a lone checker
 
-A double check keeps the same three kinds rather than only the Pope's moves. A single move
-can still answer it: a Mage blast destroys both checkers at once, and an Assassin that
-captures one checker lands behind it, which may itself block the second line.
+Under a double check, or more than two checkers, only three pieces can answer at all, so
+only their moves are built:
+
+- the Pope, which walks away
+- the Mage, whose blast destroys every checker standing in its ring at once
+- the Assassin, which captures one checker and lands behind it, where it may block the
+  other line
+
+No other piece can remove or block two checks with one move. A capture takes one checker
+and lands on its square, which is never on the other checker's line, and a single piece
+cannot stand on two lines at once.
 
 While not in check, a pinned piece is held to its own pin line. A pinned Templar produces
 nothing at all, because no leap ever lands on a line, so it can be skipped before its moves
@@ -84,10 +92,12 @@ which squares are emptied and which piece stands where. Nothing is copied.
 - **The Marshal captures.** Its victim's square must be covered by White's own army, unless
   the riposte is on or the victim is the enemy Pope. The riposte lifts the requirement
   outright.
-- **Moves that empty a square other than the destination.** A Mage blast and an en passant
-  capture both remove a piece that is not standing on the destination, so they can open a
-  line to their own Pope even when the moving piece is not pinned. These are checked
-  against the Pope like a move made while in check.
+- **Moves that empty a square other than the destination.** A Mage blast, an en passant
+  capture, and an Assassin's capture all remove a piece that is not standing on the
+  destination, so they can open a line to their own Pope even when the moving piece is not
+  pinned. The victim may have been screening an enemy slider, and the Assassin's landing
+  square lies beyond the victim, which does not always stay on the opened line. These are
+  checked against the Pope like a move made while in check.
 
 ## 6. Read the outcome
 
@@ -103,6 +113,8 @@ Apply the chosen move to the real board. Castling moves the Sentinel with the Po
 Then record what the next turn needs:
 
 - the squares where black pieces died, as material for Black's riposte
+- each side's remaining pieces, kept as a list by kind and square, so that no later step
+  searches the board for the Pope, for the Marshal, or for a kind that is already extinct
 - the repetition count and the no-progress count
 - the castling rights, which are lost for good once the Pope moves, and per side once that
   side's Sentinel moves or is captured
@@ -122,9 +134,6 @@ Steps 1 to 3 are one bounded read of the board each. Step 4 is one pass over Whi
 pieces. Step 5 is the expensive one, because it reads the board once per move that needs a
 test, which is why steps 1 and 4 drop as much as they can before it runs.
 
-Two costs are still avoidable:
-
-- The Pope's square and the Marshal's square are searched for by scanning the whole board,
-  and that search runs inside every attack test. Both are known once per turn and can be
-  carried with the rest of the turn's state.
-- A pinned Templar's moves are built and then discarded in full.
+The piece lists carried in step 7 are what keep the cost down: nothing searches the board
+for a piece, step 1 skips the probes for kinds that are extinct, and step 4 walks one
+side's own list rather than every square on the board.
