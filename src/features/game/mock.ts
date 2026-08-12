@@ -1,5 +1,6 @@
 import { FILES } from '@/constants/board'
-import type { ArmyState, GameCounters, LoggedTurn, PieceName, Position, Side } from '../../types/panel'
+import type { PieceName, Position, Side } from '@/types/piece'
+import type { ArmyState, GameCounters, LoggedTurn } from '@/types/panel'
 
 /**
  * Placeholder state so the shell can be judged before the engine exists.
@@ -81,11 +82,11 @@ const BACK_RANK: PieceName[] = [
 
 function army(side: Side, backRank: number, legionaryRank: number): Position {
   const squares: Position = {}
-  BACK_RANK.forEach((type, index) => {
+  BACK_RANK.forEach((piece, index) => {
     const file = FILES[index]
     squares[`${file}${backRank}`] =
-      type === 'emperor' ? { side, type, awake: false } : { side, type }
-    squares[`${file}${legionaryRank}`] = { side, type: 'legionary' }
+      piece === 'emperor' ? { side, piece, awake: false } : { side, piece }
+    squares[`${file}${legionaryRank}`] = { side, piece: 'legionary' }
   })
   return squares
 }

@@ -21,8 +21,8 @@
   --square-light: #a3967f;
   --square-dark: #5e5649;
   --square-edge: #2b303a;
-  --square-command: #000000;
-  --square-command-ink: #ffffff;
+  --square-command: #6f5c35;
+  --square-command-ink: #e8cf9a;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -45,8 +45,8 @@
   --square-light: #ded3b6;
   --square-dark: #9e8b6a;
   --square-edge: #857a63;
-  --square-command: #ffffff;
-  --square-command-ink: #000000;
+  --square-command: #cdad63;
+  --square-command-ink: #4a3512;
 }
 @custom-variant light (&:where([data-theme="light"] *));
 @theme inline {
@@ -89,6 +89,17 @@
   ::selection {
     background-color: color-mix(in oklab, var(--brass) 30%, transparent);
   }
+}
+@keyframes piece-slide {
+  from {
+    transform: translate(var(--dx), var(--dy));
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+@utility piece-slide {
+  animation: piece-slide 180ms ease-out;
 }
 @utility scroll-thin {
   scrollbar-width: thin;
