@@ -1,9 +1,19 @@
 import type { Side, Position } from '@/types/piece'
-import type { Castling, EnPassant, PromotionSlot, Turn } from '@/types/move'
+import type { Move, Castling, EnPassant, PromotionSlot, Turn } from '@/types/move'
+import { WHITE, BLACK } from '@/constants/colour'
 import { MARSHAL } from '@/constants/piece'
 import { fromSquare, toSquare, squareOf } from '../lib/coordinate'
-import { scanPope } from './legality'
+import { scanPope, dormantEmperor, isAttackedLegally } from './legality'
+import { riposteSquares } from './moves'
 
+const awaken = (side: Side, position: Position): Position => {
+  const square = dormantEmperor(side, position)
+  if (square === null) return position
+  const enemy = side === WHITE ? BLACK : WHITE
+  if (squareOf(side, MARSHAL, position) !== null && !isAttackedLegally(enemy, position, square))
+    return position
+  return { ...position, [square]: { ...position[square], awake: true } }
+}
 const clearLine = (position: Position, from: string, to: string): boolean => {
   if (from === to) return false
   const origin = fromSquare(from)
@@ -20,16 +30,20 @@ const clearLine = (position: Position, from: string, to: string): boolean => {
   }
   return true
 }
+export const isCheck = (turn: Turn): boolean => turn.checkers.length > 0
 export const turn = (
   side: Side,
-  position: Position,
-  victims: readonly string[] = [],
+  board: Position,
+  last: { position: Position; move: Move } | null = null,
   castling: Castling = { left: true, right: true },
   enPassant: EnPassant | null = null,
   promotionSlots: PromotionSlot[] = []
 ): Turn => {
+  const position = awaken(side, board)
   const { checkers, pinned } = scanPope(side, position)
   const marshalSquare = squareOf(side, MARSHAL, position)
+  const victims =
+    last === null ? [] : riposteSquares(side === WHITE ? BLACK : WHITE, last.position, last.move)
   const riposte =
     marshalSquare !== null && victims.some(square => clearLine(position, marshalSquare, square))
   return { side, position, checkers, pinned, riposte, castling, enPassant, promotionSlots }

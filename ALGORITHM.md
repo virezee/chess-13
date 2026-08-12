@@ -111,6 +111,14 @@ If the filtered list is empty:
 - in check, White is mated
 - not in check, Black has stalemated White, and White wins
 
+If it is not empty, three endings still ride on the move White picks:
+
+- a move that completes a third repetition of the position loses the game for White, and it
+  stays legal, so a player left with nothing else has to play it
+- material too thin to mate is a draw
+- the no-progress counter reaching its limit is a draw, the limit being 60 + 2 × (52 − pieces
+  on board), read once when the counter last reset
+
 ## 7. Play the move
 
 Apply the chosen move to the real board. Castling moves the Sentinel with the Pope.
