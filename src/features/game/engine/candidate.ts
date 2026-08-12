@@ -1,6 +1,6 @@
 import type { Move, Turn } from '@/types/move'
 import type { Piece } from '@/types/piece'
-import { POPE, MARSHAL } from '@/constants/piece'
+import { POPE, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
 import { fromSquare, squareOf } from '../lib/coordinate'
 import { generate } from './generate'
 
@@ -48,9 +48,13 @@ export const candidate = (turn: Turn): Move[] => {
   const marshalSquare = squareOf(side, MARSHAL, position)
   const pope = squareOf(side, POPE, position)
   const moves: Move[] = []
+  const doubled = turn.checkers.length > 1
   for (const [square, piece] of Object.entries(position)) {
     if (piece.side !== side) continue
+    if (doubled && piece.piece !== POPE && piece.piece !== MAGE && piece.piece !== ASSASSIN)
+      continue
     const pin = turn.pinned.get(square)
+    if (pin && piece.piece === TEMPLAR) continue
     for (const move of generate(
       side,
       piece.piece,

@@ -25,6 +25,10 @@ export interface EnPassant {
   behind: string
   enemy: string
 }
+export interface Rights {
+  castling: Record<Side, Castling>
+  enPassant: EnPassant | null
+}
 export interface PromotionSlot {
   piece: PieceName
   file: number
