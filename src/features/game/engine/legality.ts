@@ -105,7 +105,7 @@ export const legality = (turn: Turn): Move[] => {
     if (
       dormant !== null &&
       guarded !== null &&
-      threats(turn.side, turn.position, dormant, false, view).length > 0 &&
+      isAttackedLegally(turn.side, turn.position, dormant, view) &&
       threats(enemy, turn.position, guarded, true, view).includes(dormant)
     )
       return false
@@ -113,7 +113,11 @@ export const legality = (turn: Turn): Move[] => {
       if (!move.sentinel) return threats(enemy, turn.position, move.to, false, view).length === 0
       if (turn.checkers.length > 0) return false
       return path(move.from, move.to).every(
-        square => threats(enemy, turn.position, square, false).length === 0
+        square =>
+          threats(enemy, turn.position, square, false, {
+            vacated: [move.from],
+            moved: { square, piece: mover }
+          }).length === 0
       )
     }
     const empties = move.captures?.some(square => square !== move.to) ?? false

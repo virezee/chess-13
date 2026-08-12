@@ -34,9 +34,11 @@ export const turn = (
   side: Side,
   board: Position,
   last: { position: Position; move: Move } | null = null,
-  castling: Castling = { left: true, right: true },
+  castling: Castling,
   enPassant: EnPassant | null = null,
-  promotionSlots: PromotionSlot[] = []
+  promotionSlots: PromotionSlot[] = [],
+  history: string[] = [],
+  idle = 0
 ): Turn => {
   const position = awaken(side, board)
   const { checkers, pinned } = scanPope(side, position)
@@ -45,5 +47,30 @@ export const turn = (
     last === null ? [] : riposteSquares(side === WHITE ? BLACK : WHITE, last.position, last.move)
   const riposte =
     marshalSquare !== null && victims.some(square => clearLine(position, marshalSquare, square))
-  return { side, position, checkers, pinned, riposte, castling, enPassant, promotionSlots }
+  const key = [
+    side,
+    Object.keys(position)
+      .toSorted()
+      .map(square => {
+        const piece = position[square]
+        return `${square}${piece.side}${piece.piece}${piece.awake === true ? '*' : ''}`
+      })
+      .join(','),
+    `${castling.left}${castling.right}`,
+    enPassant === null ? '' : `${enPassant.behind}${enPassant.enemy}`,
+    riposte
+  ].join('|')
+  return {
+    side,
+    position,
+    castling: castling ?? { left: true, right: true },
+    checkers,
+    pinned,
+    riposte,
+    enPassant,
+    promotionSlots,
+    key,
+    repetition: history.filter(seen => seen === key).length + 1,
+    idle
+  }
 }

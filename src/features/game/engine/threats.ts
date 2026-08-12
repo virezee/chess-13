@@ -75,6 +75,8 @@ export const leapers = (
   square: string,
   view: View
 ): string[] => {
+  if (!Object.values(position).some(piece => piece.side === side && piece.piece === TEMPLAR))
+    return []
   const origin = fromSquare(square)
   const found: string[] = []
   for (const [offsets, needsAura] of [

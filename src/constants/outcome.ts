@@ -1,0 +1,9 @@
+export const CHECKMATE = 'checkmate'
+export const STALEMATE = 'stalemate'
+export const REPETITION = 'repetition'
+export const NO_PROGRESS = 'no-progress'
+export const REPETITION_LIMIT = 3
+export const MOVES_PER_TURN = 2
+export const NO_PROGRESS_BASE = 60
+export const NO_PROGRESS_STEP = 2
+export const NO_PROGRESS_PIECES = 52

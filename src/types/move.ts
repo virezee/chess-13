@@ -42,4 +42,7 @@ export interface Turn {
   riposte: boolean
   enPassant: EnPassant | null
   promotionSlots: PromotionSlot[]
+  key: string
+  repetition: number
+  idle: number
 }
