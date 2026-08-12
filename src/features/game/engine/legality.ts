@@ -6,7 +6,7 @@ import { POPE, EMPEROR, MARSHAL, ASSASSIN } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard, squareOf } from '../lib/coordinate'
 import { isEnhanced } from './generate'
-import { occupantAt, reaches, assassinReaches, threats } from './threats'
+import { occupantAt, reaches, assassinReaches, leapers, threats } from './threats'
 import { onLine, candidate } from './candidate'
 
 const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
@@ -69,9 +69,7 @@ export const scanPope = (
       break
     }
   }
-  for (const from of threats(enemy, position, pope!, false, view)) {
-    if (!checkers.includes(from)) checkers.push(from)
-  }
+  checkers.push(...leapers(enemy, position, enemyMarshal, pope!, view))
   return { checkers, pinned }
 }
 export const dormantEmperor = (side: Side, position: Position): string | null => {
@@ -102,20 +100,17 @@ export const legality = (turn: Turn): Move[] => {
   return candidate(turn).filter(move => {
     const mover = turn.position[move.from]
     if (!mover) return false
+    const view = after(turn.position, move)
     const guarded = mover.piece === POPE ? move.to : pope
-    if (dormant !== null && guarded !== null) {
-      const view = after(turn.position, move)
-      if (
-        threats(turn.side, turn.position, dormant, false, view).length > 0 &&
-        threats(enemy, turn.position, guarded, true, view).includes(dormant)
-      )
-        return false
-    }
+    if (
+      dormant !== null &&
+      guarded !== null &&
+      threats(turn.side, turn.position, dormant, false, view).length > 0 &&
+      threats(enemy, turn.position, guarded, true, view).includes(dormant)
+    )
+      return false
     if (mover.piece === POPE) {
-      if (!move.sentinel)
-        return (
-          threats(enemy, turn.position, move.to, false, after(turn.position, move)).length === 0
-        )
+      if (!move.sentinel) return threats(enemy, turn.position, move.to, false, view).length === 0
       if (turn.checkers.length > 0) return false
       return path(move.from, move.to).every(
         square => threats(enemy, turn.position, square, false).length === 0
@@ -125,7 +120,7 @@ export const legality = (turn: Turn): Move[] => {
     if (
       pope !== null &&
       (turn.checkers.length > 0 || empties) &&
-      threats(enemy, turn.position, pope, false, after(turn.position, move)).length > 0
+      threats(enemy, turn.position, pope, false, view).length > 0
     )
       return false
     if (mover.piece === MARSHAL && move.captures && !turn.riposte) {
@@ -136,7 +131,7 @@ export const legality = (turn: Turn): Move[] => {
     if (
       mover.piece === ASSASSIN &&
       move.captures &&
-      isAttackedLegally(opponent(turn.side), turn.position, move.to, after(turn.position, move))
+      isAttackedLegally(opponent(turn.side), turn.position, move.to, view)
     )
       return false
     return true

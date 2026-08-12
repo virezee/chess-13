@@ -68,6 +68,32 @@ export const assassinReaches = (
   if (!isOnBoard(file, rank)) return false
   return !occupantAt(position, view, toSquare(file, rank))
 }
+export const leapers = (
+  side: Side,
+  position: Position,
+  marshalSquare: string | null,
+  square: string,
+  view: View
+): string[] => {
+  const origin = fromSquare(square)
+  const found: string[] = []
+  for (const [offsets, needsAura] of [
+    [LEAP_3_2, false],
+    [LEAP_2_1, true]
+  ] as const) {
+    for (const [fileStep, rankStep] of offsets) {
+      const file = origin.file + fileStep
+      const rank = origin.rank + rankStep
+      if (!isOnBoard(file, rank)) continue
+      const at = toSquare(file, rank)
+      const occupant = occupantAt(position, view, at)
+      if (!occupant || occupant.side !== side || occupant.piece !== TEMPLAR) continue
+      if (needsAura && !isEnhanced(marshalSquare, at)) continue
+      found.push(at)
+    }
+  }
+  return found
+}
 export const threats = (
   side: Side,
   position: Position,
@@ -101,20 +127,6 @@ export const threats = (
       break
     }
   }
-  for (const [offsets, needsAura] of [
-    [LEAP_3_2, false],
-    [LEAP_2_1, true]
-  ] as const) {
-    for (const [fileStep, rankStep] of offsets) {
-      const file = origin.file + fileStep
-      const rank = origin.rank + rankStep
-      if (!isOnBoard(file, rank)) continue
-      const at = toSquare(file, rank)
-      const occupant = occupantAt(position, view, at)
-      if (!occupant || occupant.side !== side || occupant.piece !== TEMPLAR) continue
-      if (needsAura && !isEnhanced(marshalSquare, at)) continue
-      found.push(at)
-    }
-  }
+  found.push(...leapers(side, position, marshalSquare, square, view))
   return found
 }
