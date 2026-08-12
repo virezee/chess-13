@@ -22,14 +22,14 @@ const blocks = (pope: string, checker: string, square: string): boolean => {
 }
 const isEvasion = (turn: Turn, pope: string | null, piece: Piece, move: Move): boolean => {
   if (piece.piece === POPE) return true
-  if (turn.checkers.every(square => move.captures?.includes(square))) return true
-  if (turn.checkers.length !== 1 || pope === null) return false
-  return blocks(pope, turn.checkers[0], move.to)
+  return turn.checkers.every(
+    square => move.captures?.includes(square) || (pope !== null && blocks(pope, square, move.to))
+  )
 }
 export const onLine = (
-  [fileStep, rankStep]: readonly [number, number],
   from: string,
-  to: string
+  to: string,
+  [fileStep, rankStep]: readonly [number, number]
 ): boolean => {
   const origin = fromSquare(from)
   const target = fromSquare(to)
@@ -61,7 +61,7 @@ export const candidate = (turn: Turn): Move[] => {
       turn.enPassant,
       turn.promotionSlots
     )) {
-      if (pin && pope !== null && !onLine(pin, pope, move.to)) continue
+      if (pin && pope !== null && !onLine(pope, move.to, pin)) continue
       if (turn.checkers.length > 0 && !isEvasion(turn, pope, piece, move)) continue
       moves.push(move)
     }

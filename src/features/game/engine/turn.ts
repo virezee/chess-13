@@ -30,7 +30,6 @@ const clearLine = (position: Position, from: string, to: string): boolean => {
   }
   return true
 }
-export const isCheck = (turn: Turn): boolean => turn.checkers.length > 0
 export const turn = (
   side: Side,
   board: Position,

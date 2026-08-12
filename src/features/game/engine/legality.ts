@@ -26,28 +26,6 @@ const path = (from: string, to: string): string[] => {
     squares.push(toSquare(file, origin.rank))
   return squares
 }
-const isAttacked = (turn: Turn, square: string, move: Move): boolean =>
-  threats(opponent(turn.side), turn.position, square, after(turn.position, move)).length > 0
-const isDefended = (turn: Turn, square: string): boolean =>
-  threats(turn.side, turn.position, square).length > 0
-const losesPope = (turn: Turn, square: string | null, pope: string | null, move: Move): boolean => {
-  if (square === null || pope === null) return false
-  const view = after(turn.position, move)
-  if (threats(turn.side, turn.position, square, view).length === 0) return false
-  const origin = fromSquare(square)
-  const target = fromSquare(pope)
-  const files = target.file - origin.file
-  const ranks = target.rank - origin.rank
-  if (files !== 0 && ranks !== 0 && Math.abs(files) !== Math.abs(ranks)) return false
-  const fileStep = Math.sign(files)
-  const rankStep = Math.sign(ranks)
-  const distance = Math.max(Math.abs(files), Math.abs(ranks))
-  for (let step = 1; step < distance; step += 1) {
-    const between = toSquare(origin.file + fileStep * step, origin.rank + rankStep * step)
-    if (occupantAt(turn.position, view, between)) return false
-  }
-  return true
-}
 export const scanPope = (
   side: Side,
   position: Position,
@@ -82,8 +60,8 @@ export const scanPope = (
         occupant.piece === MARSHAL
           ? shield === null
           : occupant.piece === ASSASSIN
-            ? assassinReaches(position, view, shield ?? pope!, fileStep, rankStep, gap, enhanced)
-            : reaches(occupant, isDiagonal, rankStep, gap, enhanced)
+            ? assassinReaches(position, view, shield ?? pope!, fileStep, rankStep, enhanced, gap)
+            : reaches(occupant, false, isDiagonal, rankStep, enhanced, gap)
       if (hits) {
         if (shield === null) checkers.push(at)
         else pinned.set(shield, [fileStep, rankStep])
@@ -91,7 +69,7 @@ export const scanPope = (
       break
     }
   }
-  for (const from of threats(enemy, position, pope!, view)) {
+  for (const from of threats(enemy, position, pope!, false, view)) {
     if (!checkers.includes(from)) checkers.push(from)
   }
   return { checkers, pinned }
@@ -108,36 +86,52 @@ export const isAttackedLegally = (
   square: string,
   view: View = {}
 ): boolean => {
-  const found = threats(by, position, square, view)
+  const found = threats(by, position, square, false, view)
   if (found.length === 0) return false
   const pope = squareOf(by, POPE, position)
   const { pinned } = scanPope(by, position, view)
   return found.some(from => {
     const pin = pinned.get(from)
-    return !pin || pope === null || onLine(pin, pope, square)
+    return !pin || pope === null || onLine(pope, square, pin)
   })
 }
 export const legality = (turn: Turn): Move[] => {
+  const enemy = opponent(turn.side)
   const pope = squareOf(turn.side, POPE, turn.position)
-  const dormant = dormantEmperor(opponent(turn.side), turn.position)
+  const dormant = dormantEmperor(enemy, turn.position)
   return candidate(turn).filter(move => {
     const mover = turn.position[move.from]
     if (!mover) return false
-    if (losesPope(turn, dormant, mover.piece === POPE ? move.to : pope, move)) return false
+    const guarded = mover.piece === POPE ? move.to : pope
+    if (dormant !== null && guarded !== null) {
+      const view = after(turn.position, move)
+      if (
+        threats(turn.side, turn.position, dormant, false, view).length > 0 &&
+        threats(enemy, turn.position, guarded, true, view).includes(dormant)
+      )
+        return false
+    }
     if (mover.piece === POPE) {
-      if (!move.sentinel) return !isAttacked(turn, move.to, move)
+      if (!move.sentinel)
+        return (
+          threats(enemy, turn.position, move.to, false, after(turn.position, move)).length === 0
+        )
       if (turn.checkers.length > 0) return false
-      const enemy = opponent(turn.side)
       return path(move.from, move.to).every(
-        square => threats(enemy, turn.position, square).length === 0
+        square => threats(enemy, turn.position, square, false).length === 0
       )
     }
     const empties = move.captures?.some(square => square !== move.to) ?? false
-    if (pope !== null && (turn.checkers.length > 0 || empties) && isAttacked(turn, pope, move))
+    if (
+      pope !== null &&
+      (turn.checkers.length > 0 || empties) &&
+      threats(enemy, turn.position, pope, false, after(turn.position, move)).length > 0
+    )
       return false
     if (mover.piece === MARSHAL && move.captures && !turn.riposte) {
       const victim = turn.position[move.to]
-      if (victim?.piece !== POPE && !isDefended(turn, move.to)) return false
+      if (victim?.piece !== POPE && threats(turn.side, turn.position, move.to, false).length === 0)
+        return false
     }
     if (
       mover.piece === ASSASSIN &&

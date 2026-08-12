@@ -26,14 +26,15 @@ export const occupantAt = (position: Position, view: View, square: string): Piec
 }
 export const reaches = (
   piece: Piece,
+  dormant: boolean,
   isDiagonal: boolean,
   rankStep: number,
-  distance: number,
-  enhanced: boolean
+  enhanced: boolean,
+  distance: number
 ): boolean => {
   switch (piece.piece) {
     case EMPEROR:
-      return piece.awake === true
+      return piece.awake === true || dormant
     case SENTINEL:
       return !isDiagonal && distance <= REACH.sentinel[enhanced ? ENHANCED : RESTRICTED].capture
     case MAGE:
@@ -55,8 +56,8 @@ export const assassinReaches = (
   target: string,
   fileStep: number,
   rankStep: number,
-  gap: number,
-  enhanced: boolean
+  enhanced: boolean,
+  gap: number
 ): boolean => {
   const reach = REACH.assassin[enhanced ? ENHANCED : RESTRICTED].reach
   if (CORNERS.includes(target)) return gap <= reach
@@ -71,6 +72,7 @@ export const threats = (
   side: Side,
   position: Position,
   square: string,
+  dormant: boolean,
   view: View = {}
 ): string[] => {
   const marshalSquare = squareOf(side, MARSHAL, position)
@@ -92,9 +94,10 @@ export const threats = (
       if (occupant.piece === MARSHAL) {
         if (marshalCounts) found.push(at)
       } else if (occupant.piece === ASSASSIN) {
-        if (assassinReaches(position, view, square, fileStep, rankStep, distance, enhanced))
+        if (assassinReaches(position, view, square, fileStep, rankStep, enhanced, distance))
           found.push(at)
-      } else if (reaches(occupant, isDiagonal, rankStep, distance, enhanced)) found.push(at)
+      } else if (reaches(occupant, dormant, isDiagonal, rankStep, enhanced, distance))
+        found.push(at)
       break
     }
   }
