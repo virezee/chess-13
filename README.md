@@ -188,6 +188,24 @@ It wakes in either of two ways, and once awake it stays awake for the rest of th
 
 **The waking check is made once, at the start of its owner's turn.** That timing matters. An Emperor that comes under attack during the opponent's turn is still dormant for the rest of that turn, so it cannot be captured on the spot. The opponent always gets the chance to withdraw the attacker first, and if the attacker is withdrawn the Emperor never wakes.
 
+Example. White has a dormant Emperor on e1 and a Herald on e4. Black has a Sentinel on e7. Both Popes and both Marshals stand far away on the other side of the board. The e-file is otherwise empty. White is to move.
+
+1. White plays He4–b7 and opens the e-file itself. The black Sentinel on e7 now attacks e1, six tiles away, which even a weak Sentinel captures over.
+2. Black plays Se7–a7 and pulls the attacker off the file.
+3. White's turn begins. e1 is not attacked, so the Emperor stays asleep.
+
+Black owned the turn that followed the opening of the line, which is what let the attacker leave in time.
+
+**Waking an enemy Emperor onto your own Pope is not allowed.** The Emperor wakes at the start of its owner's turn, before that side moves. A move that leaves an enemy Emperor under attack therefore has to be read on the board with that Emperor already awake. If it attacks your Pope there, the opponent takes the Pope on that same turn and you never reply, so the move is unavailable.
+
+Example. Black has a Pope on a1 and a Herald on g1. White has a dormant Emperor on c3 and a Herald on e5, its own Pope and Marshal far away on the other side of the board. The a1–e5 diagonal is otherwise empty. Black is to move and is not in check, because the sleeping Emperor blocks the Herald on e5.
+
+1. Black plays Hg1–d4, over the empty f2 and e3, and attacks c3. Nothing pins that Herald, so the attack is legal.
+2. White's turn begins, and the waking check finds c3 attacked, so the Emperor wakes.
+3. White plays Ec3xa1, over the empty b2, and takes the Pope.
+
+Black gets no turn between step 1 and step 3, so Hg1–d4 is illegal.
+
 **Attacked here means attacked legally.** A pinned enemy piece cannot capture, so it does not wake the Emperor, exactly as it does not count as watching for the Assassin. This is the opposite of the rule for the Pope, where a pinned attacker does count. The dividing line is whether the capture would end the game: nothing punishes a pinned piece for taking the Pope, because there is no next move, while taking an Emperor costs it its own Pope on the reply.
 
 Three consequences are worth stating outright.

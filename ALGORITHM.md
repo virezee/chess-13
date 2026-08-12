@@ -81,7 +81,9 @@ are built.
 Every test here reads the board as it would be after the move, through a view that marks
 which squares are emptied and which piece stands where. Nothing is copied.
 
-- **The Pope moves.** Its destination must not be attacked.
+- **The Pope moves.** Its destination must not be attacked. Castling covers the tiles it
+  crosses as well, so f1, e1 and d1 on the left and h1, i1 and j1 on the right, and the Pope
+  may not be in check to begin with.
 - **Any other piece while in check.** After the move, the Pope must not be attacked.
 - **The Assassin captures.** Its landing square must not be attacked by anything that could
   legally capture there. The enemy Marshal and a dormant Emperor are ignored, since neither
@@ -98,6 +100,9 @@ which squares are emptied and which piece stands where. Nothing is copied.
   pinned. The victim may have been screening an enemy slider, and the Assassin's landing
   square lies beyond the victim, which does not always stay on the opened line. These are
   checked against the Pope like a move made while in check.
+- **Moves that leave a black Emperor under attack.** It wakes at the start of Black's turn,
+  before Black moves. Read the board once more with it awake. If it reaches the white Pope,
+  Black takes the Pope on that turn and White has no reply, so drop the move.
 
 ## 6. Read the outcome
 
