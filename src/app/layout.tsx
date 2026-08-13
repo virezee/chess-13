@@ -6,7 +6,7 @@ import '@/styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'Chess 13 (Chess II: Epoch)',
-  description: 'A 13 x 13 chess variant played hotseat on one screen.'
+  description: 'One of the 13 x 13 chess variant.'
 }
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
