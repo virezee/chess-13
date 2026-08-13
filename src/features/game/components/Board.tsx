@@ -108,7 +108,7 @@ function CommandGlyph({ dimmed }: { dimmed: boolean }) {
 function PieceArt({ piece }: { piece: Piece }) {
   return (
     <img
-      src={`/advanced/${piece.side}/${piece.piece}.png`}
+      src={`/${piece.side}/${piece.piece}.png`}
       alt={`${piece.side} ${piece.piece}`}
       draggable={false}
       className='pointer-events-none absolute inset-0 h-full w-full select-none object-contain'

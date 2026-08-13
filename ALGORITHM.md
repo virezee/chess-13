@@ -41,7 +41,11 @@ Four kinds answer that question differently:
   blasts the ring around it capturing all the pieces, unless the black Pope stands in that
   same ring, since a blast holding both Popes is not allowed.
 - An Assassin lands one square past what it takes, so it answers yes only when the square one
-  further along the line, past the Pope, is empty and not defended by White.
+  further along the line, past the Pope, is empty and not defended by White. The white Marshal
+  and a white Emperor still dormant are ignored there, since neither guards the square, and a
+  pinned white piece defends the squares on its own pin line and no others. Which white pieces
+  are pinned comes out of these same eight lines, so an Assassin is answered only after the
+  whole walk is done.
   A Pope on a corner has no such square, so the Assassin takes the corner itself, and both conditions
   apply to the Pope's own square instead.
 
@@ -99,21 +103,11 @@ The step changes one thing: the white Emperor's awake state.
 
 ## 3. Arm the riposte
 
-Independent of steps 1 and 2, and the only step that works outward from the white Marshal.
+Independent of steps 1 and 2, and the cheapest of the three. The flag was worked out and
+written down by the step 7 that closed Black's move, so nothing is tested again here. This step
+reads it.
 
-Read the piece lists first. If the white Marshal is gone, the riposte is off and the step is
-over. If Black's previous move killed nothing, it is off as well.
-
-Otherwise take the squares where white pieces died on that move. The capture has to have been
-made by a black piece: a white Mage destroying white pieces, or dying on its own square, arms
-nothing.
-
-Test each of those squares against the white Marshal's square by arithmetic first, since a
-square that shares no file, rank or diagonal with it can be dropped without reading the
-board at all. Walk the line only for the squares that survive, and the riposte is on for
-this turn as soon as one of them has a clear path.
-
-A black dormant Emperor on one of those lines is not a target even while the riposte is on,
+A black dormant Emperor on one of the white Marshal's lines is not a target even while the riposte is on,
 and the white Marshal does not count as attacking it. The riposte lasts White's turn alone,
 and Black's waking check runs after it has expired, by which time the white Marshal needs
 support like any other turn. Moving the white Marshal along the same line changes nothing.
@@ -133,14 +127,15 @@ is asked, except two that can produce nothing: a white Emperor still dormant, an
 that is pinned, since no leap ever lands on a pin line.
 
 Ask each piece that survives for the moves its own rules allow, reading it as enhanced or
-restricted by the white Marshal's command zone at the square it starts from. A Mage blast
-carries a condition of its own: at least one black piece the blast can destroy must stand in
+restricted by the white Marshal's command zone at the square it starts from. A pinned piece is
+asked along the direction step 1 recorded for it and no other. A Mage blast carries a condition
+of its own: at least one black piece the blast can destroy must stand in
 its ring, it may not destroy the white Pope, and a ring holding both Popes is not allowed.
 
 Three moves come from the rights rather than from the piece alone.
 
-Castling, while the rights on that wing still stand and every square between the Pope and
-its Sentinel is empty.
+Castling, while White is not in check, the rights on that wing still stand, and every square
+between the Pope and its Sentinel is empty.
 
 En passant, while that right is still live.
 
@@ -149,10 +144,8 @@ arriving on rank 13 promotes as part of that same move and cannot decline it. On
 already stands on rank 13 takes the slot without leaving its square, and that spends the
 whole turn.
 
-Then drop what step 1 has already answered. A pinned piece is held to its own pin line, in
-check or not.
-
-While not in check, that is the only cut. Every other move each piece produced is kept.
+While not in check, every move produced is kept, since the pin was already applied when the
+pieces were asked.
 
 While in check, a move survives only when it answers every checker, and the answers need not
 be of the same kind:
@@ -171,27 +164,34 @@ Every test here reads the board as it would be after the move, through a view th
 which squares are emptied and which piece stands where. Nothing is copied.
 
 - **The Pope moves.** Its destination must not be attacked. Castling covers the tiles it
-  crosses as well, so f1, e1 and d1 on the left and h1, i1 and j1 on the right, and the Pope
-  may not be in check to begin with.
+  crosses as well, so f1, e1 and d1 on the left and h1, i1 and j1 on the right.
 - **Any other piece while in check.** After the move, the Pope must not be attacked.
 - **The Assassin captures.** Its landing square must not be attacked by anything that could
   legally capture there. The enemy Marshal and a dormant Emperor are ignored, since neither
   guards the square. A pinned enemy piece counts only when the landing square lies on its
   own pin line, so one pinned defender does not forbid the capture while an unpinned one
-  does. On a corner the Assassin takes the square itself, and the same test applies to that
-  square.
+  does. Whether a defender found there is pinned costs one line, walked out of the black
+  Pope's square through that piece and on behind it, asking of the white piece found behind it
+  what step 1 asks with the colours swapped, on the board this test reads. A landing square no
+  black piece guards costs no walk at all. On a corner the Assassin takes the square itself,
+  and the same test applies to that square.
 - **The Marshal captures.** Its victim's square must be covered by White's own army, unless
-  the riposte is on or the victim is the enemy Pope. The riposte lifts the requirement
-  outright.
+  the riposte is on or the victim is the enemy Pope. A pinned white piece still counts, in
+  every direction it attacks, since this asks where White's attacks fall and not which of them
+  step 4 built. That piece is read as enhanced or restricted with the white Marshal still on
+  the square it starts from, which is the reading step 4 already made. The riposte lifts the
+  requirement outright.
 - **Moves that empty a square other than the destination.** A Mage blast, an en passant
   capture, and an Assassin's capture all remove a piece that is not standing on the
   destination, so they can open a line to their own Pope even when the moving piece is not
   pinned. The victim may have been screening an enemy slider, and the Assassin's landing
   square lies beyond the victim, which does not always stay on the opened line. These are
-  checked against the Pope like a move made while in check.
-- **Moves that leave a black Emperor under attack.** It wakes at the start of Black's turn,
-  before Black moves. Read the board once more with it awake. If it reaches the white Pope,
-  Black takes the Pope on that turn and White has no reply, so drop the move.
+  checked against the Pope like a move made while in check, and a move that is both takes that
+  test once.
+- **Moves that wake a black Emperor still dormant**, by attacking it or by capturing the black
+  Marshal. It wakes at the start of Black's turn, before Black moves. Read the board once more
+  with it awake. If it reaches the white Pope, Black takes the Pope on that turn and White has
+  no reply, so drop the move.
 
 ## 6. Read the outcome
 
@@ -200,13 +200,18 @@ If the filtered list is empty:
 - in check, White is mated
 - not in check, Black has stalemated White, and White wins
 
-If it is not empty, three endings still ride on the move White picks:
+If it is not empty, three endings still ride on the move White picks, and each is read from a
+count step 7 keeps rather than worked out here:
 
-- a move that completes a third repetition of the position loses the game for White, and it
-  stays legal, so a player left with nothing else has to play it
-- material too thin to mate is a draw (nake placeholder code only, dont give it functional first)
-- the no-progress counter reaching its limit is a draw, the limit being 60 + 2 × (52 − pieces
-  on board), read once when the counter last reset
+- the repetition count standing at three loses the game for White, and the move stays legal,
+  so a player left with nothing else has to play it
+- material too thin to mate is a draw (nake placeholder code only. it won't be carried out)
+- the no-progress count standing at its limit is a draw. It adds 1 for the move just played,
+  unless that move was a capture, a Mage blast, a Legionary move or a promotion, which returns
+  it to zero instead. Its limit is read at each of those resets, as 60 + 2 × (52 − pieces on
+  board) doubled, because the count runs one to a move where the formula counts one to a pair.
+
+One move can bring the first and the last of those at once. The draw is the result.
 
 ## 7. Play the move
 
@@ -217,11 +222,28 @@ Then record what the next turn needs:
 - the squares where black pieces died, as material for Black's riposte
 - each side's remaining pieces, kept as a list by kind and square, so that no later step
   searches the board for the Pope, for the Marshal, or for a kind that is already extinct
-- the repetition count and the no-progress count
+- the promotion slots each side holds, one for every piece that side has lost, kept by kind and
+  by the file it died on, and spent when a Legionary claims one
 - the castling rights, which are lost for good once the Pope moves, and per side once that
   side's Sentinel moves or is captured
 - the en passant right, created only by a Legionary's full advance onto rank 7 and gone on
   the following reply
+- the riposte flag Black carries into its own turn. It is off when the black Marshal is gone,
+  when the move just played killed nothing, and when the killer was not a white piece, since a
+  black Mage destroying black pieces, or dying on its own square, arms nothing. Otherwise take
+  the squares where black pieces died on this move and test each against the black Marshal's
+  square by arithmetic first, since a square that shares no file, rank or diagonal with it can
+  be dropped without reading the board at all. Walk the line only for the squares that survive,
+  and the flag is on as soon as one of them has a clear path.
+- the repetition count and the no-progress count, both built from what stands above
+
+The repetition count is how often the board now standing has stood before. Five things make two
+boards the same one: where every piece stands, which side is to move, the castling rights, the
+en passant right, and the riposte flag. Those five are combined into one key, the key is pushed
+onto a history, and the count is how often that same key already stands in that history. The
+opening position is the first entry of all, since it stands on the board before any move is
+made. History behind the last reset of the no-progress count is never read again, since none of
+the four moves that reset it can be undone.
 
 ## 8. Save and hand over
 

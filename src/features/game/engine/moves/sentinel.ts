@@ -42,7 +42,7 @@ const line = (
         moves.push({ from, to, captures: [to] })
       break
     }
-    if (!isEnhanced || !isTowardMarshal) break
+    if (!(isEnhanced && isTowardMarshal)) break
     through = true
   }
   return moves
