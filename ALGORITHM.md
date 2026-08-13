@@ -29,6 +29,10 @@ Measure the distance from that piece to that square, not from the Pope. Read it 
 or restricted by the black Marshal's command zone, taken at the square it stands on, since
 White's Marshal has no bearing on what Black can do.
 
+A yes on a line with no shield is a check, and the square the black piece stands on is
+recorded. A yes on a line with a shield is a pin, and the shield is recorded with the
+direction of that line.
+
 Four kinds answer differently:
 
 - A dormant Emperor never answers yes.
@@ -40,19 +44,15 @@ Four kinds answer differently:
   square is empty and not defended by White. On a corner there is nothing behind the target,
   so it takes the corner square itself, and both conditions apply there.
 
-A yes on a line with no shield is a check, and the square the black piece stands on is
-recorded. A yes on a line with a shield is a pin, and the shield is recorded with the
-direction of that line.
-
-No leap is ever met by walking a line, so the Templar is handled separately: test the sixteen
+No leap is ever met by walking a line, so the Templar is probed on its own: test the sixteen
 squares a Templar could leap from onto the Pope. The 3-and-2 shape always counts, the 2-and-1
-shape only when that Templar is enhanced by its own Marshal's command zone. Skip the test
-when Black has no Templar left. Every Templar the test finds gives check, and the test never
+shape only when that Templar is enhanced by its own Marshal's command zone. Skip the probe
+when Black has no Templar left. Every Templar the probe finds is a checker, and the probe never
 yields a pin, because nothing can stand in the way of a leap.
 
 The step produces:
 
-- the squares the checking pieces stand on, White being in check when that list is not empty
+- the squares the checkers stand on, White being in check when that list is not empty
 - the pinned white pieces, each with the direction of its pin
 
 ## 2. Wake the Emperor
@@ -74,8 +74,8 @@ checks: a piece standing in the way means the one behind it cannot reach the Emp
 that line is done. The Templar test runs again from that same square, since no leap is ever
 met by walking a line.
 
-While dormant it is frozen where it stands. It has no lines, it attacks nothing, it defends
-nothing, and nothing takes it or blasts it off the board. It blocks and nothing else.
+While dormant it is frozen where it stands. It has no rays, it attacks nothing, it defends
+nothing, and nothing takes it or blasts it off the board. It is a blocker and nothing else.
 
 The step changes one thing: the white Emperor's awake state.
 
