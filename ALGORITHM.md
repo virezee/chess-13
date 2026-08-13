@@ -38,9 +38,10 @@ Four kinds answer that question differently:
 - A Marshal answers on its own, for check and for pin alike, because the enemy Pope is
   exempt from the support its other captures need.
 - A Mage answers at distance 1 in any of the eight directions and never further, because it
-  blasts the ring around it capturing all the pieces.
+  blasts the ring around it capturing all the pieces, unless the black Pope stands in that
+  same ring, since a blast holding both Popes is not allowed.
 - An Assassin lands one square past what it takes, so it answers yes only when the square one
-  further along the line, past the Pope, is empty and not defended by White (excluding the Pope itself).
+  further along the line, past the Pope, is empty and not defended by White.
   A Pope on a corner has no such square, so the Assassin takes the corner itself, and both conditions
   apply to the Pope's own square instead.
 
@@ -126,14 +127,15 @@ Marshal's square, the castling rights, the en passant right, and the promotion s
 stand open. Walk that list rather than the board.
 
 Decide first which pieces are asked at all. With more than one checker only the Pope, the
-Mage and the Assassin can answer, so only those three are built. Otherwise every white piece
-in the list is asked, except two that can produce nothing: a white Emperor still dormant, and
-a Templar that is pinned, since no leap ever lands on a pin line.
+Mage and the Assassin can answer, so only those three are built, unless one of those checkers
+is an Assassin, and then every white piece is asked. Otherwise every white piece in the list
+is asked, except two that can produce nothing: a white Emperor still dormant, and a Templar
+that is pinned, since no leap ever lands on a pin line.
 
 Ask each piece that survives for the moves its own rules allow, reading it as enhanced or
 restricted by the white Marshal's command zone at the square it starts from. A Mage blast
-carries a condition of its own: at least one black piece must stand in its ring, and it may
-not destroy the white Pope.
+carries a condition of its own: at least one black piece the blast can destroy must stand in
+its ring, it may not destroy the white Pope, and a ring holding both Popes is not allowed.
 
 Three moves come from the rights rather than from the piece alone.
 
@@ -152,11 +154,13 @@ check or not.
 
 While not in check, that is the only cut. Every other move each piece produced is kept.
 
-While in check, only three kinds of move survive:
+While in check, a move survives only when it answers every checker, and the answers need not
+be of the same kind:
 
-- the Pope walks away
-- the move removes every checker at once
-- the move blocks the line of a lone checker
+- the Pope walks away, which answers all of them at once
+- the checker is removed
+- the checker's line is blocked
+- an Assassin checker's landing square is occupied or defended
 
 A lone Templar checker cannot be blocked at all, so only its capture and the Pope's own
 moves are worth keeping.
