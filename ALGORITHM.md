@@ -5,27 +5,49 @@ written from White's point of view; Black's turn is the same with the colours sw
 
 ## 1. Read the Pope's danger
 
-Stand on the white Pope and walk outward along its eight lines. Each line stops at the
-first piece it meets, because anything behind that piece is screened and cannot reach the
-Pope.
+**Locked. Settled and not to be changed.**
 
-For the first piece on each line, ask one question: from that direction and that distance,
-does it capture back to the Pope's square?
+Read three things from the piece lists step 7 keeps: the white Pope's square, the black
+Marshal's square, and whether Black still owns a Templar. Nothing here searches the board
+for a piece.
 
-- A dormant Emperor guards nothing, so it never answers yes.
-- A Marshal checks the Pope on its own. It needs no friendly attacker for that, which is
-  the one case where the Marshal counts as an attacker.
-- Leapers are never found by walking a line, so the Templar's landing squares are probed
-  separately. If the enemy has no Templar left, the probe is skipped.
+Stand on the Pope's square and walk outward along the eight lines. One walk answers checks
+and pins together, because both turn on the same question.
 
-Carry on past the first friendly piece on a line to answer pins in the same walk: if the
-first enemy piece behind it would reach the Pope, that friendly piece is pinned, and the
-direction of the line is recorded with it.
+A line runs until it meets a black piece, which ends it. White's own pieces do not end it:
+the first is kept as the shield for that line and the walk carries on behind it, and only a
+second one closes the line.
 
-What this step produces:
+Of the black piece that ends a line, ask whether it could capture the square immediately
+ahead of it: the Pope's square if the line carried no shield, the shield's square if it did.
+Measure the distance from that piece to that square, not from the Pope. Read its strength
+from the black Marshal's aura, taken at the square it stands on, since White's Marshal has
+no bearing on what Black can do.
 
-- whether White is in check
-- the squares the checkers stand on
+A yes on a line with no shield is a check, and the square the black piece stands on is
+recorded. A yes on a line with a shield is a pin, and the shield is recorded with the
+direction of that line.
+
+Four kinds answer differently:
+
+- A dormant Emperor never answers yes.
+- A Marshal answers on its own, for check and for pin alike, because the enemy Pope is
+  exempt from the support its other captures need.
+- A Mage answers at distance 1 in any of the eight directions and never further, because it
+  blasts the ring around it rather than capturing.
+- An Assassin lands one square past what it takes, so it answers yes only when that square
+  is empty. On a corner there is nothing behind the victim, so it takes the corner square
+  itself, and the same condition applies there.
+
+No leap is ever met by walking a line, so the Templar is probed on its own: test the sixteen
+squares a Templar could leap from onto the Pope. The 3-and-2 shape always counts, the 2-and-1
+shape only when that Templar stands inside its own Marshal's aura. Skip the probe when Black
+has no Templar left. Every Templar the probe finds is a checker, and the probe never yields a
+pin, because nothing can stand in the way of a leap.
+
+The step produces:
+
+- the squares the checkers stand on, White being in check when that list is not empty
 - the pinned white pieces, each with the direction of its pin
 
 ## 2. Wake the Emperor
