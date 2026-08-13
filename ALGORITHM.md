@@ -72,11 +72,24 @@ The step changes one thing: the white Emperor's awake state.
 
 ## 3. Arm the riposte
 
-Independent of steps 1 and 2, and the only step that walks outward from the Marshal rather
-than inward to the Pope.
+Independent of steps 1 and 2, and the only step that works outward from the white Marshal.
 
-Take the squares where pieces died on Black's previous turn. If any of them lies on one of
-the Marshal's lines with a clear path, the riposte is on for this turn.
+Read the piece lists first. If the white Marshal is gone, the riposte is off and the step is
+over. If Black's previous move killed nothing, it is off as well.
+
+Otherwise take the squares where white pieces died on that move. The killer has to have been
+a black piece: a white Mage destroying white pieces, or dying on its own square, arms
+nothing.
+
+Test each of those squares against the white Marshal's square by arithmetic first, since a
+square that shares no file, rank or diagonal with it can be dropped without reading the
+board at all. Walk the line only for the squares that survive, and the riposte is on for
+this turn as soon as one of them has a clear path.
+
+A black dormant Emperor on one of those lines is not a target even while the riposte is on,
+and the white Marshal does not count as attacking it. The riposte lasts White's turn alone,
+and Black's waking check runs after it has expired, by which time the white Marshal needs
+support like any other turn. Moving the white Marshal along the same line changes nothing.
 
 The step produces one flag, carried into the filtering below.
 
