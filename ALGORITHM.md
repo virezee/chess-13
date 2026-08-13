@@ -3,6 +3,13 @@
 One pass per turn. The board is read many times and copied never. Every step below is
 written from White's point of view; Black's turn is the same with the colours swapped.
 
+Every piece is read as enhanced or restricted, decided by its own Marshal. A piece is
+enhanced while its Marshal stands on g7, wherever that piece is, and otherwise while the
+piece itself stands within Chebyshev distance 4 of that Marshal. It is restricted anywhere
+further out, and every piece is restricted once its Marshal is captured. The Pope and the
+Emperor are never affected. What each version reaches is the piece's own rule, and those
+rules live in the README.
+
 ## 1. Read the Pope's danger
 
 Read three things from the piece lists step 7 keeps: the white Pope's square, the black
@@ -105,12 +112,20 @@ in the list is asked, except two that can produce nothing: a white Emperor still
 a Templar that is pinned, since no leap ever lands on a pin line.
 
 Ask each piece that survives for the moves its own rules allow, reading it as enhanced or
-restricted by the white Marshal's command zone at the square it starts from. Three moves come
-from the rights rather than from the piece alone: the Pope's castling while the rights on
-that wing still stand, a Legionary's en passant while that right is still live, and a
-Legionary's promotion, on a file where a slot is open, its own or one to either side. A
-Legionary arriving on rank 13 promotes as part of that same move and cannot decline it. One
-that already stands on rank 13 takes the slot without leaving its square, and that spends the
+restricted by the white Marshal's command zone at the square it starts from. A Mage blast
+carries a condition of its own: at least one black piece must stand in its ring, and it may
+not destroy the white Pope.
+
+Three moves come from the rights rather than from the piece alone.
+
+Castling, while the rights on that wing still stand and every square between the Pope and
+its Sentinel is empty.
+
+En passant, while that right is still live.
+
+Promotion, on a file where a slot is open, the Legionary's own or one to either side. One
+arriving on rank 13 promotes as part of that same move and cannot decline it. One that
+already stands on rank 13 takes the slot without leaving its square, and that spends the
 whole turn.
 
 Then drop what step 1 has already answered. A pinned piece is held to its own pin line, in
