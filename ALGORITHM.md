@@ -12,43 +12,43 @@ rules live in the README.
 
 ## 1. Read the Pope's danger
 
-Read three things from the piece lists step 7 keeps: the white Pope's square, the black
-Marshal's square, and whether Black still owns a Templar. Nothing here searches the board
-for a piece.
+Read from the piece lists step 7 keeps: the white Pope's square, the black Marshal's square,
+and the square of each Templar Black still owns. Nothing here searches the board for a piece.
 
 Stand on the Pope's square and walk outward along the eight lines. One walk answers checks
-and pins together, because both turn on the same question.
+and pins together, because both ask the same question of the same piece.
 
 A line runs until it meets a black piece, which ends it. White's own pieces do not end it:
-the first is kept as the shield for that line and the walk carries on behind it, and only a
-second one closes the line.
+the first is kept as the shield for that line and the walk carries on behind it, and a second
+one closes the line and produces nothing.
 
-Of the black piece that ends a line, ask whether it could capture the square immediately
-ahead of it: the Pope's square if the line carried no shield, the shield's square if it did.
-Measure the distance from that piece to that square, not from the Pope. Read it as enhanced
-or restricted by the black Marshal's command zone, taken at the square it stands on, since
-White's Marshal has no bearing on what Black can do.
+Of the black piece that ends a line, ask one question: could it capture the white Pope's
+square, with the shield taken off the board if the line carried one. The distance is measured
+from that piece to the Pope's square in both cases. Read the piece as enhanced or restricted
+by the black Marshal's command zone, taken at the square it stands on, since White's Marshal
+has no bearing on what Black can do.
 
 A yes on a line with no shield is a check, and the square the black piece stands on is
 recorded. A yes on a line with a shield is a pin, and the shield is recorded with the
 direction of that line.
 
-Four kinds answer differently:
+Four kinds answer that question differently:
 
 - A dormant Emperor never answers yes.
 - A Marshal answers on its own, for check and for pin alike, because the enemy Pope is
   exempt from the support its other captures need.
 - A Mage answers at distance 1 in any of the eight directions and never further, because it
-  blasts the ring around it rather than capturing.
-- An Assassin lands one square past what it takes, so it answers yes only when that landing
-  square is empty and not defended by White. On a corner there is nothing behind the target,
-  so it takes the corner square itself, and both conditions apply there.
+  blasts the ring around it capturing all the pieces.
+- An Assassin lands one square past what it takes, so it answers yes only when the square one
+  further along the line, past the Pope, is empty and not defended by White (excluding the Pope itself).
+  A Pope on a corner has no such square, so the Assassin takes the corner itself, and both conditions
+  apply to the Pope's own square instead.
 
-No leap is ever met by walking a line, so the Templar is probed on its own: test the sixteen
-squares a Templar could leap from onto the Pope. The 3-and-2 shape always counts, the 2-and-1
-shape only when that Templar is enhanced by its own Marshal's command zone. Skip the probe
-when Black has no Templar left. Every Templar the probe finds is a checker, and the probe never
-yields a pin, because nothing can stand in the way of a leap.
+No leap is ever met by walking a line, so each Templar Black owns is tested on its own, from
+the square the piece list gives it. It answers yes when the offset from that square to the
+Pope's is 3 and 2, or 2 and 1 while that Templar is enhanced by its own Marshal's command
+zone. Skip the test when Black has no Templar left. Every Templar that answers yes is a
+checker, and the test never yields a pin, because nothing can stand in the way of a leap.
 
 The step produces:
 
@@ -59,23 +59,40 @@ The step produces:
 
 Independent of step 1 and of the move list.
 
-The white Emperor wakes on either of two counts, read once at the start of White's turn: the
-white Marshal has been captured, or a black piece attacks the square the white Emperor
-stands on. Once awake it stays awake for the rest of the game, and a white Marshal promoted
-later does not put it back to sleep.
+While dormant the white Emperor is frozen where it stands. It has no lines, it attacks
+nothing, it defends nothing, and nothing takes it off the board. It is a blocker and nothing
+else.
+
+It wakes on either of two counts, read once at the start of White's turn: the white Marshal
+has been captured, or a black piece attacks the square the white Emperor stands on. Once
+awake it stays awake for the rest of the game, and a white Marshal promoted later does not
+put it back to sleep.
 
 Read the piece lists first. If the white Emperor is already awake, or no longer on the
 board, the step is over. If the white Marshal is gone, it wakes and the step is over. Only
 when none of those hold does anything look at the board.
 
-Any black piece attacking that square wakes it. Finding them is the same walk step 1 makes,
-run from the square the white Emperor stands on instead of the Pope's, and read only for
-checks: a piece standing in the way means the one behind it cannot reach the Emperor, so
-that line is done. The Templar test runs again from that same square, since no leap is ever
-met by walking a line.
+What is left is the second count. Walk the eight lines outward from the square the white
+Emperor stands on, as step 1 walks them from the Pope's, except that no piece is a shield
+here: the first piece of either colour ends the line, because a piece standing in the way
+means the one behind it cannot reach the Emperor. Of the black piece that ends a line, ask
+whether it could capture the Emperor's square, measured from the square it stands on and read
+as enhanced or restricted by the black Marshal's command zone. The first yes wakes the
+Emperor and ends the step.
 
-While dormant it is frozen where it stands. It has no rays, it attacks nothing, it defends
-nothing, and nothing takes it or blasts it off the board. It is a blocker and nothing else.
+Three kinds cannot supply that yes, and their reasons are not step 1's:
+
+- A dormant Emperor attacks nothing.
+- A Marshal takes the Emperor only with support from another black piece, and that piece
+  already attacks the square on its own, so the Marshal is skipped. Its exemption reaches the
+  white Pope and nothing else.
+- A Mage is skipped as well, because nothing it takes is ever a dormant Emperor.
+
+An Assassin answers as it does in step 1, with the square one further along the line, past the
+Emperor, empty and not defended by White, and the corner rule unchanged.
+
+Each Templar Black owns is tested from the square the piece list gives it, against the
+Emperor's square, by the offsets step 1 uses, since no leap is ever met by walking a line.
 
 The step changes one thing: the white Emperor's awake state.
 

@@ -3,7 +3,7 @@ import type { Move } from '@/types/move'
 import { CORNERS } from '@/constants/board'
 import { REACH } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
-import { ENHANCED, RESTRICTED } from '@/constants/aura'
+import { ENHANCED, RESTRICTED } from '@/constants/radius'
 import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 

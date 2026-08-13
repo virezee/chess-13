@@ -15,7 +15,7 @@ import {
   REACH
 } from '@/constants/piece'
 import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
-import { ENHANCED, RESTRICTED } from '@/constants/aura'
+import { ENHANCED, RESTRICTED } from '@/constants/radius'
 import { fromSquare, toSquare, isOnBoard, squareOf } from '../lib/coordinate'
 import { isEnhanced } from './generate'
 

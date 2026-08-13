@@ -1,7 +1,7 @@
 import type { Side, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
 import { LEAP } from '@/constants/piece'
-import { ENHANCED, RESTRICTED } from '@/constants/aura'
+import { ENHANCED, RESTRICTED } from '@/constants/radius'
 import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 

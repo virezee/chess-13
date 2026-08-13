@@ -3,7 +3,7 @@ import type { Move, EnPassant, PromotionSlot } from '@/types/move'
 import { SIZE, CENTRE } from '@/constants/board'
 import { WHITE } from '@/constants/colour'
 import { REACH } from '@/constants/piece'
-import { ENHANCED, RESTRICTED } from '@/constants/aura'
+import { ENHANCED, RESTRICTED } from '@/constants/radius'
 import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
