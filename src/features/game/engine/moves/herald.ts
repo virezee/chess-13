@@ -2,7 +2,7 @@ import type { Side, Position } from '@/types/piece'
 import type { Move } from '@/types/move'
 import { REACH } from '@/constants/piece'
 import { DIAGONAL, ORTHOGONAL } from '@/constants/direction'
-import { ENHANCED, RESTRICTED } from '@/constants/radius'
+import { ENHANCED, RESTRICTED } from '@/constants/zone'
 import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 

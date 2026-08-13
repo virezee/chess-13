@@ -12,7 +12,7 @@ import {
   TEMPLAR,
   LEGIONARY
 } from '@/constants/piece'
-import { RADIUS } from '@/constants/radius'
+import { RANGE } from '@/constants/zone'
 import { fromSquare } from '../lib/coordinate'
 import {
   pope,
@@ -31,7 +31,7 @@ export const isEnhanced = (marshalSquare: string | null, square: string): boolea
   if (marshalSquare === COMMAND_SQUARE) return true
   const at = fromSquare(marshalSquare)
   const here = fromSquare(square)
-  return Math.max(Math.abs(at.file - here.file), Math.abs(at.rank - here.rank)) <= RADIUS
+  return Math.max(Math.abs(at.file - here.file), Math.abs(at.rank - here.rank)) <= RANGE
 }
 export const generate = (
   side: Side,
