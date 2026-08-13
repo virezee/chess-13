@@ -5,8 +5,6 @@ written from White's point of view; Black's turn is the same with the colours sw
 
 ## 1. Read the Pope's danger
 
-**Locked. Settled and not to be changed.**
-
 Read three things from the piece lists step 7 keeps: the white Pope's square, the black
 Marshal's square, and whether Black still owns a Templar. Nothing here searches the board
 for a piece.
@@ -35,9 +33,9 @@ Four kinds answer differently:
   exempt from the support its other captures need.
 - A Mage answers at distance 1 in any of the eight directions and never further, because it
   blasts the ring around it rather than capturing.
-- An Assassin lands one square past what it takes, so it answers yes only when that square
-  is empty. On a corner there is nothing behind the victim, so it takes the corner square
-  itself, and the same condition applies there.
+- An Assassin lands one square past what it takes, so it answers yes only when that landing
+  square is empty and not defended by White. On a corner there is nothing behind the target,
+  so it takes the corner square itself, and both conditions apply there.
 
 No leap is ever met by walking a line, so the Templar is probed on its own: test the sixteen
 squares a Templar could leap from onto the Pope. The 3-and-2 shape always counts, the 2-and-1
@@ -52,14 +50,25 @@ The step produces:
 
 ## 2. Wake the Emperor
 
-Independent of step 1 and of the move list. The white Emperor wakes when its own Marshal
-has been captured, or when it is under attack at the start of White's turn.
+Independent of step 1 and of the move list.
 
-Attacked here means attacked **legally**. A pinned black piece cannot capture, so it does
-not wake the Emperor. This step therefore needs Black's pins, not White's, and cannot be
-answered by a plain line scan alone.
+The white Emperor wakes on either of two counts, read once at the start of White's turn: the
+white Marshal has been captured, or a black piece attacks the square the white Emperor
+stands on. Once awake it stays awake for the rest of the game, and a white Marshal promoted
+later does not put it back to sleep.
 
-The step changes one thing: the Emperor's awake state. Once awake it stays awake.
+Read the piece lists first. If the white Emperor is already awake, or no longer on the
+board, the step is over. If the white Marshal is gone, it wakes and the step is over. Only
+when none of those hold does anything look at the board.
+
+Any black piece attacking that square wakes it. Finding them is step 1's scan again, run
+from the square the white Emperor stands on instead of the Pope's, and read only for checks:
+a blocker on a ray means the piece behind it cannot reach the Emperor, so the ray is done.
+
+While dormant it is frozen where it stands. It has no rays, it attacks nothing, it defends
+nothing, and nothing takes it or blasts it off the board. It is a blocker and nothing else.
+
+The step changes one thing: the white Emperor's awake state.
 
 ## 3. Arm the riposte
 
