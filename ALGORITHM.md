@@ -29,10 +29,6 @@ Measure the distance from that piece to that square, not from the Pope. Read it 
 or restricted by the black Marshal's command zone, taken at the square it stands on, since
 White's Marshal has no bearing on what Black can do.
 
-A yes on a line with no shield is a check, and the square the black piece stands on is
-recorded. A yes on a line with a shield is a pin, and the shield is recorded with the
-direction of that line.
-
 Four kinds answer differently:
 
 - A dormant Emperor never answers yes.
@@ -44,15 +40,19 @@ Four kinds answer differently:
   square is empty and not defended by White. On a corner there is nothing behind the target,
   so it takes the corner square itself, and both conditions apply there.
 
-No leap is ever met by walking a line, so the Templar is probed on its own: test the sixteen
+A yes on a line with no shield is a check, and the square the black piece stands on is
+recorded. A yes on a line with a shield is a pin, and the shield is recorded with the
+direction of that line.
+
+No leap is ever met by walking a line, so the Templar is handled separately: test the sixteen
 squares a Templar could leap from onto the Pope. The 3-and-2 shape always counts, the 2-and-1
-shape only when that Templar is enhanced by its own Marshal's command zone. Skip the probe
-when Black has no Templar left. Every Templar the probe finds is a checker, and the probe never
+shape only when that Templar is enhanced by its own Marshal's command zone. Skip the test
+when Black has no Templar left. Every Templar the test finds gives check, and the test never
 yields a pin, because nothing can stand in the way of a leap.
 
 The step produces:
 
-- the squares the checkers stand on, White being in check when that list is not empty
+- the squares the checking pieces stand on, White being in check when that list is not empty
 - the pinned white pieces, each with the direction of its pin
 
 ## 2. Wake the Emperor
@@ -68,12 +68,14 @@ Read the piece lists first. If the white Emperor is already awake, or no longer 
 board, the step is over. If the white Marshal is gone, it wakes and the step is over. Only
 when none of those hold does anything look at the board.
 
-Any black piece attacking that square wakes it. Finding them is step 1's scan again, run
-from the square the white Emperor stands on instead of the Pope's, and read only for checks:
-a blocker on a ray means the piece behind it cannot reach the Emperor, so the ray is done.
+Any black piece attacking that square wakes it. Finding them is the same walk step 1 makes,
+run from the square the white Emperor stands on instead of the Pope's, and read only for
+checks: a piece standing in the way means the one behind it cannot reach the Emperor, so
+that line is done. The Templar test runs again from that same square, since no leap is ever
+met by walking a line.
 
-While dormant it is frozen where it stands. It has no rays, it attacks nothing, it defends
-nothing, and nothing takes it or blasts it off the board. It is a blocker and nothing else.
+While dormant it is frozen where it stands. It has no lines, it attacks nothing, it defends
+nothing, and nothing takes it or blasts it off the board. It blocks and nothing else.
 
 The step changes one thing: the white Emperor's awake state.
 
@@ -84,8 +86,8 @@ Independent of steps 1 and 2, and the only step that works outward from the whit
 Read the piece lists first. If the white Marshal is gone, the riposte is off and the step is
 over. If Black's previous move killed nothing, it is off as well.
 
-Otherwise take the squares where white pieces died on that move. The killer has to have been
-a black piece: a white Mage destroying white pieces, or dying on its own square, arms
+Otherwise take the squares where white pieces died on that move. The capture has to have been
+made by a black piece: a white Mage destroying white pieces, or dying on its own square, arms
 nothing.
 
 Test each of those squares against the white Marshal's square by arithmetic first, since a
@@ -181,7 +183,7 @@ If it is not empty, three endings still ride on the move White picks:
 
 - a move that completes a third repetition of the position loses the game for White, and it
   stays legal, so a player left with nothing else has to play it
-- material too thin to mate is a draw
+- material too thin to mate is a draw (nake placeholder code only, dont give it functional first)
 - the no-progress counter reaching its limit is a draw, the limit being 60 + 2 × (52 − pieces
   on board), read once when the counter last reset
 
