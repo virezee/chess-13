@@ -18,9 +18,9 @@ second one closes the line.
 
 Of the black piece that ends a line, ask whether it could capture the square immediately
 ahead of it: the Pope's square if the line carried no shield, the shield's square if it did.
-Measure the distance from that piece to that square, not from the Pope. Read its strength
-from the black Marshal's aura, taken at the square it stands on, since White's Marshal has
-no bearing on what Black can do.
+Measure the distance from that piece to that square, not from the Pope. Read it as enhanced
+or restricted by the black Marshal's command zone, taken at the square it stands on, since
+White's Marshal has no bearing on what Black can do.
 
 A yes on a line with no shield is a check, and the square the black piece stands on is
 recorded. A yes on a line with a shield is a pin, and the shield is recorded with the
@@ -39,9 +39,9 @@ Four kinds answer differently:
 
 No leap is ever met by walking a line, so the Templar is probed on its own: test the sixteen
 squares a Templar could leap from onto the Pope. The 3-and-2 shape always counts, the 2-and-1
-shape only when that Templar stands inside its own Marshal's aura. Skip the probe when Black
-has no Templar left. Every Templar the probe finds is a checker, and the probe never yields a
-pin, because nothing can stand in the way of a leap.
+shape only when that Templar is enhanced by its own Marshal's command zone. Skip the probe
+when Black has no Templar left. Every Templar the probe finds is a checker, and the probe never
+yields a pin, because nothing can stand in the way of a leap.
 
 The step produces:
 
@@ -95,30 +95,37 @@ The step produces one flag, carried into the filtering below.
 
 ## 4. Build the move list
 
-Ask every white piece for the moves its own rules allow, then drop what step 1 has already
-answered.
+Read from what the previous turn's step 7 left behind: White's own piece list, the white
+Marshal's square, the castling rights, the en passant right, and the promotion slots that
+stand open. Walk that list rather than the board.
 
-While in check, only three kinds of move are worth keeping:
+Decide first which pieces are asked at all. With more than one checker only the Pope, the
+Mage and the Assassin can answer, so only those three are built. Otherwise every white piece
+in the list is asked, except two that can produce nothing: a white Emperor still dormant, and
+a Templar that is pinned, since no leap ever lands on a pin line.
+
+Ask each piece that survives for the moves its own rules allow, reading it as enhanced or
+restricted by the white Marshal's command zone at the square it starts from. Three moves come
+from the rights rather than from the piece alone: the Pope's castling while the rights on
+that wing still stand, a Legionary's en passant while that right is still live, and a
+Legionary's promotion, on a file where a slot is open, its own or one to either side. A
+Legionary arriving on rank 13 promotes as part of that same move and cannot decline it. One
+that already stands on rank 13 takes the slot without leaving its square, and that spends the
+whole turn.
+
+Then drop what step 1 has already answered. A pinned piece is held to its own pin line, in
+check or not.
+
+While not in check, that is the only cut. Every other move each piece produced is kept.
+
+While in check, only three kinds of move survive:
 
 - the Pope walks away
 - the move removes every checker at once
 - the move blocks the line of a lone checker
 
-Under a double check, or more than two checkers, only three pieces can answer at all, so
-only their moves are built:
-
-- the Pope, which walks away
-- the Mage, whose blast destroys every checker standing in its ring at once
-- the Assassin, which captures one checker and lands behind it, where it may block the
-  other line
-
-No other piece can remove or block two checks with one move. A capture takes one checker
-and lands on its square, which is never on the other checker's line, and a single piece
-cannot stand on two lines at once.
-
-While not in check, a pinned piece is held to its own pin line. A pinned Templar produces
-nothing at all, because no leap ever lands on a line, so it can be skipped before its moves
-are built.
+A lone Templar checker cannot be blocked at all, so only its capture and the Pope's own
+moves are worth keeping.
 
 ## 5. Filter to the legal moves
 
