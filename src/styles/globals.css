@@ -99,7 +99,7 @@
   }
 }
 @utility piece-slide {
-  animation: piece-slide 180ms ease-out;
+  animation: piece-slide .3s ease-out;
 }
 @utility scroll-thin {
   scrollbar-width: thin;

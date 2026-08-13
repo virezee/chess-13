@@ -4,8 +4,8 @@ import type { ArmyState, AuraState } from '@/types/panel'
 
 const AURA_COPY: Record<AuraState, { label: string; note: string }> = {
   full: { label: 'Command square', note: 'Whole army enhanced' },
-  partial: { label: 'Aura active', note: 'Chebyshev 4' },
-  none: { label: 'Marshal down', note: 'Whole army restricted' }
+  partial: { label: 'Command zone', note: 'Chebyshev 4' },
+  none: { label: 'Marshal captured', note: 'Whole army restricted' }
 }
 
 /**
@@ -56,12 +56,12 @@ function AuraMeter({ army }: { army: ArmyState }) {
         <span
           className={cn(
             'text-[11px] font-semibold uppercase tracking-[0.12em]',
-            army.aura === 'down' ? 'text-alert' : 'text-brass'
+            army.aura === 'none' ? 'text-alert' : 'text-brass'
           )}>
           {copy.label}
         </span>
         <span className='font-mono text-[11px] text-ink-dim'>
-          {army.strongCount}
+          {army.enhancedCount}
           <span className='text-ink-faint'>/{army.pieceCount}</span>
         </span>
       </div>
@@ -70,7 +70,7 @@ function AuraMeter({ army }: { army: ArmyState }) {
         <div
           className={cn(
             'h-full transition-[width] duration-300',
-            army.aura === 'down' ? 'bg-alert/60' : 'bg-brass'
+            army.aura === 'none' ? 'bg-alert/60' : 'bg-brass'
           )}
           style={{ width: `${Math.round(ratio * 100)}%` }}
         />
