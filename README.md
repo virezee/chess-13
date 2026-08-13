@@ -206,8 +206,6 @@ Example. Black has a Pope on a1 and a Herald on g1. White has a dormant Emperor 
 
 Black gets no turn between step 1 and step 3, so Hg1–d4 is illegal.
 
-**Attacked here means attacked legally.** A pinned enemy piece cannot capture, so it does not wake the Emperor, exactly as it does not count as watching for the Assassin. This is the opposite of the rule for the Pope, where a pinned attacker does count. The dividing line is whether the capture would end the game: nothing punishes a pinned piece for taking the Pope, because there is no next move, while taking an Emperor costs it its own Pope on the reply.
-
 Three consequences are worth stating outright.
 
 A dormant Emperor is an unremovable shield. It can stand in front of the Pope and no capture will ever clear it. Hiding behind it is not free, though: attacking that line wakes the piece being hidden behind.
