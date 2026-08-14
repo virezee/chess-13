@@ -1,5 +1,5 @@
 import type { Side, PieceList, Position } from '@/types/piece'
-import type { Move, Castling, EnPassant, PromotionSlot, Turn } from '@/types/move'
+import type { Move, Castling, EnPassant, PromotionSlot, Board, Turn } from '@/types/move'
 import { WHITE, BLACK } from '@/constants/colour'
 import {
   POPE,
@@ -32,14 +32,12 @@ const lists = (position: Position): Record<Side, PieceList> => {
   for (const [square, piece] of Object.entries(position)) found[piece.side][piece.piece].push(square)
   return found
 }
-const awaken = (side: Side, pieces: Record<Side, PieceList>, position: Position): Position => {
+const awaken = (side: Side, board: Board): Position => {
+  const { position } = board
   const square = dormantEmperor(side, position)
   if (square === null) return position
   const enemy = side === WHITE ? BLACK : WHITE
-  if (
-    squareOf(side, MARSHAL, position) !== null &&
-    !isAttackedLegally(enemy, pieces, position, square)
-  )
+  if (squareOf(side, MARSHAL, position) !== null && !isAttackedLegally(enemy, board, square))
     return position
   return { ...position, [square]: { ...position[square], awake: true } }
 }
@@ -70,8 +68,8 @@ export const turn = (
   idle = 0
 ): Turn => {
   const pieces = lists(board)
-  const position = awaken(side, pieces, board)
-  const { checkers, pinned } = scanPope(side, pieces, position)
+  const position = awaken(side, { pieces, position: board })
+  const { checkers, pinned } = scanPope(side, { pieces, position })
   const marshalSquare = squareOf(side, MARSHAL, position)
   const victims =
     last === null ? [] : riposteSquares(side === WHITE ? BLACK : WHITE, last.position, last.move)

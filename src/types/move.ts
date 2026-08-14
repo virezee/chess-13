@@ -36,10 +36,12 @@ export interface PromotionSlot {
   piece: PieceName
   file: number
 }
-export interface Turn {
-  side: Side
+export interface Board {
   pieces: Record<Side, PieceList>
   position: Position
+}
+export interface Turn extends Board {
+  side: Side
   rights: Rights
   promotionSlots: Record<Side, PromotionSlot[]>
   checkers: string[]

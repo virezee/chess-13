@@ -1,5 +1,5 @@
-import type { Side, PieceList, Position } from '@/types/piece'
-import type { Move, View, Turn } from '@/types/move'
+import type { Side, Position } from '@/types/piece'
+import type { Move, View, Board, Turn } from '@/types/move'
 import { SIZE, CORNERS } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
@@ -38,10 +38,10 @@ const path = (from: string, to: string): string[] => {
 }
 export const scanPope = (
   side: Side,
-  pieces: Record<Side, PieceList>,
-  position: Position,
+  board: Board,
   view: View = {}
 ): { checkers: string[]; pinned: Map<string, readonly [number, number]> } => {
+  const { pieces, position } = board
   const checkers: string[] = []
   const pinned = new Map<string, readonly [number, number]>()
   const pope = pieces[side][POPE][0] ?? null
@@ -126,15 +126,14 @@ export const dormantEmperor = (side: Side, position: Position): string | null =>
 }
 export const isAttackedLegally = (
   by: Side,
-  pieces: Record<Side, PieceList>,
-  position: Position,
+  board: Board,
   square: string,
   view: View = {}
 ): boolean => {
-  const found = threats(by, position, square, false, view)
+  const found = threats(by, board.position, square, false, view)
   if (found.length === 0) return false
-  const pope = pieces[by][POPE][0] ?? null
-  const { pinned } = scanPope(by, pieces, position, view)
+  const pope = board.pieces[by][POPE][0] ?? null
+  const { pinned } = scanPope(by, board, view)
   return found.some(from => {
     const pin = pinned.get(from)
     return !pin || pope === null || onLine(pope, square, pin)
@@ -152,7 +151,7 @@ export const legality = (turn: Turn): Move[] => {
     if (
       dormant !== null &&
       guarded !== null &&
-      isAttackedLegally(turn.side, turn.pieces, turn.position, dormant, view) &&
+      isAttackedLegally(turn.side, turn, dormant, view) &&
       threats(enemy, turn.position, guarded, true, view).includes(dormant)
     )
       return false
@@ -182,7 +181,7 @@ export const legality = (turn: Turn): Move[] => {
     if (
       mover.piece === ASSASSIN &&
       move.captures &&
-      isAttackedLegally(opponent(turn.side), turn.pieces, turn.position, move.to, view)
+      isAttackedLegally(opponent(turn.side), turn, move.to, view)
     )
       return false
     return true
