@@ -1,5 +1,5 @@
-import type { Side, Position } from '@/types/piece'
-import type { Move } from '@/types/move'
+import type { Side, SquareOccupant } from '@/types/material'
+import type { Move } from '@/types/game'
 import { LEAP } from '@/constants/piece'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
 import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
@@ -7,7 +7,7 @@ import { isDormant } from './emperor'
 
 export const templar = (
   side: Side,
-  position: Position,
+  occupancy: SquareOccupant,
   from: string,
   isEnhanced: boolean
 ): Move[] => {
@@ -18,7 +18,7 @@ export const templar = (
     const rank = origin.rank + rankStep
     if (!isOnBoard(file, rank)) continue
     const to = toSquare(file, rank)
-    const occupant = position[to]
+    const occupant = occupancy[to]
     if (!occupant) {
       moves.push({ from, to })
       continue

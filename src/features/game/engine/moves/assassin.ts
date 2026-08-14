@@ -1,5 +1,5 @@
-import type { Side, Position } from '@/types/piece'
-import type { Move } from '@/types/move'
+import type { Side, SquareOccupant } from '@/types/material'
+import type { Move } from '@/types/game'
 import { CORNERS } from '@/constants/board'
 import { REACH } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
@@ -9,7 +9,7 @@ import { isDormant } from './emperor'
 
 export const assassin = (
   side: Side,
-  position: Position,
+  occupancy: SquareOccupant,
   from: string,
   isEnhanced: boolean
 ): Move[] => {
@@ -22,7 +22,7 @@ export const assassin = (
       const rank = origin.rank + rankStep * distance
       if (!isOnBoard(file, rank)) break
       const square = toSquare(file, rank)
-      const occupant = position[square]
+      const occupant = occupancy[square]
       if (!occupant) {
         moves.push({ from, to: square })
         continue
@@ -37,7 +37,7 @@ export const assassin = (
       const landingRank = rank + rankStep
       if (!isOnBoard(landingFile, landingRank)) break
       const landing = toSquare(landingFile, landingRank)
-      if (!position[landing]) moves.push({ from, to: landing, captures: [square] })
+      if (!occupancy[landing]) moves.push({ from, to: landing, captures: [square] })
       break
     }
   }

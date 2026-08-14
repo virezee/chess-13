@@ -1,4 +1,4 @@
-import type { Side, Position } from '@/types/piece'
+import type { Side, SquareOccupant } from '@/types/material'
 import { SIZE, FILES } from '@/constants/board'
 import { POPE, MARSHAL } from '@/constants/piece'
 
@@ -17,9 +17,9 @@ export const isOnBoard = (file: number, rank: number): boolean => {
 export const squareOf = (
   side: Side,
   piece: typeof POPE | typeof MARSHAL,
-  position: Position
+  occupancy: SquareOccupant
 ): string | null => {
-  for (const [square, occupant] of Object.entries(position)) {
+  for (const [square, occupant] of Object.entries(occupancy)) {
     if (occupant.side === side && occupant.piece === piece) return square
   }
   return null

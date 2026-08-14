@@ -1,13 +1,13 @@
-import type { Side, Piece, Position } from '@/types/piece'
-import type { Move } from '@/types/move'
+import type { Side, Piece, SquareOccupant } from '@/types/material'
+import type { Move } from '@/types/game'
 import { SIZE } from '@/constants/board'
 import { EMPEROR } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 
 export const isDormant = (piece: Piece): boolean => piece.piece === EMPEROR && piece.awake !== true
-export const emperor = (side: Side, position: Position, from: string): Move[] => {
-  const self = position[from]
+export const emperor = (side: Side, occupancy: SquareOccupant, from: string): Move[] => {
+  const self = occupancy[from]
   if (!self || isDormant(self)) return []
   const origin = fromSquare(from)
   const moves: Move[] = []
@@ -17,7 +17,7 @@ export const emperor = (side: Side, position: Position, from: string): Move[] =>
       const rank = origin.rank + rankStep * distance
       if (!isOnBoard(file, rank)) break
       const to = toSquare(file, rank)
-      const occupant = position[to]
+      const occupant = occupancy[to]
       if (!occupant) {
         moves.push({ from, to })
         continue

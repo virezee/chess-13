@@ -1,17 +1,27 @@
-import type { Side, Position } from '@/types/piece'
-import type { Move, Castling, Wing } from '@/types/move'
+import type { Side, SquareOccupant } from '@/types/material'
+import type { Move, Castling, CastlingSide } from '@/types/game'
 import { SENTINEL, CASTLING } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
-const castle = (side: Side, position: Position, from: string, wing: Wing): Move | null => {
-  const sentinel = position[wing.sentinel]
+const castle = (
+  side: Side,
+  occupancy: SquareOccupant,
+  from: string,
+  castling: Castling
+): Move | null => {
+  const sentinel = occupancy[castling.sentinel]
   if (!sentinel || sentinel.side !== side || sentinel.piece !== SENTINEL) return null
-  if (wing.between.some(square => position[square])) return null
-  return { from, to: wing.to, sentinel: { from: wing.sentinel, to: wing.lands } }
+  if (castling.between.some(square => occupancy[square])) return null
+  return { from, to: castling.to, sentinel: { from: castling.sentinel, to: castling.sentinelTo } }
 }
-export const pope = (side: Side, position: Position, from: string, castling: Castling): Move[] => {
+export const pope = (
+  side: Side,
+  occupancy: SquareOccupant,
+  from: string,
+  castlingSide: CastlingSide
+): Move[] => {
   const origin = fromSquare(from)
   const moves: Move[] = []
   for (const [fileStep, rankStep] of EVERY) {
@@ -19,21 +29,21 @@ export const pope = (side: Side, position: Position, from: string, castling: Cas
     const rank = origin.rank + rankStep
     if (!isOnBoard(file, rank)) continue
     const to = toSquare(file, rank)
-    const occupant = position[to]
+    const occupant = occupancy[to]
     if (!occupant) {
       moves.push({ from, to })
       continue
     }
     if (occupant.side !== side && !isDormant(occupant)) moves.push({ from, to, captures: [to] })
   }
-  const wings = CASTLING[side]
-  if (from !== wings.home) return moves
-  for (const [available, wing] of [
-    [castling.left, wings.left],
-    [castling.right, wings.right]
+  const castlings = CASTLING[side]
+  if (from !== castlings.home) return moves
+  for (const [available, castling] of [
+    [castlingSide.left, castlings.left],
+    [castlingSide.right, castlings.right]
   ] as const) {
     if (!available) continue
-    const move = castle(side, position, from, wing)
+    const move = castle(side, occupancy, from, castling)
     if (move) moves.push(move)
   }
   return moves

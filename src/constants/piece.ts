@@ -34,21 +34,21 @@ export const LEAP = {
 export const CASTLING = {
   white: {
     home: 'g1',
-    left: { to: 'd1', sentinel: 'a1', lands: 'e1', between: ['b1', 'c1', 'd1', 'e1', 'f1'] },
-    right: { to: 'j1', sentinel: 'm1', lands: 'i1', between: ['h1', 'i1', 'j1', 'k1', 'l1'] }
+    left: { to: 'd1', sentinel: 'a1', sentinelTo: 'e1', between: ['b1', 'c1', 'd1', 'e1', 'f1'] },
+    right: { to: 'j1', sentinel: 'm1', sentinelTo: 'i1', between: ['h1', 'i1', 'j1', 'k1', 'l1'] }
   },
   black: {
     home: 'g13',
     left: {
       to: 'd13',
       sentinel: 'a13',
-      lands: 'e13',
+      sentinelTo: 'e13',
       between: ['b13', 'c13', 'd13', 'e13', 'f13']
     },
     right: {
       to: 'j13',
       sentinel: 'm13',
-      lands: 'i13',
+      sentinelTo: 'i13',
       between: ['h13', 'i13', 'j13', 'k13', 'l13']
     }
   }

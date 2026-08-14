@@ -1,5 +1,5 @@
-import type { Side, Position } from '@/types/piece'
-import type { Move } from '@/types/move'
+import type { Side, SquareOccupant } from '@/types/material'
+import type { Move } from '@/types/game'
 import { REACH } from '@/constants/piece'
 import { ORTHOGONAL } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
@@ -8,7 +8,7 @@ import { isDormant } from './emperor'
 
 const line = (
   side: Side,
-  position: Position,
+  occupancy: SquareOccupant,
   from: string,
   isEnhanced: boolean,
   marshal: string | null,
@@ -32,7 +32,7 @@ const line = (
     const rank = origin.rank + dr * distance
     if (!isOnBoard(file, rank)) break
     const to = toSquare(file, rank)
-    const occupant = position[to]
+    const occupant = occupancy[to]
     if (!occupant) {
       if (distance <= quiet) moves.push({ from, to })
       continue
@@ -49,9 +49,9 @@ const line = (
 }
 export const sentinel = (
   side: Side,
-  position: Position,
+  occupancy: SquareOccupant,
   from: string,
   isEnhanced: boolean,
   marshal: string | null
 ): Move[] =>
-  ORTHOGONAL.flatMap(([df, dr]) => line(side, position, from, isEnhanced, marshal, df, dr))
+  ORTHOGONAL.flatMap(([df, dr]) => line(side, occupancy, from, isEnhanced, marshal, df, dr))

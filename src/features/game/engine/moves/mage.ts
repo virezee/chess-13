@@ -1,5 +1,5 @@
-import type { Side, Position } from '@/types/piece'
-import type { Move } from '@/types/move'
+import type { Side, SquareOccupant } from '@/types/material'
+import type { Move } from '@/types/game'
 import { POPE } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
@@ -15,17 +15,22 @@ const ring = (from: string): string[] => {
   }
   return squares
 }
-const steps = (position: Position, from: string): Move[] =>
+const steps = (occupancy: SquareOccupant, from: string): Move[] =>
   ring(from)
-    .filter(to => !position[to])
+    .filter(to => !occupancy[to])
     .map(to => ({ from, to }))
-const blast = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
+const blast = (
+  side: Side,
+  occupancy: SquareOccupant,
+  from: string,
+  isEnhanced: boolean
+): Move[] => {
   const victims: string[] = []
   let hasEnemy = false
   let ownPope = false
   let enemyPope = false
   for (const to of ring(from)) {
-    const occupant = position[to]
+    const occupant = occupancy[to]
     if (!occupant) continue
     if (occupant.side !== side) {
       if (isDormant(occupant)) continue
@@ -42,7 +47,9 @@ const blast = (side: Side, position: Position, from: string, isEnhanced: boolean
   if (!isEnhanced) victims.push(from)
   return [{ from, to: from, captures: victims }]
 }
-export const mage = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => [
-  ...steps(position, from),
-  ...blast(side, position, from, isEnhanced)
-]
+export const mage = (
+  side: Side,
+  occupancy: SquareOccupant,
+  from: string,
+  isEnhanced: boolean
+): Move[] => [...steps(occupancy, from), ...blast(side, occupancy, from, isEnhanced)]

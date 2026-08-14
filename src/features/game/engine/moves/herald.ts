@@ -1,12 +1,17 @@
-import type { Side, Position } from '@/types/piece'
-import type { Move } from '@/types/move'
+import type { Side, SquareOccupant } from '@/types/material'
+import type { Move } from '@/types/game'
 import { REACH } from '@/constants/piece'
 import { DIAGONAL, ORTHOGONAL } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
 import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
-const diagonals = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
+const diagonals = (
+  side: Side,
+  occupancy: SquareOccupant,
+  from: string,
+  isEnhanced: boolean
+): Move[] => {
   const origin = fromSquare(from)
   const { diagonal } = REACH.herald[isEnhanced ? ENHANCED : RESTRICTED]
   const moves: Move[] = []
@@ -16,7 +21,7 @@ const diagonals = (side: Side, position: Position, from: string, isEnhanced: boo
       const rank = origin.rank + rankStep * distance
       if (!isOnBoard(file, rank)) break
       const to = toSquare(file, rank)
-      const occupant = position[to]
+      const occupant = occupancy[to]
       if (!occupant) {
         moves.push({ from, to })
         continue
@@ -27,7 +32,12 @@ const diagonals = (side: Side, position: Position, from: string, isEnhanced: boo
   }
   return moves
 }
-const steps = (side: Side, position: Position, from: string, isEnhanced: boolean): Move[] => {
+const steps = (
+  side: Side,
+  occupancy: SquareOccupant,
+  from: string,
+  isEnhanced: boolean
+): Move[] => {
   const origin = fromSquare(from)
   const moves: Move[] = []
   for (const [fileStep, rankStep] of ORTHOGONAL) {
@@ -35,7 +45,7 @@ const steps = (side: Side, position: Position, from: string, isEnhanced: boolean
     const rank = origin.rank + rankStep
     if (!isOnBoard(file, rank)) continue
     const to = toSquare(file, rank)
-    const occupant = position[to]
+    const occupant = occupancy[to]
     if (!occupant) {
       moves.push({ from, to })
       continue
@@ -47,10 +57,10 @@ const steps = (side: Side, position: Position, from: string, isEnhanced: boolean
 }
 export const herald = (
   side: Side,
-  position: Position,
+  occupancy: SquareOccupant,
   from: string,
   isEnhanced: boolean
 ): Move[] => [
-  ...diagonals(side, position, from, isEnhanced),
-  ...steps(side, position, from, isEnhanced)
+  ...diagonals(side, occupancy, from, isEnhanced),
+  ...steps(side, occupancy, from, isEnhanced)
 ]
