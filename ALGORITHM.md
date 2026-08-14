@@ -12,8 +12,9 @@ rules live in the README.
 
 ## 1. Read the Pope's danger
 
-Read from the piece lists step 7 keeps: the white Pope's square, the black Marshal's square,
-and the square of each Templar Black still owns. Nothing here searches the board for a piece.
+Read from the piece lists step 7 keeps: the white Pope's square, the black Pope's square, the
+black Marshal's square, and the square of each Templar Black still owns. Nothing here searches
+the board for a piece.
 
 Stand on the Pope's square and walk outward along the eight lines. One walk answers checks
 and pins together, because both ask the same question of the same piece.
@@ -129,8 +130,9 @@ that is pinned, since no leap ever lands on a pin line.
 Ask each piece that survives for the moves its own rules allow, reading it as enhanced or
 restricted by the white Marshal's command zone at the square it starts from. A pinned piece is
 asked along the direction step 1 recorded for it and no other. A Mage blast carries a condition
-of its own: at least one black piece the blast can destroy must stand in
-its ring, it may not destroy the white Pope, and a ring holding both Popes is not allowed.
+of its own: at least one black piece the blast can destroy must stand in its ring, it may not
+destroy the white Pope, and a ring holding both Popes is not allowed. A pinned Mage still blasts,
+since the blast leaves it on its square and never opens the pin line.
 
 Three moves come from the rights rather than from the piece alone.
 
@@ -143,6 +145,11 @@ Promotion, on a file where a slot is open, the Legionary's own or one to either 
 arriving on rank 13 promotes as part of that same move and cannot decline it. One that
 already stands on rank 13 takes the slot without leaving its square, and that spends the
 whole turn.
+
+The swap is Black's alone and does not mirror, so it is the one entry here that White never
+holds. On Black's first turn, while that right still stands, Black may take over White's side
+instead of replying. It is offered beside the moves rather than built as one, since no piece
+makes it.
 
 While not in check, every move produced is kept, since the pin was already applied when the
 pieces were asked.
@@ -200,12 +207,15 @@ If the filtered list is empty:
 - in check, White is mated
 - not in check, Black has stalemated White, and White wins
 
-If it is not empty, three endings still ride on the move White picks, and each is read from a
-count step 7 keeps rather than worked out here:
+If it is not empty, three endings still ride on the move White picks. Each takes the counts
+step 7 left at the end of Black's move and reads them as the move being judged leaves them:
 
 - the repetition count standing at three loses the game for White, and the move stays legal,
-  so a player left with nothing else has to play it
-- material too thin to mate is a draw (nake placeholder code only. it won't be carried out)
+  so a player left with nothing else has to play it. The count is how often the key of the
+  position this move leaves stands in the history step 7 keeps, its own occurrence counted in,
+  since step 7 pushes that key only after this reading
+- material too thin to mate is a draw. Which material counts as too thin is still open, so this
+  one is a named hook that is never entered until that list exists
 - the no-progress count standing at its limit is a draw. It adds 1 for the move just played,
   unless that move was a capture, a Mage blast, a Legionary move or a promotion, which returns
   it to zero instead. Its limit is read at each of those resets, as 60 + 2 × (52 − pieces on
@@ -215,49 +225,90 @@ One move can bring the first and the last of those at once. The draw is the resu
 
 ## 7. Play the move
 
-Apply the chosen move to the real board. Castling moves the Sentinel with the Pope.
+When Black took the swap, there is no move to apply. The two players trade sides, the one who
+took it owning White for the rest of the game, and the reply Black owed falls to the other, so
+Black is still the side to move. Nothing below is written again except the swap right, and no
+key is pushed, since the board and the side to move are the ones the last key already holds.
+
+Otherwise apply the chosen move to the real board. Castling moves the Sentinel with the Pope.
 
 Then record what the next turn needs:
 
-- the squares where black pieces died, as material for Black's riposte
 - each side's remaining pieces, kept as a list by kind and square, so that no later step
   searches the board for the Pope, for the Marshal, or for a kind that is already extinct
-- the promotion slots each side holds, one for every piece that side has lost, kept by kind and
-  by the file it died on, and spent when a Legionary claims one
 - the castling rights, which are lost for good once the Pope moves, and per side once that
   side's Sentinel moves or is captured
 - the en passant right, created only by a Legionary's full advance onto rank 7 and gone on
   the following reply
-- the riposte flag Black carries into its own turn. It is off when the black Marshal is gone,
-  when the move just played killed nothing, and when the killer was not a white piece, since a
-  black Mage destroying black pieces, or dying on its own square, arms nothing. Otherwise take
+- the riposte flag Black carries into its own turn. Either of two turns it off on its own: the
+  black Marshal is gone, or the move just played killed nothing. With neither holding, take
   the squares where black pieces died on this move and test each against the black Marshal's
   square by arithmetic first, since a square that shares no file, rank or diagonal with it can
   be dropped without reading the board at all. Walk the line only for the squares that survive,
   and the flag is on as soon as one of them has a clear path.
-- the repetition count and the no-progress count, both built from what stands above
+- the swap right, which Black holds from the start and loses the moment its first turn is over,
+  whether it took the swap or replied with a move, and, once the swap has been taken, which
+  player owns White from then on, since nothing on the board says so afterwards
+- each Emperor that step 2 has woken, since a woken Emperor stays woken after its attacker
+  withdraws and nothing on the board says so afterwards
+- the promotion slots each side holds, one for every piece that side has lost, kept by kind and
+  by the file it died on, and spent when a Legionary claims one
+- the no-progress count with the limit read at its last reset, and the repetition count, built
+  from what stands above, both carried on by the rules step 6 gives them
 
 The repetition count is how often the board now standing has stood before. Five things make two
 boards the same one: where every piece stands, which side is to move, the castling rights, the
-en passant right, and the riposte flag. Those five are combined into one key, the key is pushed
-onto a history, and the count is how often that same key already stands in that history. The
+en passant right, and the riposte flag. Those five are combined into one key. It is the key step
+6 already built to read the repetition of this move, built once there and pushed onto a history
+here, and the count is how often that same key already stands in that history. The
 opening position is the first entry of all, since it stands on the board before any move is
 made. History behind the last reset of the no-progress count is never read again, since none of
-the four moves that reset it can be undone.
+the moves step 6 names as resetting it can be undone.
 
 ## 8. Save and hand over
 
-Persist the state so a reload can continue the game, then repeat from step 1 for Black.
-Storing the position together with the rights and counters restores in one read; storing
-only the notation restores by replaying the whole game, which costs one full turn
-calculation per move played so far.
+If step 6 ended the game, mated, stalemated or drawn, delete the saved state and hand nothing
+over, since there is no turn left to continue into.
 
-## Cost
+Otherwise persist the state so a reload can continue the game, then repeat from step 1 for
+Black.
 
-Steps 1 to 3 are one bounded read of the board each. Step 4 is one pass over White's own
-pieces. Step 5 is the expensive one, because it reads the board once per move that needs a
-test, which is why steps 1 and 4 drop as much as they can before it runs.
+A reload reads the state back in one read and replays nothing. The notation is written beside
+it and never read back, since it is there for the player to follow the game.
 
-The piece lists carried in step 7 are what keep the cost down: nothing searches the board
-for a piece, step 1 skips the probes for kinds that are extinct, and step 4 walks one
-side's own list rather than every square on the board.
+Written out:
+
+- the board, one entry per square, carrying the kind and the colour of what stands there
+- the side to move
+- the castling rights, the en passant right, the riposte flag and the swap right, as step 7
+  leaves them, and with them which player owns White once the swap has been taken
+- for each side, whether its Emperor has been woken
+- for each side, the promotion slots still open, by kind and by file
+- the no-progress count, together with the limit read at its last reset, since the formula
+  reads a piece count the board no longer shows once material has changed since that reset
+- the repetition history, as the list of keys step 7 pushes onto it, cut back to the key that
+  stood at the last reset of the no-progress count, since step 7 never reads behind that one
+- the notation of the moves played, kept as a PGN whose movetext is long algebraic: the piece's
+  letter, the square it left, `-` for a move or `x` for a capture, and the square it reached,
+  `Tg1-h3` and `Tg1xh3`, with the Legionary carrying no letter. Because the square left is
+  always written, no move ever needs the disambiguation that shorter chess notation does. Six
+  places where chess has no form of its own:
+  - a move made by a piece its own Marshal had enhanced ends in `^`, `Tg1-h3^` against
+    `Tg1-h3`, so a move written without it was made restricted. A Pope's move and an Emperor's
+    move never carry it, since the aura never reaches either
+  - castling writes `O-O-O` to the Emperor's wing and `O-O` to the Marshal's. The count of O's
+    marks the wing and nothing else here, the two sides being equal in length
+  - a Mage blast writes the Mage's own square on both sides of the `x`, `Gg5xg5`, since a Mage
+    never captures by moving and never leaves its square to do it
+  - an Assassin's capture writes the square it lands on as the square it reached, `Ac3xe6`, and
+    what it took is the square before that one on the line from c3. On a corner it lands on the
+    corner itself, which reads as an ordinary capture and is one
+  - a promotion taken without leaving the square writes that square on both sides, `d13-d13=Sc`
+  - a promotion names the file its slot died on, `d12-d13=Sc`, when two slots of that kind stand
+    on different files and the Legionary reaches both
+
+Left out, because a load rebuilds each of them cheaper than a store keeps them true:
+
+- the piece lists, rebuilt by one sweep of the board
+- the repetition count, which is how often the last key stands in the history
+- each piece's enhanced or restricted reading, which follows from its own Marshal's square
