@@ -1,4 +1,4 @@
-import { Archivo, Cinzel, Tinos, UnifrakturMaguntia } from 'next/font/google'
+import { UnifrakturMaguntia, Archivo, Tinos, Cinzel } from 'next/font/google'
 import localFont from 'next/font/local'
 
 const cloisterBlack = localFont({
