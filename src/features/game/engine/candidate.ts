@@ -61,9 +61,9 @@ export const candidate = (turn: Turn): Move[] => {
       position,
       marshalSquare,
       square,
-      turn.castling,
-      turn.enPassant,
-      turn.promotionSlots
+      turn.rights.castling[side],
+      turn.rights.enPassant,
+      turn.promotionSlots[side]
     )) {
       if (pin && pope !== null && !onLine(pope, move.to, pin)) continue
       if (turn.checkers.length > 0 && !isEvasion(turn, pope, piece, move)) continue

@@ -1,16 +1,45 @@
-import type { Side, Position } from '@/types/piece'
+import type { Side, PieceList, Position } from '@/types/piece'
 import type { Move, Castling, EnPassant, PromotionSlot, Turn } from '@/types/move'
 import { WHITE, BLACK } from '@/constants/colour'
-import { MARSHAL } from '@/constants/piece'
+import {
+  POPE,
+  EMPEROR,
+  MARSHAL,
+  ASSASSIN,
+  SENTINEL,
+  MAGE,
+  HERALD,
+  TEMPLAR,
+  LEGIONARY
+} from '@/constants/piece'
 import { fromSquare, toSquare, squareOf } from '../lib/coordinate'
 import { scanPope, dormantEmperor, isAttackedLegally } from './legality'
 import { riposteSquares } from './moves'
 
-const awaken = (side: Side, position: Position): Position => {
+const empty = (): PieceList => ({
+  [POPE]: [],
+  [EMPEROR]: [],
+  [MARSHAL]: [],
+  [ASSASSIN]: [],
+  [SENTINEL]: [],
+  [MAGE]: [],
+  [HERALD]: [],
+  [TEMPLAR]: [],
+  [LEGIONARY]: []
+})
+const lists = (position: Position): Record<Side, PieceList> => {
+  const found = { [WHITE]: empty(), [BLACK]: empty() }
+  for (const [square, piece] of Object.entries(position)) found[piece.side][piece.piece].push(square)
+  return found
+}
+const awaken = (side: Side, pieces: Record<Side, PieceList>, position: Position): Position => {
   const square = dormantEmperor(side, position)
   if (square === null) return position
   const enemy = side === WHITE ? BLACK : WHITE
-  if (squareOf(side, MARSHAL, position) !== null && !isAttackedLegally(enemy, position, square))
+  if (
+    squareOf(side, MARSHAL, position) !== null &&
+    !isAttackedLegally(enemy, pieces, position, square)
+  )
     return position
   return { ...position, [square]: { ...position[square], awake: true } }
 }
@@ -40,8 +69,9 @@ export const turn = (
   history: string[] = [],
   idle = 0
 ): Turn => {
-  const position = awaken(side, board)
-  const { checkers, pinned } = scanPope(side, position)
+  const pieces = lists(board)
+  const position = awaken(side, pieces, board)
+  const { checkers, pinned } = scanPope(side, pieces, position)
   const marshalSquare = squareOf(side, MARSHAL, position)
   const victims =
     last === null ? [] : riposteSquares(side === WHITE ? BLACK : WHITE, last.position, last.move)
@@ -62,6 +92,7 @@ export const turn = (
   ].join('|')
   return {
     side,
+    pieces,
     position,
     castling: castling ?? { left: true, right: true },
     checkers,

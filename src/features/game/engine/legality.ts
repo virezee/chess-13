@@ -1,15 +1,25 @@
-import type { Side, Position } from '@/types/piece'
+import type { Side, PieceList, Position } from '@/types/piece'
 import type { Move, View, Turn } from '@/types/move'
-import { SIZE } from '@/constants/board'
+import { SIZE, CORNERS } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
-import { POPE, EMPEROR, MARSHAL, ASSASSIN } from '@/constants/piece'
-import { EVERY } from '@/constants/direction'
+import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
+import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard, squareOf } from '../lib/coordinate'
 import { isEnhanced } from './generate'
-import { occupantAt, reaches, assassinReaches, leapers, threats } from './threats'
+import { occupantAt, reaches, assassinReaches, threats } from './threats'
 import { onLine, candidate } from './candidate'
 
 const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
+const adjacent = (from: string, to: string): boolean => {
+  const one = fromSquare(from)
+  const two = fromSquare(to)
+  return Math.max(Math.abs(one.file - two.file), Math.abs(one.rank - two.rank)) === 1
+}
+const isLeap = (
+  offsets: readonly (readonly [number, number])[],
+  files: number,
+  ranks: number
+): boolean => offsets.some(([fileStep, rankStep]) => fileStep === files && rankStep === ranks)
 const after = (position: Position, move: Move): View => {
   const mover = position[move.from]
   const vacated = [move.from, ...(move.captures ?? [])]
@@ -28,19 +38,27 @@ const path = (from: string, to: string): string[] => {
 }
 export const scanPope = (
   side: Side,
+  pieces: Record<Side, PieceList>,
   position: Position,
   view: View = {}
 ): { checkers: string[]; pinned: Map<string, readonly [number, number]> } => {
   const checkers: string[] = []
   const pinned = new Map<string, readonly [number, number]>()
-  const pope = squareOf(side, POPE, position)
+  const pope = pieces[side][POPE][0] ?? null
   const enemy = opponent(side)
-  const enemyMarshal = squareOf(enemy, MARSHAL, position)
+  const enemyMarshal = pieces[enemy][MARSHAL][0] ?? null
+  const enemyPope = pieces[enemy][POPE][0] ?? null
   const origin = fromSquare(pope!)
+  const assassins: {
+    at: string
+    shield: string | null
+    step: readonly [number, number]
+    enhanced: boolean
+    distance: number
+  }[] = []
   for (const [fileStep, rankStep] of EVERY) {
     const isDiagonal = fileStep !== 0 && rankStep !== 0
     let shield: string | null = null
-    let shieldAt = 0
     for (let distance = 1; distance <= SIZE; distance += 1) {
       const file = origin.file + fileStep * distance
       const rank = origin.rank + rankStep * distance
@@ -51,17 +69,19 @@ export const scanPope = (
       if (occupant.side === side) {
         if (shield !== null) break
         shield = at
-        shieldAt = distance
         continue
       }
-      const gap = distance - shieldAt
       const enhanced = isEnhanced(enemyMarshal, at)
+      if (occupant.piece === ASSASSIN) {
+        assassins.push({ at, shield, step: [fileStep, rankStep], enhanced, distance })
+        break
+      }
       const hits =
         occupant.piece === MARSHAL
-          ? shield === null
-          : occupant.piece === ASSASSIN
-            ? assassinReaches(position, view, shield ?? pope!, fileStep, rankStep, enhanced, gap)
-            : reaches(occupant, false, isDiagonal, rankStep, enhanced, gap)
+          ? true
+          : occupant.piece === MAGE
+            ? distance === 1 && (enemyPope === null || !adjacent(at, enemyPope))
+            : reaches(occupant, false, isDiagonal, rankStep, enhanced, distance)
       if (hits) {
         if (shield === null) checkers.push(at)
         else pinned.set(shield, [fileStep, rankStep])
@@ -69,7 +89,33 @@ export const scanPope = (
       break
     }
   }
-  checkers.push(...leapers(enemy, position, enemyMarshal, pope!, view))
+  for (const at of pieces[enemy][TEMPLAR]) {
+    const occupant = occupantAt(position, view, at)
+    if (occupant?.side !== enemy || occupant.piece !== TEMPLAR) continue
+    const { file, rank } = fromSquare(at)
+    const files = file - origin.file
+    const ranks = rank - origin.rank
+    if (
+      isLeap(LEAP_3_2, files, ranks) ||
+      (isLeap(LEAP_2_1, files, ranks) && isEnhanced(enemyMarshal, at))
+    )
+      checkers.push(at)
+  }
+  for (const { at, shield, step, enhanced, distance } of assassins) {
+    const [fileStep, rankStep] = step
+    if (!assassinReaches(position, view, pope!, fileStep, rankStep, enhanced, distance)) continue
+    const lands = CORNERS.includes(pope!)
+      ? pope!
+      : toSquare(origin.file - fileStep, origin.rank - rankStep)
+    const guarded = threats(side, position, lands, false, view).some(from => {
+      if (from === pope) return false
+      const pin = pinned.get(from)
+      return !pin || onLine(pope!, lands, pin)
+    })
+    if (guarded) continue
+    if (shield === null) checkers.push(at)
+    else pinned.set(shield, [fileStep, rankStep])
+  }
   return { checkers, pinned }
 }
 export const dormantEmperor = (side: Side, position: Position): string | null => {
@@ -80,14 +126,15 @@ export const dormantEmperor = (side: Side, position: Position): string | null =>
 }
 export const isAttackedLegally = (
   by: Side,
+  pieces: Record<Side, PieceList>,
   position: Position,
   square: string,
   view: View = {}
 ): boolean => {
   const found = threats(by, position, square, false, view)
   if (found.length === 0) return false
-  const pope = squareOf(by, POPE, position)
-  const { pinned } = scanPope(by, position, view)
+  const pope = pieces[by][POPE][0] ?? null
+  const { pinned } = scanPope(by, pieces, position, view)
   return found.some(from => {
     const pin = pinned.get(from)
     return !pin || pope === null || onLine(pope, square, pin)
@@ -105,7 +152,7 @@ export const legality = (turn: Turn): Move[] => {
     if (
       dormant !== null &&
       guarded !== null &&
-      isAttackedLegally(turn.side, turn.position, dormant, view) &&
+      isAttackedLegally(turn.side, turn.pieces, turn.position, dormant, view) &&
       threats(enemy, turn.position, guarded, true, view).includes(dormant)
     )
       return false
@@ -127,7 +174,7 @@ export const legality = (turn: Turn): Move[] => {
       threats(enemy, turn.position, pope, false, view).length > 0
     )
       return false
-    if (mover.piece === MARSHAL && move.captures && !turn.riposte) {
+    if (mover.piece === MARSHAL && move.captures && !turn.rights.riposte) {
       const victim = turn.position[move.to]
       if (victim?.piece !== POPE && threats(turn.side, turn.position, move.to, false).length === 0)
         return false
@@ -135,7 +182,7 @@ export const legality = (turn: Turn): Move[] => {
     if (
       mover.piece === ASSASSIN &&
       move.captures &&
-      isAttackedLegally(opponent(turn.side), turn.position, move.to, view)
+      isAttackedLegally(opponent(turn.side), turn.pieces, turn.position, move.to, view)
     )
       return false
     return true

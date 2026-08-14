@@ -27,4 +27,5 @@ export interface Piece {
   piece: PieceName
   awake?: boolean
 }
+export type PieceList = Record<PieceName, string[]>
 export type Position = Record<string, Piece>

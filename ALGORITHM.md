@@ -43,8 +43,9 @@ Four kinds answer that question differently:
   same ring, since a blast holding both Popes is not allowed.
 - An Assassin lands one square past what it takes, so it answers yes only when the square one
   further along the line, past the Pope, is empty and not defended by White. The white Marshal
-  and a white Emperor still dormant are ignored there, since neither guards the square, and a
-  pinned white piece defends the squares on its own pin line and no others. Which white pieces
+  and a white Emperor still dormant are ignored there, since neither guards the square, and
+  dormant is read as Black's move left it, since the danger asked about here is the one that
+  move produced. A pinned white piece defends the squares on its own pin line and no others. Which white pieces
   are pinned comes out of these same eight lines, so an Assassin is answered only after the
   whole walk is done.
   A Pope on a corner has no such square, so the Assassin takes the corner itself, and both conditions
@@ -118,8 +119,8 @@ The step produces one flag, carried into the filtering below.
 ## 4. Build the move list
 
 Read from what the previous turn's step 7 left behind: White's own piece list, the white
-Marshal's square, the castling rights, the en passant right, and the promotion slots that
-stand open. Walk that list rather than the board.
+Marshal's square, the castling rights, the en passant right, the swap right, and the promotion
+slots that stand open. Walk that list rather than the board.
 
 Decide first which pieces are asked at all. With more than one checker only the Pope, the
 Mage and the Assassin can answer, so only those three are built, unless one of those checkers

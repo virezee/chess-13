@@ -1,11 +1,11 @@
-import type { Side, PieceName, Piece, Position } from './piece'
+import type { Side, PieceName, Piece, PieceList, Position } from './piece'
 
 export interface Move {
   from: string
   to: string
   captures?: string[]
   sentinel?: { from: string; to: string }
-  promotesTo?: PieceName
+  promotesTo?: PromotionSlot
 }
 export interface View {
   vacated?: readonly string[]
@@ -18,7 +18,7 @@ export interface Castling {
 export interface Wing {
   to: string
   sentinel: string
-  lands: string
+  sentinelTo: string
   between: readonly string[]
 }
 export interface EnPassant {
@@ -26,8 +26,11 @@ export interface EnPassant {
   enemy: string
 }
 export interface Rights {
+  swap: boolean
+  whitePlayer: string | null
   castling: Record<Side, Castling>
   enPassant: EnPassant | null
+  riposte: boolean
 }
 export interface PromotionSlot {
   piece: PieceName
@@ -35,14 +38,13 @@ export interface PromotionSlot {
 }
 export interface Turn {
   side: Side
+  pieces: Record<Side, PieceList>
   position: Position
-  castling: Castling
+  rights: Rights
+  promotionSlots: Record<Side, PromotionSlot[]>
   checkers: string[]
   pinned: Map<string, readonly [number, number]>
-  riposte: boolean
-  enPassant: EnPassant | null
-  promotionSlots: PromotionSlot[]
-  key: string
-  repetition: number
-  idle: number
+  history: string[]
+  noProgress: number
+  noProgressLimit: number
 }
