@@ -1,7 +1,7 @@
 import type { Side, Piece, SquareOccupant } from '@/types/material'
 import type { Board, View } from '@/types/game'
 import { SIZE, CORNERS } from '@/constants/board'
-import { WHITE } from '@/constants/colour'
+import { WHITE, BLACK } from '@/constants/colour'
 import {
   POPE,
   EMPEROR,
@@ -16,14 +16,10 @@ import {
 } from '@/constants/piece'
 import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
-import { fromSquare, toSquare, isOnBoard } from '../lib/coordinate'
+import { parseSquare, makeSquare, isOnBoard } from '../lib/coordinate'
 import { isEnhanced } from './generate'
 
-export const occupantAt = (
-  occupancy: SquareOccupant,
-  view: View,
-  square: string
-): Piece | undefined => {
+const occupantAt = (occupancy: SquareOccupant, view: View, square: string): Piece | undefined => {
   if (view.moved && view.moved.square === square) return view.moved.piece
   if (view.vacated?.includes(square)) return
   return occupancy[square]
@@ -57,33 +53,33 @@ export const reaches = (
 export const assassinReaches = (
   occupancy: SquareOccupant,
   view: View,
-  target: string,
+  square: string,
   fileStep: number,
   rankStep: number,
   enhanced: boolean,
   gap: number
 ): boolean => {
   const reach = REACH.assassin[enhanced ? ENHANCED : RESTRICTED].reach
-  if (CORNERS.includes(target)) return gap <= reach
+  if (CORNERS.includes(square)) return gap <= reach
   if (gap + 1 > reach) return false
-  const at = fromSquare(target)
-  const file = at.file - fileStep
-  const rank = at.rank - rankStep
+  const target = parseSquare(square)
+  const file = target.file - fileStep
+  const rank = target.rank - rankStep
   if (!isOnBoard(file, rank)) return false
-  return !occupantAt(occupancy, view, toSquare(file, rank))
+  return !occupantAt(occupancy, view, makeSquare(file, rank))
 }
 export const leapers = (
+  board: Board,
   side: Side,
-  occupancy: SquareOccupant,
   view: View,
   marshalSquare: string | null,
   square: string
 ): string[] => {
-  if (!Object.values(occupancy).some(piece => piece.side === side && piece.piece === TEMPLAR))
-    return []
-  const origin = fromSquare(square)
-  const found: string[] = []
-  for (const [offsets, needsAura] of [
+  const { pieces, occupancy } = board
+  if (pieces[side][TEMPLAR].length === 0) return []
+  const origin = parseSquare(square)
+  const templars: string[] = []
+  for (const [offsets, enhancedOnly] of [
     [LEAP_3_2, false],
     [LEAP_2_1, true]
   ] as const) {
@@ -91,14 +87,14 @@ export const leapers = (
       const file = origin.file + fileStep
       const rank = origin.rank + rankStep
       if (!isOnBoard(file, rank)) continue
-      const at = toSquare(file, rank)
-      const occupant = occupantAt(occupancy, view, at)
+      const from = makeSquare(file, rank)
+      const occupant = occupantAt(occupancy, view, from)
       if (!occupant || occupant.side !== side || occupant.piece !== TEMPLAR) continue
-      if (needsAura && !isEnhanced(marshalSquare, at)) continue
-      found.push(at)
+      if (enhancedOnly && !isEnhanced(marshalSquare, from)) continue
+      templars.push(from)
     }
   }
-  return found
+  return templars
 }
 export const threats = (
   board: Board,
@@ -108,32 +104,40 @@ export const threats = (
   square: string
 ): string[] => {
   const { pieces, occupancy } = board
-  const marshalSquare = pieces[side][MARSHAL][0] ?? null
-  const origin = fromSquare(square)
-  const target = occupantAt(occupancy, view, square)
-  const marshalCounts = target?.piece === POPE && target.side !== side
-  const found: string[] = []
+  const marshalSq = pieces[side][MARSHAL][0] ?? null
+  const origin = parseSquare(square)
+  const victim = occupantAt(occupancy, view, square)
+  const isEnemyPope = victim?.piece === POPE && victim.side !== side
+  const attackers: string[] = []
   for (const [fileStep, rankStep] of EVERY) {
     const isDiagonal = fileStep !== 0 && rankStep !== 0
     for (let distance = 1; distance <= SIZE; distance += 1) {
       const file = origin.file + fileStep * distance
       const rank = origin.rank + rankStep * distance
       if (!isOnBoard(file, rank)) break
-      const at = toSquare(file, rank)
-      const occupant = occupantAt(occupancy, view, at)
+      const from = makeSquare(file, rank)
+      const occupant = occupantAt(occupancy, view, from)
       if (!occupant) continue
       if (occupant.side !== side) break
-      const enhanced = isEnhanced(marshalSquare, at)
+      const enhanced = isEnhanced(marshalSq, from)
       if (occupant.piece === MARSHAL) {
-        if (marshalCounts) found.push(at)
+        if (isEnemyPope) attackers.push(from)
       } else if (occupant.piece === ASSASSIN) {
-        if (assassinReaches(occupancy, view, square, fileStep, rankStep, enhanced, distance))
-          found.push(at)
+        const destination = CORNERS.includes(square)
+          ? square
+          : makeSquare(origin.file - fileStep, origin.rank - rankStep)
+        if (
+          assassinReaches(occupancy, view, square, fileStep, rankStep, enhanced, distance) &&
+          !threats(board, side === WHITE ? BLACK : WHITE, view, false, destination).some(
+            defender => defender !== square
+          )
+        )
+          attackers.push(from)
       } else if (reaches(occupant, dormant, isDiagonal, rankStep, enhanced, distance))
-        found.push(at)
+        attackers.push(from)
       break
     }
   }
-  found.push(...leapers(side, occupancy, view, marshalSquare, square))
-  return found
+  attackers.push(...leapers(board, side, view, marshalSq, square))
+  return attackers
 }

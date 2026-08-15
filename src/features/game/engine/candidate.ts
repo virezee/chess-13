@@ -1,7 +1,7 @@
-import type { Move, Turn } from '@/types/game'
-import type { Piece } from '@/types/material'
-import { POPE, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
-import { fromSquare, squareOf } from '../lib/coordinate'
+import type { Move, Position } from '@/types/game'
+import type { Piece, PieceName } from '@/types/material'
+import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
+import { fromSquare } from '../lib/coordinate'
 import { generate } from './generate'
 
 const blocks = (pope: string, checker: string, square: string): boolean => {
@@ -20,9 +20,14 @@ const blocks = (pope: string, checker: string, square: string): boolean => {
   }
   return false
 }
-const isEvasion = (turn: Turn, pope: string | null, piece: Piece, move: Move): boolean => {
+const isEvasion = (
+  checkers: readonly string[],
+  pope: string | null,
+  piece: Piece,
+  move: Move
+): boolean => {
   if (piece.piece === POPE) return true
-  return turn.checkers.every(
+  return checkers.every(
     square => move.captures?.includes(square) || (pope !== null && blocks(pope, square, move.to))
   )
 }
@@ -43,31 +48,36 @@ export const onLine = (
     Math.sign(ranks) === rankStep
   )
 }
-export const candidate = (turn: Turn): Move[] => {
-  const { side, position } = turn
-  const marshalSquare = squareOf(side, MARSHAL, position)
-  const pope = squareOf(side, POPE, position)
+export const candidate = (position: Position): Move[] => {
+  const { pieces, occupancy, side, checkInfo, state } = position
+  const { checkers, pinned } = checkInfo
+  const marshalSquare = pieces[side][MARSHAL][0] ?? null
+  const pope = pieces[side][POPE][0] ?? null
+  const answering = checkers.some(square => occupancy[square]?.piece === ASSASSIN)
+  const doubled = checkers.length > 1 && !answering
   const moves: Move[] = []
-  const doubled = turn.checkers.length > 1
-  for (const [square, piece] of Object.entries(position)) {
-    if (piece.side !== side) continue
-    if (doubled && piece.piece !== POPE && piece.piece !== MAGE && piece.piece !== ASSASSIN)
-      continue
-    const pin = turn.pinned.get(square)
-    if (pin && piece.piece === TEMPLAR) continue
-    for (const move of generate(
-      side,
-      piece.piece,
-      position,
-      marshalSquare,
-      square,
-      turn.rights.castling[side],
-      turn.rights.enPassant,
-      turn.promotionSlots[side]
-    )) {
-      if (pin && pope !== null && !onLine(pope, move.to, pin)) continue
-      if (turn.checkers.length > 0 && !isEvasion(turn, pope, piece, move)) continue
-      moves.push(move)
+  for (const name of Object.keys(pieces[side]) as PieceName[]) {
+    if (doubled && name !== POPE && name !== MAGE && name !== ASSASSIN) continue
+    for (const square of pieces[side][name]) {
+      const piece = occupancy[square]
+      if (!piece) continue
+      if (name === EMPEROR && piece.awake !== true) continue
+      const pin = pinned.get(square)
+      if (pin && name === TEMPLAR) continue
+      for (const move of generate(
+        side,
+        name,
+        occupancy,
+        marshalSquare,
+        square,
+        state.castlingSide[side],
+        state.promotions[side],
+        state.enPassant
+      )) {
+        if (pin && pope !== null && !onLine(pope, move.to, pin)) continue
+        if (checkers.length > 0 && !isEvasion(checkers, pope, piece, move)) continue
+        moves.push(move)
+      }
     }
   }
   return moves

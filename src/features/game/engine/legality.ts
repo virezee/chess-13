@@ -6,7 +6,7 @@ import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/pie
 import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
 import { fromSquare, toSquare, isOnBoard } from '../lib/coordinate'
 import { isEnhanced } from './generate'
-import { occupantAt, reaches, assassinReaches, threats } from './threats'
+import {  reaches, assassinReaches, threats } from './threats'
 import { candidate } from './candidate'
 
 const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
@@ -40,7 +40,6 @@ const scanLine = (
   pope: string,
   side: Side,
   occupancy: SquareOccupant,
-  view: View,
   fileStep: number,
   rankStep: number
 ): { occupant: Piece; square: string; blocker: string | null; distance: number } | null => {
@@ -51,7 +50,7 @@ const scanLine = (
     const rank = origin.rank + rankStep * distance
     if (!isOnBoard(file, rank)) return null
     const square = toSquare(file, rank)
-    const occupant = occupantAt(occupancy, view, square)
+    const occupant = occupancy[square]
     if (!occupant) continue
     if (occupant.side === side) {
       if (blocker !== null) return null
@@ -66,7 +65,6 @@ const sliderCheckers = (
   board: Board,
   pope: string,
   side: Side,
-  view: View,
   enemyPope: string | null,
   enemyMarshal: string | null,
   pinned: CheckInfo['pinned']
@@ -75,7 +73,7 @@ const sliderCheckers = (
   const origin = fromSquare(pope)
   const checkers: string[] = []
   for (const [fileStep, rankStep] of EVERY) {
-    const line = scanLine(pope, side, occupancy, view, fileStep, rankStep)
+    const line = scanLine(pope, side, occupancy, fileStep, rankStep)
     if (line === null) continue
     const { occupant, square, blocker, distance } = line
     const enhanced = isEnhanced(enemyMarshal, square)
@@ -89,8 +87,8 @@ const sliderCheckers = (
           ? pope
           : toSquare(origin.file - fileStep, origin.rank - rankStep)
         hits =
-          assassinReaches(occupancy, view, pope, fileStep, rankStep, enhanced, distance) &&
-          !threats(board, side, view, false, destination).some(from => from !== pope)
+          assassinReaches(occupancy, {}, pope, fileStep, rankStep, enhanced, distance) &&
+          !threats(board, side, {}, false, destination).some(from => from !== pope)
         break
       }
       case MAGE:
@@ -114,17 +112,12 @@ const sliderCheckers = (
 }
 const templarCheckers = (
   pope: string,
-  occupancy: SquareOccupant,
-  view: View,
-  enemy: Side,
   enemyMarshal: string | null,
   enemyTemplars: string[]
 ): string[] => {
   const origin = fromSquare(pope)
   const checkers: string[] = []
   for (const templar of enemyTemplars) {
-    const occupant = occupantAt(occupancy, view, templar)
-    if (occupant?.side !== enemy || occupant.piece !== TEMPLAR) continue
     const { file, rank } = fromSquare(templar)
     const files = file - origin.file
     const ranks = rank - origin.rank
@@ -136,23 +129,24 @@ const templarCheckers = (
   }
   return checkers
 }
-export const checkInfo = (board: Board, side: Side, view: View = {}): CheckInfo => {
-  const { pieces, occupancy } = board
+export const checkInfo = (board: Board, side: Side): CheckInfo => {
+  const { pieces } = board
   const pinned: CheckInfo['pinned'] = new Map()
   const pope = pieces[side][POPE][0]!
   const enemy = opponent(side)
   const enemyMarshal = pieces[enemy][MARSHAL][0] ?? null
   const enemyPope = pieces[enemy][POPE][0] ?? null
   const checkers = [
-    ...sliderCheckers(board, pope, side, view, enemyPope, enemyMarshal, pinned),
-    ...templarCheckers(pope, occupancy, view, enemy, enemyMarshal, pieces[enemy][TEMPLAR])
+    ...sliderCheckers(board, pope, side, enemyPope, enemyMarshal, pinned),
+    ...templarCheckers(pope, enemyMarshal, pieces[enemy][TEMPLAR])
   ]
   return { checkers, pinned }
 }
 export const dormantEmperor = (board: Board, side: Side): string | null => {
-  const square = board.pieces[side][EMPEROR][0]
-  if (square === undefined) return null
-  return board.occupancy[square]?.awake === true ? null : square
+  const { pieces, occupancy } = board
+  const square = pieces[side][EMPEROR][0] ?? null
+  if (square === null) return null
+  return occupancy[square]?.awake === true ? null : square
 }
 export const legality = (position: Position): Move[] => {
   const { pieces, occupancy, side, checkInfo: info, state } = position

@@ -43,13 +43,14 @@ Four kinds answer that question differently:
   same ring, since a blast holding both Popes is not allowed.
 - An Assassin lands one square past what it takes, so it answers yes only when the square one
   further along the line, past the Pope, is empty and not defended by White. The white Marshal
-  and a white Emperor still dormant are ignored there, since neither guards the square, and
-  dormant is read as Black's move left it, since the danger asked about here is the one that
-  move produced. A pinned white piece defends every square it attacks, the pin binding where that
-  piece may move and not where its defence falls, so an Assassin is answered on the line it ends
-  and nothing here waits for the rest of the walk.
-  A Pope on a corner has no such square, so the Assassin takes the corner itself, and both conditions
-  apply to the Pope's own square instead.
+  and a white Emperor still dormant are ignored there, since neither guards the square, and the
+  Pope is ignored with them, since it is the piece being taken and is gone by the time the
+  Assassin stands behind it. Dormant is read as Black's move left it, since the danger asked
+  about here is the one that move produced. A pinned white piece defends every square it attacks,
+  the pin binding where that piece may move and not where its defence falls, so an Assassin is
+  answered on the line it ends and nothing here waits for the rest of the walk.
+  A Pope on a corner has no square behind it, so the Assassin stops on the corner itself, and the
+  square that must be undefended is the Pope's own, there being none past it to ask about.
 
 No leap is ever met by walking a line, so each Templar Black owns is tested on its own, from
 the square the piece list gives it. It answers yes when the offset from that square to the

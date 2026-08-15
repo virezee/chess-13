@@ -8,7 +8,7 @@ import { Board } from '@/features/game/components/Board'
 import { ArmyPanel } from '@/features/game/components/ArmyPanel'
 import { MoveLog } from '@/features/game/components/MoveLog'
 import { GameStatus } from '@/features/game/components/GameStatus'
-import { turn } from '@/features/game/engine/turn'
+import { turn } from '@/features/game/engine/position'
 import { legality } from '@/features/game/engine/legality'
 import { apply } from '@/features/game/engine/apply'
 import {

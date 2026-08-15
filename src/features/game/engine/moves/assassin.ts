@@ -4,7 +4,7 @@ import { CORNERS } from '@/constants/board'
 import { REACH } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
-import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
+import { parseSquare, makeSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
 export const assassin = (
@@ -13,7 +13,7 @@ export const assassin = (
   from: string,
   isEnhanced: boolean
 ): Move[] => {
-  const origin = fromSquare(from)
+  const origin = parseSquare(from)
   const { reach } = REACH.assassin[isEnhanced ? ENHANCED : RESTRICTED]
   const moves: Move[] = []
   for (const [fileStep, rankStep] of EVERY) {
@@ -21,7 +21,7 @@ export const assassin = (
       const file = origin.file + fileStep * distance
       const rank = origin.rank + rankStep * distance
       if (!isOnBoard(file, rank)) break
-      const square = toSquare(file, rank)
+      const square = makeSquare(file, rank)
       const occupant = occupancy[square]
       if (!occupant) {
         moves.push({ from, to: square })
@@ -33,10 +33,10 @@ export const assassin = (
         break
       }
       if (distance + 1 > reach) break
-      const landingFile = file + fileStep
-      const landingRank = rank + rankStep
-      if (!isOnBoard(landingFile, landingRank)) break
-      const landing = toSquare(landingFile, landingRank)
+      const landFile = file + fileStep
+      const landRank = rank + rankStep
+      if (!isOnBoard(landFile, landRank)) break
+      const landing = makeSquare(landFile, landRank)
       if (!occupancy[landing]) moves.push({ from, to: landing, captures: [square] })
       break
     }

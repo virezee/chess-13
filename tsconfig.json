@@ -3,6 +3,8 @@
   "compilerOptions": {
     "target": "esnext",
     "verbatimModuleSyntax": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noUncheckedIndexedAccess": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,

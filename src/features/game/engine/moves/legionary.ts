@@ -4,26 +4,26 @@ import { SIZE, CENTRE } from '@/constants/board'
 import { WHITE } from '@/constants/colour'
 import { REACH } from '@/constants/piece'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
-import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
+import { parseSquare, makeSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
-const step = (side: Side): number => (side === WHITE ? 1 : -1)
+const push = (side: Side): number => (side === WHITE ? 1 : -1)
 const quiets = (
   side: Side,
   occupancy: SquareOccupant,
   from: string,
   isEnhanced: boolean
 ): Move[] => {
-  const { file, rank } = fromSquare(from)
-  const forward = step(side)
+  const { file, rank } = parseSquare(from)
+  const up = push(side)
   const { quiet } = REACH.legionary[isEnhanced ? ENHANCED : RESTRICTED]
-  const beforeCentre = side === WHITE ? rank < CENTRE : rank > CENTRE
-  const reach = beforeCentre ? Math.abs(CENTRE - rank) : quiet
+  const isBeforeCentre = side === WHITE ? rank < CENTRE : rank > CENTRE
+  const reach = isBeforeCentre ? Math.abs(CENTRE - rank) : quiet
   const moves: Move[] = []
-  for (let squares = 1; squares <= reach; squares += 1) {
-    const rankAhead = rank + forward * squares
-    if (rankAhead < 1 || rankAhead > SIZE) break
-    const to = toSquare(file, rankAhead)
+  for (let distance = 1; distance <= reach; distance += 1) {
+    const toRank = rank + up * distance
+    if (toRank < 1 || toRank > SIZE) break
+    const to = makeSquare(file, toRank)
     if (occupancy[to]) break
     moves.push({ from, to })
   }
@@ -35,28 +35,28 @@ const captures = (
   from: string,
   enPassant: EnPassant | null
 ): Move[] => {
-  const { file, rank } = fromSquare(from)
-  const rankAhead = rank + step(side)
+  const { file, rank } = parseSquare(from)
+  const toRank = rank + push(side)
   const moves: Move[] = []
   for (const offset of [-1, 1]) {
-    const fileBeside = file + offset
-    if (!isOnBoard(fileBeside, rankAhead)) continue
-    const to = toSquare(fileBeside, rankAhead)
+    const adjFile = file + offset
+    if (!isOnBoard(adjFile, toRank)) continue
+    const to = makeSquare(adjFile, toRank)
     const occupant = occupancy[to]
     if (occupant) {
       if (occupant.side !== side && !isDormant(occupant)) moves.push({ from, to, captures: [to] })
       continue
     }
     if (enPassant?.target !== to) continue
-    const passer = occupancy[enPassant.captured]
-    if (passer && passer.side !== side) moves.push({ from, to, captures: [enPassant.captured] })
+    const victim = occupancy[enPassant.captured]
+    if (victim && victim.side !== side) moves.push({ from, to, captures: [enPassant.captured] })
   }
   return moves
 }
-const claimables = (side: Side, square: string, promotions: Promotion[]): PieceName[] => {
-  const { file, rank } = fromSquare(square)
-  const lastRank = side === WHITE ? SIZE : 1
-  if (rank !== lastRank) return []
+const promotionPieces = (side: Side, square: string, promotions: Promotion[]): PieceName[] => {
+  const { file, rank } = parseSquare(square)
+  const promRank = side === WHITE ? SIZE : 1
+  if (rank !== promRank) return []
   return [
     ...new Set(
       promotions
@@ -66,16 +66,16 @@ const claimables = (side: Side, square: string, promotions: Promotion[]): PieceN
   ]
 }
 const withPromotions = (side: Side, move: Move, promotions: Promotion[]): Move[] => {
-  const claimable = claimables(side, move.to, promotions)
-  if (claimable.length === 0) return [move]
-  return claimable.map(piece => {
+  const promPiece = promotionPieces(side, move.to, promotions)
+  if (promPiece.length === 0) return [move]
+  return promPiece.map(piece => {
     const promoted: Move = { from: move.from, to: move.to, promotesTo: piece }
     if (move.captures) promoted.captures = move.captures
     return promoted
   })
 }
 const transforms = (side: Side, from: string, promotions: Promotion[]): Move[] =>
-  claimables(side, from, promotions).map(piece => ({ from, to: from, promotesTo: piece }))
+  promotionPieces(side, from, promotions).map(piece => ({ from, to: from, promotesTo: piece }))
 export const legionary = (
   side: Side,
   occupancy: SquareOccupant,

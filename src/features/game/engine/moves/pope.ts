@@ -2,7 +2,7 @@ import type { Side, SquareOccupant } from '@/types/material'
 import type { Move, Castling, CastlingSide } from '@/types/game'
 import { SENTINEL, CASTLING } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
+import { parseSquare, makeSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
 const castle = (
@@ -22,13 +22,13 @@ export const pope = (
   from: string,
   castlingSide: CastlingSide
 ): Move[] => {
-  const origin = fromSquare(from)
+  const origin = parseSquare(from)
   const moves: Move[] = []
   for (const [fileStep, rankStep] of EVERY) {
     const file = origin.file + fileStep
     const rank = origin.rank + rankStep
     if (!isOnBoard(file, rank)) continue
-    const to = toSquare(file, rank)
+    const to = makeSquare(file, rank)
     const occupant = occupancy[to]
     if (!occupant) {
       moves.push({ from, to })
@@ -38,11 +38,11 @@ export const pope = (
   }
   const castlings = CASTLING[side]
   if (from !== castlings.home) return moves
-  for (const [available, castling] of [
+  for (const [avail, castling] of [
     [castlingSide.left, castlings.left],
     [castlingSide.right, castlings.right]
   ] as const) {
-    if (!available) continue
+    if (!avail) continue
     const move = castle(side, occupancy, from, castling)
     if (move) moves.push(move)
   }

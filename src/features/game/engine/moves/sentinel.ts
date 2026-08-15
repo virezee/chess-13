@@ -3,26 +3,26 @@ import type { Move } from '@/types/game'
 import { REACH } from '@/constants/piece'
 import { ORTHOGONAL } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
-import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
+import { parseSquare, makeSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
 const line = (
   side: Side,
   occupancy: SquareOccupant,
   from: string,
+  marshalSquare: string | null,
   isEnhanced: boolean,
-  marshal: string | null,
   deltaFile: number,
   deltaRank: number
 ): Move[] => {
-  const origin = fromSquare(from)
-  const isFile = deltaFile !== 0
-  const start = isFile ? origin.file : origin.rank
-  const towards = isFile ? deltaFile : deltaRank
+  const origin = parseSquare(from)
+  const isAlongRank = deltaFile !== 0
+  const axisOrigin = isAlongRank ? origin.file : origin.rank
+  const axisStep = isAlongRank ? deltaFile : deltaRank
   let isTowardMarshal = false
-  if (marshal !== null) {
-    const { file: marshalFile, rank: marshalRank } = fromSquare(marshal)
-    isTowardMarshal = ((isFile ? marshalFile : marshalRank) - start) * towards > 0
+  if (marshalSquare !== null) {
+    const { file: marshalFile, rank: marshalRank } = parseSquare(marshalSquare)
+    isTowardMarshal = ((isAlongRank ? marshalFile : marshalRank) - axisOrigin) * axisStep > 0
   }
   const { quiet, capture } = REACH.sentinel[isEnhanced ? ENHANCED : RESTRICTED]
   const moves: Move[] = []
@@ -31,7 +31,7 @@ const line = (
     const file = origin.file + deltaFile * distance
     const rank = origin.rank + deltaRank * distance
     if (!isOnBoard(file, rank)) break
-    const to = toSquare(file, rank)
+    const to = makeSquare(file, rank)
     const occupant = occupancy[to]
     if (!occupant) {
       if (distance <= quiet) moves.push({ from, to })
@@ -51,9 +51,9 @@ export const sentinel = (
   side: Side,
   occupancy: SquareOccupant,
   from: string,
-  isEnhanced: boolean,
-  marshal: string | null
+  marshalSquare: string | null,
+  isEnhanced: boolean
 ): Move[] =>
   ORTHOGONAL.flatMap(([deltaFile, deltaRank]) =>
-    line(side, occupancy, from, isEnhanced, marshal, deltaFile, deltaRank)
+    line(side, occupancy, from, marshalSquare, isEnhanced, deltaFile, deltaRank)
   )

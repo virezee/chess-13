@@ -2,16 +2,16 @@ import type { Side, SquareOccupant } from '@/types/material'
 import type { Move } from '@/types/game'
 import { POPE } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard } from '../../lib/coordinate'
+import { parseSquare, makeSquare, isOnBoard } from '../../lib/coordinate'
 import { isDormant } from './emperor'
 
 const ring = (from: string): string[] => {
-  const origin = fromSquare(from)
+  const origin = parseSquare(from)
   const squares: string[] = []
   for (const [fileStep, rankStep] of EVERY) {
     const file = origin.file + fileStep
     const rank = origin.rank + rankStep
-    if (isOnBoard(file, rank)) squares.push(toSquare(file, rank))
+    if (isOnBoard(file, rank)) squares.push(makeSquare(file, rank))
   }
   return squares
 }

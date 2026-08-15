@@ -1,12 +1,12 @@
-import type { Side, Position } from '@/types/material'
-import type { Move, Rights, PromotionSlot } from '@/types/game'
+import type { SquareOccupant } from '@/types/material'
+import type { EnPassant, Move, State } from '@/types/game'
 import { CENTRE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, LEGIONARY, CASTLING } from '@/constants/piece'
 import { fromSquare, toSquare } from '../lib/coordinate'
 
-const board = (position: Position, move: Move): Position => {
-  const next = { ...position }
+const board = (occupancy: SquareOccupant, move: Move): SquareOccupant => {
+  const next = { ...occupancy }
   const mover = next[move.from]
   delete next[move.from]
   move.captures?.forEach(square => delete next[square])
@@ -19,8 +19,12 @@ const board = (position: Position, move: Move): Position => {
     next[move.to] = move.promotesTo ? { side: mover.side, piece: move.promotesTo } : mover
   return next
 }
-const castling = (position: Position, move: Move, held: Rights['castling']): Rights['castling'] => {
-  const mover = position[move.from]
+const castling = (
+  occupancy: SquareOccupant,
+  move: Move,
+  held: State['castlingSide']
+): State['castlingSide'] => {
+  const mover = occupancy[move.from]
   const kept = { [WHITE]: held[WHITE], [BLACK]: held[BLACK] }
   for (const side of [WHITE, BLACK] as const) {
     const wings = CASTLING[side]
@@ -42,8 +46,40 @@ const castling = (position: Position, move: Move, held: Rights['castling']): Rig
   }
   return kept
 }
-const enPassant = (position: Position, move: Move): Rights['enPassant'] => {
-  const mover = position[move.from]
+const promotion = (
+  occupancy: SquareOccupant,
+  move: Move,
+  open: State['promotions']
+): State['promotions'] => {
+  const mover = occupancy[move.from]
+  const next = {
+    [WHITE]: open[WHITE].map(slot => ({ ...slot, piece: [...slot.piece] })),
+    [BLACK]: open[BLACK].map(slot => ({ ...slot, piece: [...slot.piece] }))
+  }
+  const promotesTo = move.promotesTo
+  if (mover && promotesTo !== undefined) {
+    const arrived = fromSquare(move.to).file
+    const taken = next[mover.side].findIndex(
+      slot => slot.piece.includes(promotesTo) && Math.abs(slot.file - arrived) <= 1
+    )
+    const slot = next[mover.side][taken]
+    if (slot) {
+      slot.piece.splice(slot.piece.indexOf(promotesTo), 1)
+      if (slot.piece.length === 0) next[mover.side].splice(taken, 1)
+    }
+  }
+  move.captures?.forEach(square => {
+    const dead = occupancy[square]
+    if (!dead || dead.piece === POPE) return
+    const file = fromSquare(square).file
+    const slot = next[dead.side].find(held => held.file === file)
+    if (slot) slot.piece.push(dead.piece)
+    else next[dead.side].push({ file, piece: [dead.piece] })
+  })
+  return next
+}
+const enPassant = (occupancy: SquareOccupant, move: Move): EnPassant | null => {
+  const mover = occupancy[move.from]
   const step = mover?.side === WHITE ? 1 : -1
   const origin = fromSquare(move.from)
   const target = fromSquare(move.to)
@@ -53,53 +89,27 @@ const enPassant = (position: Position, move: Move): Rights['enPassant'] => {
     origin.rank !== CENTRE - step * (CENTRE - 3)
   )
     return null
-  return { behind: toSquare(target.file, CENTRE - step), enemy: move.to }
+  return { target: toSquare(target.file, CENTRE - step), captured: move.to }
 }
-const promotion = (
-  position: Position,
-  move: Move,
-  open: Record<Side, PromotionSlot[]>
-): Record<Side, PromotionSlot[]> => {
-  const mover = position[move.from]
-  const next = { [WHITE]: [...open[WHITE]], [BLACK]: [...open[BLACK]] }
-  if (mover && move.promotesTo) {
-    const arrived = fromSquare(move.to).file
-    const taken = next[mover.side].findIndex(
-      slot => slot.piece === move.promotesTo && Math.abs(slot.file - arrived) <= 1
-    )
-    if (taken !== -1) next[mover.side].splice(taken, 1)
-  }
-  move.captures?.forEach(square => {
-    const dead = position[square]
-    if (!dead || dead.piece === POPE) return
-    next[dead.side].push({ piece: dead.piece, file: fromSquare(square).file })
-  })
-  return next
-}
-const progress = (position: Position, move: Move, idle: number): number => {
+const progress = (occupancy: SquareOccupant, move: Move, noProgress: number): number => {
   const made =
     (move.captures?.length ?? 0) > 0 ||
-    position[move.from]?.piece === LEGIONARY ||
+    occupancy[move.from]?.piece === LEGIONARY ||
     move.promotesTo !== undefined
-  return made ? 0 : idle + 1
+  return made ? 0 : noProgress + 1
 }
 export const apply = (
-  position: Position,
+  occupancy: SquareOccupant,
   move: Move,
-  rights: Rights,
-  slots: Record<Side, PromotionSlot[]>,
-  idle = 0
-): {
-  position: Position
-  rights: Rights
-  slots: Record<Side, PromotionSlot[]>
-  idle: number
-} => ({
-  position: board(position, move),
-  rights: {
-    castling: castling(position, move, rights.castling),
-    enPassant: enPassant(position, move)
-  },
-  slots: promotion(position, move, slots),
-  idle: progress(position, move, idle)
+  state: State
+): { occupancy: SquareOccupant; state: State } => ({
+  occupancy: board(occupancy, move),
+  state: {
+    castlingSide: castling(occupancy, move, state.castlingSide),
+    promotions: promotion(occupancy, move, state.promotions),
+    enPassant: enPassant(occupancy, move),
+    riposte: state.riposte,
+    noProgress: progress(occupancy, move, state.noProgress),
+    noProgressLimit: state.noProgressLimit
+  }
 })

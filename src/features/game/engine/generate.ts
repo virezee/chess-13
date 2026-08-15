@@ -13,7 +13,7 @@ import {
   LEGIONARY
 } from '@/constants/piece'
 import { RANGE } from '@/constants/zone'
-import { fromSquare } from '../lib/coordinate'
+import { parseSquare } from '../lib/coordinate'
 import {
   pope,
   emperor,
@@ -29,12 +29,9 @@ import {
 export const isEnhanced = (marshalSquare: string | null, square: string): boolean => {
   if (marshalSquare === null) return false
   if (marshalSquare === COMMAND_SQUARE) return true
-  const marshalSq = fromSquare(marshalSquare)
-  const target = fromSquare(square)
-  return (
-    Math.max(Math.abs(marshalSq.file - target.file), Math.abs(marshalSq.rank - target.rank)) <=
-    RANGE
-  )
+  const marshalSq = parseSquare(marshalSquare)
+  const { file, rank } = parseSquare(square)
+  return Math.max(Math.abs(marshalSq.file - file), Math.abs(marshalSq.rank - rank)) <= RANGE
 }
 export const generate = (
   side: Side,
