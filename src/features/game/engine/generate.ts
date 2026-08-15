@@ -51,7 +51,7 @@ export const generate = (
     case ASSASSIN:
       return assassin(side, occupancy, square, enhanced)
     case SENTINEL:
-      return sentinel(side, occupancy, square, enhanced, marshalSquare)
+      return sentinel(side, occupancy, square, marshalSquare, enhanced)
     case MAGE:
       return mage(side, occupancy, square, enhanced)
     case HERALD:

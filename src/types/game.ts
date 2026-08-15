@@ -39,13 +39,17 @@ export interface View {
   moved?: { piece: Piece; square: string }
   vacated?: readonly string[]
 }
+export interface NoProgress {
+  count: number
+  limit: number
+}
 export interface State {
   castlingSide: Record<Side, CastlingSide>
   promotions: Record<Side, Promotion[]>
   enPassant: EnPassant | null
+  awake: Record<Side, boolean>
   riposte: boolean
-  noProgress: number
-  noProgressLimit: number
+  noProgress: NoProgress
 }
 export interface Position extends Board {
   side: Side

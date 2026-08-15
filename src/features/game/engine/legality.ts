@@ -1,12 +1,12 @@
 import type { Side, Piece, SquareOccupant } from '@/types/material'
-import type { Board, Position, CheckInfo, Step, Move, View } from '@/types/game'
+import type { Board, CheckInfo, Step, Move, View, Position } from '@/types/game'
 import { SIZE, CORNERS } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
 import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard } from '../lib/coordinate'
+import { parseSquare, makeSquare, isOnBoard } from '../lib/coordinate'
 import { isEnhanced } from './generate'
-import {  reaches, assassinReaches, threats } from './threats'
+import { reaches, assassinReaches, threats } from './threats'
 import { candidate } from './candidate'
 
 const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
@@ -18,17 +18,17 @@ const makeMove = (occupancy: SquareOccupant, move: Move): View => {
   return { moved: { piece: mover, square: move.to }, vacated }
 }
 const castlingPath = ({ from, to }: Step): string[] => {
-  const origin = fromSquare(from)
-  const target = fromSquare(to)
+  const origin = parseSquare(from)
+  const target = parseSquare(to)
   const step = Math.sign(target.file - origin.file)
   const squares: string[] = []
   for (let file = origin.file + step; file !== target.file + step; file += step)
-    squares.push(toSquare(file, origin.rank))
+    squares.push(makeSquare(file, origin.rank))
   return squares
 }
 const isInRing = ({ from, to }: Step): boolean => {
-  const origin = fromSquare(from)
-  const target = fromSquare(to)
+  const origin = parseSquare(from)
+  const target = parseSquare(to)
   return Math.max(Math.abs(origin.file - target.file), Math.abs(origin.rank - target.rank)) === 1
 }
 const isLeap = (
@@ -43,13 +43,13 @@ const scanLine = (
   fileStep: number,
   rankStep: number
 ): { occupant: Piece; square: string; blocker: string | null; distance: number } | null => {
-  const origin = fromSquare(pope)
+  const origin = parseSquare(pope)
   let blocker: string | null = null
   for (let distance = 1; distance <= SIZE; distance += 1) {
     const file = origin.file + fileStep * distance
     const rank = origin.rank + rankStep * distance
     if (!isOnBoard(file, rank)) return null
-    const square = toSquare(file, rank)
+    const square = makeSquare(file, rank)
     const occupant = occupancy[square]
     if (!occupant) continue
     if (occupant.side === side) {
@@ -70,7 +70,7 @@ const sliderCheckers = (
   pinned: CheckInfo['pinned']
 ): string[] => {
   const { occupancy } = board
-  const origin = fromSquare(pope)
+  const origin = parseSquare(pope)
   const checkers: string[] = []
   for (const [fileStep, rankStep] of EVERY) {
     const line = scanLine(pope, side, occupancy, fileStep, rankStep)
@@ -85,7 +85,7 @@ const sliderCheckers = (
       case ASSASSIN: {
         const destination = CORNERS.includes(pope)
           ? pope
-          : toSquare(origin.file - fileStep, origin.rank - rankStep)
+          : makeSquare(origin.file - fileStep, origin.rank - rankStep)
         hits =
           assassinReaches(occupancy, {}, pope, fileStep, rankStep, enhanced, distance) &&
           !threats(board, side, {}, false, destination).some(from => from !== pope)
@@ -115,10 +115,10 @@ const templarCheckers = (
   enemyMarshal: string | null,
   enemyTemplars: string[]
 ): string[] => {
-  const origin = fromSquare(pope)
+  const origin = parseSquare(pope)
   const checkers: string[] = []
   for (const templar of enemyTemplars) {
-    const { file, rank } = fromSquare(templar)
+    const { file, rank } = parseSquare(templar)
     const files = file - origin.file
     const ranks = rank - origin.rank
     if (

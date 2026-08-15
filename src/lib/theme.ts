@@ -7,4 +7,4 @@ const applyStoredTheme = (): void => {
     document.documentElement.dataset.theme = 'dark'
   }
 }
-export const themeScript = `(${applyStoredTheme.toString()})()`
+export const theme = `(${applyStoredTheme.toString()})()`

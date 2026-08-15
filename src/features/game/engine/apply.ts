@@ -1,9 +1,10 @@
 import type { SquareOccupant } from '@/types/material'
-import type { EnPassant, Move, State } from '@/types/game'
+import type { EnPassant, Move, State, Step, Position } from '@/types/game'
 import { CENTRE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
-import { POPE, LEGIONARY, CASTLING } from '@/constants/piece'
-import { fromSquare, toSquare } from '../lib/coordinate'
+import { POPE, MARSHAL, LEGIONARY, CASTLING } from '@/constants/piece'
+import { parseSquare, makeSquare } from '../lib/coordinate'
+import { riposteSquares } from './moves'
 
 const board = (occupancy: SquareOccupant, move: Move): SquareOccupant => {
   const next = { ...occupancy }
@@ -58,7 +59,7 @@ const promotion = (
   }
   const promotesTo = move.promotesTo
   if (mover && promotesTo !== undefined) {
-    const arrived = fromSquare(move.to).file
+    const arrived = parseSquare(move.to).file
     const taken = next[mover.side].findIndex(
       slot => slot.piece.includes(promotesTo) && Math.abs(slot.file - arrived) <= 1
     )
@@ -71,7 +72,7 @@ const promotion = (
   move.captures?.forEach(square => {
     const dead = occupancy[square]
     if (!dead || dead.piece === POPE) return
-    const file = fromSquare(square).file
+    const file = parseSquare(square).file
     const slot = next[dead.side].find(held => held.file === file)
     if (slot) slot.piece.push(dead.piece)
     else next[dead.side].push({ file, piece: [dead.piece] })
@@ -81,15 +82,42 @@ const promotion = (
 const enPassant = (occupancy: SquareOccupant, move: Move): EnPassant | null => {
   const mover = occupancy[move.from]
   const step = mover?.side === WHITE ? 1 : -1
-  const origin = fromSquare(move.from)
-  const target = fromSquare(move.to)
+  const origin = parseSquare(move.from)
+  const target = parseSquare(move.to)
   if (
     mover?.piece !== LEGIONARY ||
     target.rank !== CENTRE ||
     origin.rank !== CENTRE - step * (CENTRE - 3)
   )
     return null
-  return { target: toSquare(target.file, CENTRE - step), captured: move.to }
+  return { target: makeSquare(target.file, CENTRE - step), captured: move.to }
+}
+const clearLine = (occupancy: SquareOccupant, { from, to }: Step): boolean => {
+  if (from === to) return false
+  const origin = parseSquare(from)
+  const target = parseSquare(to)
+  const files = target.file - origin.file
+  const ranks = target.rank - origin.rank
+  if (files !== 0 && ranks !== 0 && Math.abs(files) !== Math.abs(ranks)) return false
+  const fileStep = Math.sign(files)
+  const rankStep = Math.sign(ranks)
+  const distance = Math.max(Math.abs(files), Math.abs(ranks))
+  for (let step = 1; step < distance; step += 1) {
+    if (occupancy[makeSquare(origin.file + fileStep * step, origin.rank + rankStep * step)])
+      return false
+  }
+  return true
+}
+const riposte = (position: Position, move: Move, next: SquareOccupant): boolean => {
+  const { pieces, occupancy } = position
+  const mover = occupancy[move.from]
+  if (!mover) return false
+  const side = mover.side === WHITE ? BLACK : WHITE
+  const marshalSquare = pieces[side][MARSHAL][0]
+  if (marshalSquare === undefined || move.captures?.includes(marshalSquare)) return false
+  return riposteSquares(mover.side, occupancy, move).some(square =>
+    clearLine(next, { from: marshalSquare, to: square })
+  )
 }
 const progress = (occupancy: SquareOccupant, move: Move, noProgress: number): number => {
   const made =
@@ -99,17 +127,21 @@ const progress = (occupancy: SquareOccupant, move: Move, noProgress: number): nu
   return made ? 0 : noProgress + 1
 }
 export const apply = (
-  occupancy: SquareOccupant,
-  move: Move,
-  state: State
-): { occupancy: SquareOccupant; state: State } => ({
-  occupancy: board(occupancy, move),
-  state: {
-    castlingSide: castling(occupancy, move, state.castlingSide),
-    promotions: promotion(occupancy, move, state.promotions),
-    enPassant: enPassant(occupancy, move),
-    riposte: state.riposte,
-    noProgress: progress(occupancy, move, state.noProgress),
-    noProgressLimit: state.noProgressLimit
+  position: Position,
+  move: Move
+): { occupancy: SquareOccupant; state: State } => {
+  const { occupancy, state } = position
+  const next = board(occupancy, move)
+  return {
+    occupancy: next,
+    state: {
+      castlingSide: castling(occupancy, move, state.castlingSide),
+      promotions: promotion(occupancy, move, state.promotions),
+      enPassant: enPassant(occupancy, move),
+      awake: state.awake,
+      riposte: riposte(position, move, next),
+      noProgress: progress(occupancy, move, state.noProgress),
+      noProgressLimit: state.noProgressLimit
+    }
   }
-})
+}

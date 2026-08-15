@@ -1,19 +1,19 @@
 import type { Move, Position } from '@/types/game'
 import type { Piece, PieceName } from '@/types/material'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
-import { fromSquare } from '../lib/coordinate'
+import { parseSquare } from '../lib/coordinate'
 import { generate } from './generate'
 
 const blocks = (pope: string, checker: string, square: string): boolean => {
-  const origin = fromSquare(pope)
-  const target = fromSquare(checker)
+  const origin = parseSquare(pope)
+  const target = parseSquare(checker)
   const files = target.file - origin.file
   const ranks = target.rank - origin.rank
   if (files !== 0 && ranks !== 0 && Math.abs(files) !== Math.abs(ranks)) return false
   const fileStep = Math.sign(files)
   const rankStep = Math.sign(ranks)
   const distance = Math.max(Math.abs(files), Math.abs(ranks))
-  const at = fromSquare(square)
+  const at = parseSquare(square)
   for (let step = 1; step < distance; step += 1) {
     if (at.file === origin.file + fileStep * step && at.rank === origin.rank + rankStep * step)
       return true
@@ -36,8 +36,8 @@ export const onLine = (
   to: string,
   [fileStep, rankStep]: readonly [number, number]
 ): boolean => {
-  const origin = fromSquare(from)
-  const target = fromSquare(to)
+  const origin = parseSquare(from)
+  const target = parseSquare(to)
   const files = target.file - origin.file
   const ranks = target.rank - origin.rank
   if (fileStep === 0) return files === 0 && Math.sign(ranks) === rankStep

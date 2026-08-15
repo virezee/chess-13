@@ -123,12 +123,12 @@ export const threats = (
       if (occupant.piece === MARSHAL) {
         if (isEnemyPope) attackers.push(from)
       } else if (occupant.piece === ASSASSIN) {
-        const destination = CORNERS.includes(square)
+        const dest = CORNERS.includes(square)
           ? square
           : makeSquare(origin.file - fileStep, origin.rank - rankStep)
         if (
           assassinReaches(occupancy, view, square, fileStep, rankStep, enhanced, distance) &&
-          !threats(board, side === WHITE ? BLACK : WHITE, view, false, destination).some(
+          !threats(board, side === WHITE ? BLACK : WHITE, view, false, dest).some(
             defender => defender !== square
           )
         )
