@@ -1,5 +1,5 @@
-import type { Side } from '@/types/piece'
-import type { Move, Turn } from '@/types/move'
+import type { Side } from '@/types/material'
+import type { Move, Turn } from '@/types/game'
 import { WHITE, BLACK } from '@/constants/colour'
 import {
   CHECKMATE,

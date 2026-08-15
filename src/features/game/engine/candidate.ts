@@ -1,5 +1,5 @@
-import type { Move, Turn } from '@/types/move'
-import type { Piece } from '@/types/piece'
+import type { Move, Turn } from '@/types/game'
+import type { Piece } from '@/types/material'
 import { POPE, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
 import { fromSquare, squareOf } from '../lib/coordinate'
 import { generate } from './generate'

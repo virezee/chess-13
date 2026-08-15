@@ -36,7 +36,7 @@ export interface EnPassant {
   captured: string
 }
 export interface View {
-  moved?: { square: string; piece: Piece }
+  moved?: { piece: Piece; square: string }
   vacated?: readonly string[]
 }
 export interface State {

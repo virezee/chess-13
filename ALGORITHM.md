@@ -45,9 +45,9 @@ Four kinds answer that question differently:
   further along the line, past the Pope, is empty and not defended by White. The white Marshal
   and a white Emperor still dormant are ignored there, since neither guards the square, and
   dormant is read as Black's move left it, since the danger asked about here is the one that
-  move produced. A pinned white piece defends the squares on its own pin line and no others. Which white pieces
-  are pinned comes out of these same eight lines, so an Assassin is answered only after the
-  whole walk is done.
+  move produced. A pinned white piece defends every square it attacks, the pin binding where that
+  piece may move and not where its defence falls, so an Assassin is answered on the line it ends
+  and nothing here waits for the rest of the walk.
   A Pope on a corner has no such square, so the Assassin takes the corner itself, and both conditions
   apply to the Pope's own square instead.
 
@@ -174,15 +174,12 @@ which squares are emptied and which piece stands where. Nothing is copied.
 - **The Pope moves.** Its destination must not be attacked. Castling covers the tiles it
   crosses as well, so f1, e1 and d1 on the left and h1, i1 and j1 on the right.
 - **Any other piece while in check.** After the move, the Pope must not be attacked.
-- **The Assassin captures.** Its landing square must not be attacked by anything that could
-  legally capture there. The enemy Marshal and a dormant Emperor are ignored, since neither
-  guards the square. A pinned enemy piece counts only when the landing square lies on its
-  own pin line, so one pinned defender does not forbid the capture while an unpinned one
-  does. Whether a defender found there is pinned costs one line, walked out of the black
-  Pope's square through that piece and on behind it, asking of the white piece found behind it
-  what step 1 asks with the colours swapped, on the board this test reads. A landing square no
-  black piece guards costs no walk at all. On a corner the Assassin takes the square itself,
-  and the same test applies to that square.
+- **The Assassin captures.** Its landing square must not be attacked. The enemy Marshal and a
+  dormant Emperor are ignored, since neither guards the square. A pinned enemy piece counts, in
+  every direction it attacks, since this asks where Black's defence falls and not which of those
+  moves Black would be allowed to play, so a single defender standing on that square forbids the
+  capture whether it is pinned or not, and no line is ever walked to tell the two apart. On a
+  corner the Assassin takes the square itself, and the same test applies to that square.
 - **The Marshal captures.** Its victim's square must be covered by White's own army, unless
   the riposte is on or the victim is the enemy Pope. A pinned white piece still counts, in
   every direction it attacks, since this asks where White's attacks fall and not which of them

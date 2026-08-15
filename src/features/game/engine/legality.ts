@@ -1,33 +1,23 @@
-import type { Side, Position } from '@/types/piece'
-import type { Move, View, Board, Turn } from '@/types/move'
+import type { Side, Piece, SquareOccupant } from '@/types/material'
+import type { Board, Position, CheckInfo, Step, Move, View } from '@/types/game'
 import { SIZE, CORNERS } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
 import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
-import { fromSquare, toSquare, isOnBoard, squareOf } from '../lib/coordinate'
+import { fromSquare, toSquare, isOnBoard } from '../lib/coordinate'
 import { isEnhanced } from './generate'
 import { occupantAt, reaches, assassinReaches, threats } from './threats'
-import { onLine, candidate } from './candidate'
+import { candidate } from './candidate'
 
 const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
-const adjacent = (from: string, to: string): boolean => {
-  const one = fromSquare(from)
-  const two = fromSquare(to)
-  return Math.max(Math.abs(one.file - two.file), Math.abs(one.rank - two.rank)) === 1
-}
-const isLeap = (
-  offsets: readonly (readonly [number, number])[],
-  files: number,
-  ranks: number
-): boolean => offsets.some(([fileStep, rankStep]) => fileStep === files && rankStep === ranks)
-const after = (position: Position, move: Move): View => {
-  const mover = position[move.from]
+const makeMove = (occupancy: SquareOccupant, move: Move): View => {
+  const mover = occupancy[move.from]
   const vacated = [move.from, ...(move.captures ?? [])]
   const dies = move.captures?.includes(move.from) ?? false
   if (!mover || dies) return { vacated }
-  return { vacated, moved: { square: move.to, piece: mover } }
+  return { moved: { piece: mover, square: move.to }, vacated }
 }
-const path = (from: string, to: string): string[] => {
+const castlingPath = ({ from, to }: Step): string[] => {
   const origin = fromSquare(from)
   const target = fromSquare(to)
   const step = Math.sign(target.file - origin.file)
@@ -36,154 +26,179 @@ const path = (from: string, to: string): string[] => {
     squares.push(toSquare(file, origin.rank))
   return squares
 }
-export const scanPope = (
-  side: Side,
-  board: Board,
-  view: View = {}
-): { checkers: string[]; pinned: Map<string, readonly [number, number]> } => {
-  const { pieces, position } = board
-  const checkers: string[] = []
-  const pinned = new Map<string, readonly [number, number]>()
-  const pope = pieces[side][POPE][0] ?? null
-  const enemy = opponent(side)
-  const enemyMarshal = pieces[enemy][MARSHAL][0] ?? null
-  const enemyPope = pieces[enemy][POPE][0] ?? null
-  const origin = fromSquare(pope!)
-  const assassins: {
-    at: string
-    shield: string | null
-    step: readonly [number, number]
-    enhanced: boolean
-    distance: number
-  }[] = []
-  for (const [fileStep, rankStep] of EVERY) {
-    const isDiagonal = fileStep !== 0 && rankStep !== 0
-    let shield: string | null = null
-    for (let distance = 1; distance <= SIZE; distance += 1) {
-      const file = origin.file + fileStep * distance
-      const rank = origin.rank + rankStep * distance
-      if (!isOnBoard(file, rank)) break
-      const at = toSquare(file, rank)
-      const occupant = occupantAt(position, view, at)
-      if (!occupant) continue
-      if (occupant.side === side) {
-        if (shield !== null) break
-        shield = at
-        continue
-      }
-      const enhanced = isEnhanced(enemyMarshal, at)
-      if (occupant.piece === ASSASSIN) {
-        assassins.push({ at, shield, step: [fileStep, rankStep], enhanced, distance })
-        break
-      }
-      const hits =
-        occupant.piece === MARSHAL
-          ? true
-          : occupant.piece === MAGE
-            ? distance === 1 && (enemyPope === null || !adjacent(at, enemyPope))
-            : reaches(occupant, false, isDiagonal, rankStep, enhanced, distance)
-      if (hits) {
-        if (shield === null) checkers.push(at)
-        else pinned.set(shield, [fileStep, rankStep])
-      }
-      break
-    }
-  }
-  for (const at of pieces[enemy][TEMPLAR]) {
-    const occupant = occupantAt(position, view, at)
-    if (occupant?.side !== enemy || occupant.piece !== TEMPLAR) continue
-    const { file, rank } = fromSquare(at)
-    const files = file - origin.file
-    const ranks = rank - origin.rank
-    if (
-      isLeap(LEAP_3_2, files, ranks) ||
-      (isLeap(LEAP_2_1, files, ranks) && isEnhanced(enemyMarshal, at))
-    )
-      checkers.push(at)
-  }
-  for (const { at, shield, step, enhanced, distance } of assassins) {
-    const [fileStep, rankStep] = step
-    if (!assassinReaches(position, view, pope!, fileStep, rankStep, enhanced, distance)) continue
-    const lands = CORNERS.includes(pope!)
-      ? pope!
-      : toSquare(origin.file - fileStep, origin.rank - rankStep)
-    const guarded = threats(side, position, lands, false, view).some(from => {
-      if (from === pope) return false
-      const pin = pinned.get(from)
-      return !pin || onLine(pope!, lands, pin)
-    })
-    if (guarded) continue
-    if (shield === null) checkers.push(at)
-    else pinned.set(shield, [fileStep, rankStep])
-  }
-  return { checkers, pinned }
+const isInRing = ({ from, to }: Step): boolean => {
+  const origin = fromSquare(from)
+  const target = fromSquare(to)
+  return Math.max(Math.abs(origin.file - target.file), Math.abs(origin.rank - target.rank)) === 1
 }
-export const dormantEmperor = (side: Side, position: Position): string | null => {
-  for (const [square, piece] of Object.entries(position)) {
-    if (piece.side === side && piece.piece === EMPEROR && piece.awake !== true) return square
+const isLeap = (
+  files: number,
+  ranks: number,
+  offsets: readonly (readonly [number, number])[]
+): boolean => offsets.some(([fileStep, rankStep]) => fileStep === files && rankStep === ranks)
+const scanLine = (
+  pope: string,
+  side: Side,
+  occupancy: SquareOccupant,
+  view: View,
+  fileStep: number,
+  rankStep: number
+): { occupant: Piece; square: string; blocker: string | null; distance: number } | null => {
+  const origin = fromSquare(pope)
+  let blocker: string | null = null
+  for (let distance = 1; distance <= SIZE; distance += 1) {
+    const file = origin.file + fileStep * distance
+    const rank = origin.rank + rankStep * distance
+    if (!isOnBoard(file, rank)) return null
+    const square = toSquare(file, rank)
+    const occupant = occupantAt(occupancy, view, square)
+    if (!occupant) continue
+    if (occupant.side === side) {
+      if (blocker !== null) return null
+      blocker = square
+      continue
+    }
+    return { square, occupant, blocker, distance }
   }
   return null
 }
-export const isAttackedLegally = (
-  by: Side,
+const sliderCheckers = (
   board: Board,
-  square: string,
-  view: View = {}
-): boolean => {
-  const found = threats(by, board.position, square, false, view)
-  if (found.length === 0) return false
-  const pope = board.pieces[by][POPE][0] ?? null
-  const { pinned } = scanPope(by, board, view)
-  return found.some(from => {
-    const pin = pinned.get(from)
-    return !pin || pope === null || onLine(pope, square, pin)
-  })
+  pope: string,
+  side: Side,
+  view: View,
+  enemyPope: string | null,
+  enemyMarshal: string | null,
+  pinned: CheckInfo['pinned']
+): string[] => {
+  const { occupancy } = board
+  const origin = fromSquare(pope)
+  const checkers: string[] = []
+  for (const [fileStep, rankStep] of EVERY) {
+    const line = scanLine(pope, side, occupancy, view, fileStep, rankStep)
+    if (line === null) continue
+    const { occupant, square, blocker, distance } = line
+    const enhanced = isEnhanced(enemyMarshal, square)
+    let hits: boolean
+    switch (occupant.piece) {
+      case MARSHAL:
+        hits = true
+        break
+      case ASSASSIN: {
+        const destination = CORNERS.includes(pope)
+          ? pope
+          : toSquare(origin.file - fileStep, origin.rank - rankStep)
+        hits =
+          assassinReaches(occupancy, view, pope, fileStep, rankStep, enhanced, distance) &&
+          !threats(board, side, view, false, destination).some(from => from !== pope)
+        break
+      }
+      case MAGE:
+        hits = distance === 1 && (enemyPope === null || !isInRing({ from: square, to: enemyPope }))
+        break
+      default:
+        hits = reaches(
+          occupant,
+          false,
+          fileStep !== 0 && rankStep !== 0,
+          rankStep,
+          enhanced,
+          distance
+        )
+    }
+    if (!hits) continue
+    if (blocker === null) checkers.push(square)
+    else pinned.set(blocker, [fileStep, rankStep])
+  }
+  return checkers
 }
-export const legality = (turn: Turn): Move[] => {
-  const enemy = opponent(turn.side)
-  const pope = squareOf(turn.side, POPE, turn.position)
-  const dormant = dormantEmperor(enemy, turn.position)
-  return candidate(turn).filter(move => {
-    const mover = turn.position[move.from]
+const templarCheckers = (
+  pope: string,
+  occupancy: SquareOccupant,
+  view: View,
+  enemy: Side,
+  enemyMarshal: string | null,
+  enemyTemplars: string[]
+): string[] => {
+  const origin = fromSquare(pope)
+  const checkers: string[] = []
+  for (const templar of enemyTemplars) {
+    const occupant = occupantAt(occupancy, view, templar)
+    if (occupant?.side !== enemy || occupant.piece !== TEMPLAR) continue
+    const { file, rank } = fromSquare(templar)
+    const files = file - origin.file
+    const ranks = rank - origin.rank
+    if (
+      isLeap(files, ranks, LEAP_3_2) ||
+      (isLeap(files, ranks, LEAP_2_1) && isEnhanced(enemyMarshal, templar))
+    )
+      checkers.push(templar)
+  }
+  return checkers
+}
+export const checkInfo = (board: Board, side: Side, view: View = {}): CheckInfo => {
+  const { pieces, occupancy } = board
+  const pinned: CheckInfo['pinned'] = new Map()
+  const pope = pieces[side][POPE][0]!
+  const enemy = opponent(side)
+  const enemyMarshal = pieces[enemy][MARSHAL][0] ?? null
+  const enemyPope = pieces[enemy][POPE][0] ?? null
+  const checkers = [
+    ...sliderCheckers(board, pope, side, view, enemyPope, enemyMarshal, pinned),
+    ...templarCheckers(pope, occupancy, view, enemy, enemyMarshal, pieces[enemy][TEMPLAR])
+  ]
+  return { checkers, pinned }
+}
+export const dormantEmperor = (board: Board, side: Side): string | null => {
+  const square = board.pieces[side][EMPEROR][0]
+  if (square === undefined) return null
+  return board.occupancy[square]?.awake === true ? null : square
+}
+export const legality = (position: Position): Move[] => {
+  const { pieces, occupancy, side, checkInfo: info, state } = position
+  const enemy = opponent(side)
+  const pope = pieces[side][POPE][0] ?? null
+  const enemyMarshal = pieces[enemy][MARSHAL][0] ?? null
+  const dormant = dormantEmperor(position, enemy)
+  return candidate(position).filter(move => {
+    const mover = occupancy[move.from]
     if (!mover) return false
-    const view = after(turn.position, move)
+    const view = makeMove(occupancy, move)
     const guarded = mover.piece === POPE ? move.to : pope
     if (
       dormant !== null &&
       guarded !== null &&
-      isAttackedLegally(turn.side, turn, dormant, view) &&
-      threats(enemy, turn.position, guarded, true, view).includes(dormant)
+      ((enemyMarshal !== null && move.captures?.includes(enemyMarshal)) ||
+        threats(position, side, view, false, dormant).length > 0) &&
+      threats(position, enemy, view, true, guarded).includes(dormant)
     )
       return false
     if (mover.piece === POPE) {
-      if (!move.sentinel) return threats(enemy, turn.position, move.to, false, view).length === 0
-      if (turn.checkers.length > 0) return false
-      return path(move.from, move.to).every(
-        square =>
-          threats(enemy, turn.position, square, false, {
-            vacated: [move.from],
-            moved: { square, piece: mover }
-          }).length === 0
-      )
+      if (!move.sentinel) return threats(position, enemy, view, false, move.to).length === 0
+      if (info.checkers.length > 0) return false
+      return castlingPath(move).every(square => {
+        const crossing = { vacated: [move.from], moved: { square, piece: mover } }
+        return threats(position, enemy, crossing, false, square).length === 0
+      })
     }
-    const empties = move.captures?.some(square => square !== move.to) ?? false
     if (
       pope !== null &&
-      (turn.checkers.length > 0 || empties) &&
-      threats(enemy, turn.position, pope, false, view).length > 0
+      (info.checkers.length > 0 || move.captures?.some(square => square !== move.to)) &&
+      threats(position, enemy, view, false, pope).length > 0
     )
       return false
-    if (mover.piece === MARSHAL && move.captures && !turn.rights.riposte) {
-      const victim = turn.position[move.to]
-      if (victim?.piece !== POPE && threats(turn.side, turn.position, move.to, false).length === 0)
-        return false
-    }
     if (
+      mover.piece === MARSHAL &&
+      move.captures &&
+      !state.riposte &&
+      occupancy[move.to]?.piece !== POPE &&
+      threats(position, side, {}, false, move.to).length === 0
+    )
+      return false
+    return !(
       mover.piece === ASSASSIN &&
       move.captures &&
-      isAttackedLegally(opponent(turn.side), turn, move.to, view)
+      threats(position, enemy, view, false, move.to).length > 0
     )
-      return false
-    return true
   })
 }

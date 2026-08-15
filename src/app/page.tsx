@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import type { Side, Position } from '@/types/piece'
-import type { Move, Rights, PromotionSlot } from '@/types/move'
+import type { Side, Position } from '@/types/material'
+import type { Move, Rights, PromotionSlot } from '@/types/game'
 import { WHITE, BLACK } from '@/constants/colour'
 import { Board } from '@/features/game/components/Board'
 import { ArmyPanel } from '@/features/game/components/ArmyPanel'

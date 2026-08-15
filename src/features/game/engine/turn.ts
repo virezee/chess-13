@@ -1,5 +1,5 @@
-import type { Side, PieceList, Position } from '@/types/piece'
-import type { Move, Castling, EnPassant, PromotionSlot, Board, Turn } from '@/types/move'
+import type { Side, PieceList, Position } from '@/types/material'
+import type { Move, Castling, EnPassant, PromotionSlot, Board, Turn } from '@/types/game'
 import { WHITE, BLACK } from '@/constants/colour'
 import {
   POPE,

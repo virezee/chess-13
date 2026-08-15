@@ -1,8 +1,8 @@
-import type { Side } from './piece'
-import type { PromotionSlot } from './move'
+import type { Side } from './material'
+import type { Promotion } from './game'
 
 export type EmperorState = { square: string; awake: boolean } | null
-export type AuraState = 'full' | 'partial' | 'none'
+export type MarshalState = 'full' | 'partial' | 'none'
 export interface ArmyState {
   player: string
   side: Side
@@ -12,7 +12,7 @@ export interface ArmyState {
   enhancedCount: number
   emperor: EmperorState
   lost: string[]
-  promotionSlots: PromotionSlot[]
+  promotionSlots: Promotion[]
   material: number
 }
 export interface LoggedTurn {

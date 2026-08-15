@@ -1,5 +1,5 @@
 import { FILES } from '@/constants/board'
-import type { PieceName, Position, Side } from '@/types/piece'
+import type { PieceName, Position, Side } from '@/types/material'
 import type { ArmyState, GameCounters, LoggedTurn } from '@/types/panel'
 
 /**

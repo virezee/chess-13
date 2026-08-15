@@ -1,5 +1,5 @@
-import type { Side, PieceName, Position } from '@/types/piece'
-import type { Move, Castling, EnPassant, PromotionSlot } from '@/types/move'
+import type { Side, PieceName, SquareOccupant } from '@/types/material'
+import type { Move, CastlingSide, Promotion, EnPassant } from '@/types/game'
 import { COMMAND_SQUARE } from '@/constants/board'
 import {
   POPE,
@@ -29,37 +29,40 @@ import {
 export const isEnhanced = (marshalSquare: string | null, square: string): boolean => {
   if (marshalSquare === null) return false
   if (marshalSquare === COMMAND_SQUARE) return true
-  const at = fromSquare(marshalSquare)
-  const here = fromSquare(square)
-  return Math.max(Math.abs(at.file - here.file), Math.abs(at.rank - here.rank)) <= RANGE
+  const marshalSq = fromSquare(marshalSquare)
+  const target = fromSquare(square)
+  return (
+    Math.max(Math.abs(marshalSq.file - target.file), Math.abs(marshalSq.rank - target.rank)) <=
+    RANGE
+  )
 }
 export const generate = (
   side: Side,
   piece: PieceName,
-  position: Position,
+  occupancy: SquareOccupant,
   marshalSquare: string | null,
   square: string,
-  castling: Castling,
-  enPassant: EnPassant | null,
-  promotionSlots: PromotionSlot[]
+  castlingSide: CastlingSide,
+  promotions: Promotion[],
+  enPassant: EnPassant | null
 ): Move[] => {
-  if (piece === POPE) return pope(side, position, square, castling)
-  if (piece === EMPEROR) return emperor(side, position, square)
-  if (piece === MARSHAL) return marshal(side, position, square)
+  if (piece === POPE) return pope(side, occupancy, square, castlingSide)
+  if (piece === EMPEROR) return emperor(side, occupancy, square)
+  if (piece === MARSHAL) return marshal(side, occupancy, square)
   const enhanced = isEnhanced(marshalSquare, square)
   switch (piece) {
     case ASSASSIN:
-      return assassin(side, position, square, enhanced)
+      return assassin(side, occupancy, square, enhanced)
     case SENTINEL:
-      return sentinel(side, position, square, enhanced, marshalSquare)
+      return sentinel(side, occupancy, square, enhanced, marshalSquare)
     case MAGE:
-      return mage(side, position, square, enhanced)
+      return mage(side, occupancy, square, enhanced)
     case HERALD:
-      return herald(side, position, square, enhanced)
+      return herald(side, occupancy, square, enhanced)
     case TEMPLAR:
-      return templar(side, position, square, enhanced)
+      return templar(side, occupancy, square, enhanced)
     case LEGIONARY:
-      return legionary(side, position, square, enhanced, enPassant, promotionSlots)
+      return legionary(side, occupancy, square, enhanced, promotions, enPassant)
     default: {
       // Every piece name has a branch. A new one has to be wired in here or this fails to compile.
       const unwired: never = piece

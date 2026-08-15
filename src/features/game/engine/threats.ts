@@ -1,5 +1,5 @@
-import type { Side, Piece, Position } from '@/types/piece'
-import type { View } from '@/types/move'
+import type { Side, Piece, SquareOccupant } from '@/types/material'
+import type { Board, View } from '@/types/game'
 import { SIZE, CORNERS } from '@/constants/board'
 import { WHITE } from '@/constants/colour'
 import {
@@ -16,13 +16,17 @@ import {
 } from '@/constants/piece'
 import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
-import { fromSquare, toSquare, isOnBoard, squareOf } from '../lib/coordinate'
+import { fromSquare, toSquare, isOnBoard } from '../lib/coordinate'
 import { isEnhanced } from './generate'
 
-export const occupantAt = (position: Position, view: View, square: string): Piece | undefined => {
+export const occupantAt = (
+  occupancy: SquareOccupant,
+  view: View,
+  square: string
+): Piece | undefined => {
   if (view.moved && view.moved.square === square) return view.moved.piece
   if (view.vacated?.includes(square)) return
-  return position[square]
+  return occupancy[square]
 }
 export const reaches = (
   piece: Piece,
@@ -51,7 +55,7 @@ export const reaches = (
   }
 }
 export const assassinReaches = (
-  position: Position,
+  occupancy: SquareOccupant,
   view: View,
   target: string,
   fileStep: number,
@@ -66,16 +70,16 @@ export const assassinReaches = (
   const file = at.file - fileStep
   const rank = at.rank - rankStep
   if (!isOnBoard(file, rank)) return false
-  return !occupantAt(position, view, toSquare(file, rank))
+  return !occupantAt(occupancy, view, toSquare(file, rank))
 }
 export const leapers = (
   side: Side,
-  position: Position,
+  occupancy: SquareOccupant,
+  view: View,
   marshalSquare: string | null,
-  square: string,
-  view: View
+  square: string
 ): string[] => {
-  if (!Object.values(position).some(piece => piece.side === side && piece.piece === TEMPLAR))
+  if (!Object.values(occupancy).some(piece => piece.side === side && piece.piece === TEMPLAR))
     return []
   const origin = fromSquare(square)
   const found: string[] = []
@@ -88,7 +92,7 @@ export const leapers = (
       const rank = origin.rank + rankStep
       if (!isOnBoard(file, rank)) continue
       const at = toSquare(file, rank)
-      const occupant = occupantAt(position, view, at)
+      const occupant = occupantAt(occupancy, view, at)
       if (!occupant || occupant.side !== side || occupant.piece !== TEMPLAR) continue
       if (needsAura && !isEnhanced(marshalSquare, at)) continue
       found.push(at)
@@ -97,15 +101,16 @@ export const leapers = (
   return found
 }
 export const threats = (
+  board: Board,
   side: Side,
-  position: Position,
-  square: string,
+  view: View = {},
   dormant: boolean,
-  view: View = {}
+  square: string
 ): string[] => {
-  const marshalSquare = squareOf(side, MARSHAL, position)
+  const { pieces, occupancy } = board
+  const marshalSquare = pieces[side][MARSHAL][0] ?? null
   const origin = fromSquare(square)
-  const target = occupantAt(position, view, square)
+  const target = occupantAt(occupancy, view, square)
   const marshalCounts = target?.piece === POPE && target.side !== side
   const found: string[] = []
   for (const [fileStep, rankStep] of EVERY) {
@@ -115,20 +120,20 @@ export const threats = (
       const rank = origin.rank + rankStep * distance
       if (!isOnBoard(file, rank)) break
       const at = toSquare(file, rank)
-      const occupant = occupantAt(position, view, at)
+      const occupant = occupantAt(occupancy, view, at)
       if (!occupant) continue
       if (occupant.side !== side) break
       const enhanced = isEnhanced(marshalSquare, at)
       if (occupant.piece === MARSHAL) {
         if (marshalCounts) found.push(at)
       } else if (occupant.piece === ASSASSIN) {
-        if (assassinReaches(position, view, square, fileStep, rankStep, enhanced, distance))
+        if (assassinReaches(occupancy, view, square, fileStep, rankStep, enhanced, distance))
           found.push(at)
       } else if (reaches(occupant, dormant, isDiagonal, rankStep, enhanced, distance))
         found.push(at)
       break
     }
   }
-  found.push(...leapers(side, position, marshalSquare, square, view))
+  found.push(...leapers(side, occupancy, view, marshalSquare, square))
   return found
 }

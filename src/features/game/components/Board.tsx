@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react'
 import { cn } from '@/lib/cn'
 import { FILES, RANKS } from '@/constants/board'
-import type { Piece, Position } from '@/types/piece'
-import type { Move } from '@/types/move'
+import type { Piece, Position } from '@/types/material'
+import type { Move } from '@/types/game'
 
 /** The Marshal's command square, at the exact centre of the board. */
 const COMMAND_FILE = 6

@@ -1,5 +1,5 @@
-import type { Side, Position } from '@/types/piece'
-import type { Move, Rights, PromotionSlot } from '@/types/move'
+import type { Side, Position } from '@/types/material'
+import type { Move, Rights, PromotionSlot } from '@/types/game'
 import { CENTRE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, LEGIONARY, CASTLING } from '@/constants/piece'
