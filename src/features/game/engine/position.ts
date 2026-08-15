@@ -1,5 +1,5 @@
 import type { Side, PieceSquares, SquareOccupant } from '@/types/material'
-import type { EnPassant, Board, Position, State, NoProgress } from '@/types/game'
+import type { Board, Position, State } from '@/types/game'
 import { WHITE, BLACK } from '@/constants/colour'
 import {
   POPE,
@@ -13,7 +13,7 @@ import {
   LEGIONARY
 } from '@/constants/piece'
 import { threats } from './threats'
-import { checkInfo, dormantEmperor } from './legality'
+import { checkInfo, dormantSquare } from './legality'
 
 const empty = (): PieceSquares => ({
   [POPE]: [],
@@ -34,7 +34,7 @@ const lists = (occupancy: SquareOccupant): Board['pieces'] => {
 }
 const awaken = (board: Board, side: Side, awake: boolean): SquareOccupant => {
   const { pieces, occupancy } = board
-  const square = dormantEmperor(board, side)
+  const square = dormantSquare(board, side)
   if (square === null) return occupancy
   const enemy = side === WHITE ? BLACK : WHITE
   const marshalSq = pieces[side][MARSHAL][0] ?? null
@@ -46,19 +46,10 @@ const awaken = (board: Board, side: Side, awake: boolean): SquareOccupant => {
     return occupancy
   return { ...occupancy, [square]: { ...occupancy[square]!, awake: true } }
 }
-export const position = (
-  side: Side,
-  occupancy: SquareOccupant,
-  castlingSide: State['castlingSide'],
-  promotions: State['promotions'],
-  awake: State['awake'],
-  enPassant: EnPassant | null = null,
-  riposte: boolean,
-  noProgress: NoProgress
-): Position => {
+export const position = (side: Side, occupancy: SquareOccupant, state: State): Position => {
   const pieces = lists(occupancy)
-  const woken = awaken({ pieces, occupancy }, side, awake[side])
-  const board: Board = { pieces, occupancy: woken }
+  const { awake } = state
+  const board: Board = { pieces, occupancy: awaken({ pieces, occupancy }, side, awake[side]) }
   const kept: State['awake'] = {
     ...awake,
     [side]: awake[side] || dormantEmperor(board, side) === null
@@ -66,7 +57,7 @@ export const position = (
   return {
     ...board,
     side,
-    checkInfo: checkInfo(board, side),
-    state: { castlingSide, promotions, enPassant, riposte, awake: kept, noProgress }
+    checkInfo: checkInfo({ pieces, occupancy }, side),
+    state: { ...state, awake: kept }
   }
 }

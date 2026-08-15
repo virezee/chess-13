@@ -1,5 +1,5 @@
 import type { SquareOccupant } from '@/types/material'
-import type { EnPassant, Move, State, Step, Position } from '@/types/game'
+import type { EnPassant, Move, State, Step, Position, NoProgress } from '@/types/game'
 import { CENTRE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, MARSHAL, LEGIONARY, CASTLING } from '@/constants/piece'
@@ -119,7 +119,7 @@ const riposte = (position: Position, move: Move, next: SquareOccupant): boolean 
     clearLine(next, { from: marshalSquare, to: square })
   )
 }
-const progress = (occupancy: SquareOccupant, move: Move, noProgress: number): number => {
+const progress = (occupancy: SquareOccupant, move: Move, noProgress: NoProgress): number => {
   const made =
     (move.captures?.length ?? 0) > 0 ||
     occupancy[move.from]?.piece === LEGIONARY ||
@@ -140,8 +140,7 @@ export const apply = (
       enPassant: enPassant(occupancy, move),
       awake: state.awake,
       riposte: riposte(position, move, next),
-      noProgress: progress(occupancy, move, state.noProgress),
-      noProgressLimit: state.noProgressLimit
+      noProgress: {count: progress(occupancy, move, noProgress), limit:  state.noProgressLimi},
     }
   }
 }

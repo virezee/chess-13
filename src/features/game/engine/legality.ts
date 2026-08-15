@@ -134,15 +134,15 @@ export const checkInfo = (board: Board, side: Side): CheckInfo => {
   const pinned: CheckInfo['pinned'] = new Map()
   const pope = pieces[side][POPE][0]!
   const enemy = opponent(side)
+  const enemyPope = pieces[enemy][POPE][0]!
   const enemyMarshal = pieces[enemy][MARSHAL][0] ?? null
-  const enemyPope = pieces[enemy][POPE][0] ?? null
   const checkers = [
     ...sliderCheckers(board, pope, side, enemyPope, enemyMarshal, pinned),
     ...templarCheckers(pope, enemyMarshal, pieces[enemy][TEMPLAR])
   ]
   return { checkers, pinned }
 }
-export const dormantEmperor = (board: Board, side: Side): string | null => {
+export const dormantSquare = (board: Board, side: Side): string | null => {
   const { pieces, occupancy } = board
   const square = pieces[side][EMPEROR][0] ?? null
   if (square === null) return null

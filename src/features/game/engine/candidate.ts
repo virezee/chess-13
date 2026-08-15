@@ -31,7 +31,7 @@ const isEvasion = (
     square => move.captures?.includes(square) || (pope !== null && blocks(pope, square, move.to))
   )
 }
-export const onLine = (
+const onLine = (
   from: string,
   to: string,
   [fileStep, rankStep]: readonly [number, number]
