@@ -44,11 +44,11 @@ export interface NoProgress {
   limit: number
 }
 export interface State {
+  awake: Record<Side, boolean>
+  riposte: boolean
   castlingSide: Record<Side, CastlingSide>
   promotions: Record<Side, Promotion[]>
   enPassant: EnPassant | null
-  awake: Record<Side, boolean>
-  riposte: boolean
   noProgress: NoProgress
 }
 export interface Position extends Board {
