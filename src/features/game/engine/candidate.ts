@@ -78,7 +78,7 @@ export const candidate = (position: Position): Move[] => {
         state.enPassant
       )) {
         if (pinDirection && !isAligned({ from: pope, to: move.to }, pinDirection)) continue
-        if (checkers.length > 0 && !isEvasion(pope, checkers, piece, move)) continue
+        if (checkers.length > 0 && !isAssCheck && !isEvasion(pope, checkers, piece, move)) continue
         moves.push(move)
       }
     }

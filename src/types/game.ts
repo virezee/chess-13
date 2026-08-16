@@ -64,6 +64,7 @@ export interface Match {
   swap: boolean
   whitePlayer: string | null
   history: string[]
+  pgn: string
 }
 export interface Save {
   side: Side

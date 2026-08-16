@@ -3,6 +3,12 @@ import type { EnPassant, Move, State, Step, Position, NoProgress } from '@/types
 import { CENTRE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, MARSHAL, LEGIONARY, CASTLING } from '@/constants/piece'
+import {
+  PLIES_PER_MOVE,
+  NO_PROGRESS_BASE,
+  NO_PROGRESS_PER_PIECE,
+  STARTING_PIECES
+} from '@/constants/outcome'
 import { parseSquare, makeSquare } from '../lib/coordinate'
 import { riposteSquares } from './moves'
 
@@ -90,7 +96,7 @@ const enPassant = (occupancy: SquareOccupant, move: Move): EnPassant | null => {
     origin.rank !== CENTRE - step * (CENTRE - 3)
   )
     return null
-  return { target: makeSquare(target.file, CENTRE - step), captured: move.to }
+  return { target: makeSquare({ file: target.file, rank: CENTRE - step }), captured: move.to }
 }
 const clearLine = (occupancy: SquareOccupant, { from, to }: Step): boolean => {
   if (from === to) return false
@@ -103,7 +109,11 @@ const clearLine = (occupancy: SquareOccupant, { from, to }: Step): boolean => {
   const rankStep = Math.sign(ranks)
   const distance = Math.max(Math.abs(files), Math.abs(ranks))
   for (let step = 1; step < distance; step += 1) {
-    if (occupancy[makeSquare(origin.file + fileStep * step, origin.rank + rankStep * step)])
+    if (
+      occupancy[
+        makeSquare({ file: origin.file + fileStep * step, rank: origin.rank + rankStep * step })
+      ]
+    )
       return false
   }
   return true
@@ -119,12 +129,22 @@ const riposte = (position: Position, move: Move, next: SquareOccupant): boolean 
     clearLine(next, { from: marshalSquare, to: square })
   )
 }
-const progress = (occupancy: SquareOccupant, move: Move, noProgress: NoProgress): number => {
+const progress = (
+  occupancy: SquareOccupant,
+  next: SquareOccupant,
+  move: Move,
+  noProgress: NoProgress
+): NoProgress => {
   const made =
     (move.captures?.length ?? 0) > 0 ||
     occupancy[move.from]?.piece === LEGIONARY ||
     move.promotesTo !== undefined
-  return made ? 0 : noProgress + 1
+  if (!made) return { count: noProgress.count + 1, limit: noProgress.limit }
+  const pieces = Object.keys(next).length
+  return {
+    count: 0,
+    limit: (NO_PROGRESS_BASE + NO_PROGRESS_PER_PIECE * (STARTING_PIECES - pieces)) * PLIES_PER_MOVE
+  }
 }
 export const apply = (
   position: Position,
@@ -140,7 +160,7 @@ export const apply = (
       enPassant: enPassant(occupancy, move),
       awake: state.awake,
       riposte: riposte(position, move, next),
-      noProgress: {count: progress(occupancy, move, noProgress), limit:  state.noProgressLimi},
+      noProgress: progress(occupancy, next, move, state.noProgress)
     }
   }
 }
