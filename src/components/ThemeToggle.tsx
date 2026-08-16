@@ -1,21 +1,14 @@
 'use client'
 
-import { THEME } from '@/constants/storage'
-import { IconButton } from '@/components/ui/IconButton'
+import { useTheme } from 'next-themes'
+import { IconButton } from './ui/IconButton'
 
-const toggle = () => {
-  const root = document.documentElement
-  const next = root.dataset.theme === 'light' ? 'dark' : 'light'
-  root.dataset.theme = next
-  try {
-    localStorage.setItem(THEME, next)
-  } catch (e) {
-    console.warn('Theme preference could not be saved.', e)
-  }
-}
 export function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme()
   return (
-    <IconButton label='Switch theme' onClick={toggle}>
+    <IconButton
+      label='Switch theme'
+      onClick={() => setTheme(resolvedTheme === 'light' ? 'dark' : 'light')}>
       <svg viewBox='0 0 16 16' className='h-4 w-4 light:hidden' aria-hidden>
         <circle cx='8' cy='8' r='3' fill='none' stroke='currentColor' strokeWidth='1.1' />
         <path

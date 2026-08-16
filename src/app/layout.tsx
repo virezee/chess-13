@@ -1,22 +1,21 @@
 import type { Metadata } from 'next'
+import { ThemeProvider } from 'next-themes'
 import { AppHeader } from '@/components/AppHeader'
-import { themeScript } from '@/lib/theme'
 import { typography } from '@/styles/typography'
 import '@/styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'Chess 13 (Chess II: Epoch)',
-  description: 'One of the 13 x 13 chess variant.'
+  description: 'A 13 × 13 chess variant.'
 }
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang='en' suppressHydrationWarning className={`${typography} h-full antialiased`}>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
       <body className='min-h-full flex flex-col'>
-        <AppHeader />
-        {children}
+        <ThemeProvider attribute='data-theme' defaultTheme='system' enableSystem>
+          <AppHeader />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

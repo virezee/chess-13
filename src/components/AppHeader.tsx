@@ -1,5 +1,5 @@
-import { IconButton } from '@/components/ui/IconButton'
-import { ThemeToggle } from '@/components/ThemeToggle'
+import { IconButton } from './ui/IconButton'
+import { ThemeToggle } from './ThemeToggle'
 
 export function AppHeader() {
   return (
@@ -30,7 +30,7 @@ export function AppHeader() {
               />
             </svg>
           </IconButton>
-          <IconButton label='Sound'>
+          {/* <IconButton label='Sound'>
             <svg viewBox='0 0 16 16' className='h-4 w-4' aria-hidden>
               <path
                 d='M8.5 3 5 5.8H2.8v4.4H5L8.5 13zM11 6.2a2.6 2.6 0 0 1 0 3.6M12.9 4.4a5.2 5.2 0 0 1 0 7.2'
@@ -41,7 +41,7 @@ export function AppHeader() {
                 strokeLinejoin='round'
               />
             </svg>
-          </IconButton>
+          </IconButton> */}
           <ThemeToggle />
         </div>
       </div>
