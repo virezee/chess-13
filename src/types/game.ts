@@ -62,8 +62,8 @@ export interface Match {
   history: string[]
 }
 export interface Save {
-  occupancy: SquareOccupant
   side: Side
+  occupancy: SquareOccupant
   state: State
   match: Match
 }

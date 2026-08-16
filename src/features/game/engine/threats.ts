@@ -52,7 +52,7 @@ const leapers = (
   }
   return templars
 }
-export const reaches = (
+export const isReachable = (
   piece: Piece,
   dormant: boolean,
   isDiagonal: boolean,
@@ -78,18 +78,18 @@ export const reaches = (
       return false
   }
 }
-export const assassinReaches = (
+export const isAssassinReachable = (
   occupancy: SquareOccupant,
   view: View,
   square: string,
   fileStep: number,
   rankStep: number,
   enhanced: boolean,
-  gap: number
+  distance: number
 ): boolean => {
   const reach = REACH.assassin[enhanced ? ENHANCED : RESTRICTED].reach
-  if (CORNERS.includes(square)) return gap <= reach
-  if (gap + 1 > reach) return false
+  if (CORNERS.includes(square)) return distance <= reach
+  if (distance + 1 > reach) return false
   const target = parseSquare(square)
   const file = target.file - fileStep
   const rank = target.rank - rankStep
@@ -127,13 +127,13 @@ export const threats = (
           ? square
           : makeSquare(target.file - fileStep, target.rank - rankStep)
         if (
-          assassinReaches(occupancy, view, square, fileStep, rankStep, enhanced, distance) &&
+          isAssassinReachable(occupancy, view, square, fileStep, rankStep, enhanced, distance) &&
           !threats(board, side === WHITE ? BLACK : WHITE, view, false, dest).some(
             defender => defender !== square
           )
         )
           attackers.push(attacker)
-      } else if (reaches(occupant, dormant, isDiagonal, rankStep, enhanced, distance))
+      } else if (isReachable(occupant, dormant, isDiagonal, rankStep, enhanced, distance))
         attackers.push(attacker)
       break
     }

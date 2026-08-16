@@ -7,7 +7,7 @@ import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
 import { parseSquare, makeSquare, isOnBoard } from '../lib/coordinate'
 import { isEnhanced } from './generate'
 import { candidate } from './candidate'
-import { reaches, assassinReaches, threats } from './threats'
+import { isReachable, isAssassinReachable, threats } from './threats'
 
 const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
 const makeMove = (occupancy: SquareOccupant, move: Move): View => {
@@ -82,7 +82,7 @@ const sliderCheckers = (
           ? pope
           : makeSquare(origin.file - fileStep, origin.rank - rankStep)
         isAttacked =
-          assassinReaches(occupancy, {}, pope, fileStep, rankStep, enhanced, distance) &&
+          isAssassinReachable(occupancy, {}, pope, fileStep, rankStep, enhanced, distance) &&
           !threats(board, side, {}, false, dest).some(defender => defender !== pope)
         break
       }
@@ -90,7 +90,7 @@ const sliderCheckers = (
         isAttacked = distance === 1 && !isInRing({ from: square, to: enemyPope })
         break
       default:
-        isAttacked = reaches(
+        isAttacked = isReachable(
           occupant,
           false,
           fileStep !== 0 && rankStep !== 0,

@@ -1,58 +1,61 @@
-import type { Move, Position } from '@/types/game'
+import type { Move, Position, Step } from '@/types/game'
 import type { Piece, PieceName } from '@/types/material'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
 import { parseSquare } from '../lib/coordinate'
 import { generate } from './generate'
 
-const blocks = (pope: string, checker: string, square: string): boolean => {
+const isBlocking = (pope: string, checker: string, square: string): boolean => {
   const origin = parseSquare(pope)
   const target = parseSquare(checker)
-  const files = target.file - origin.file
-  const ranks = target.rank - origin.rank
-  if (files !== 0 && ranks !== 0 && Math.abs(files) !== Math.abs(ranks)) return false
-  const fileStep = Math.sign(files)
-  const rankStep = Math.sign(ranks)
-  const distance = Math.max(Math.abs(files), Math.abs(ranks))
-  const at = parseSquare(square)
-  for (let step = 1; step < distance; step += 1) {
-    if (at.file === origin.file + fileStep * step && at.rank === origin.rank + rankStep * step)
+  const fileDelta = target.file - origin.file
+  const rankDelta = target.rank - origin.rank
+  if (fileDelta !== 0 && rankDelta !== 0 && Math.abs(fileDelta) !== Math.abs(rankDelta))
+    return false
+  const fileStep = Math.sign(fileDelta)
+  const rankStep = Math.sign(rankDelta)
+  const fromOrigin = Math.max(Math.abs(fileDelta), Math.abs(rankDelta))
+  const blocker = parseSquare(square)
+  for (let distance = 1; distance < fromOrigin; distance += 1) {
+    if (
+      blocker.file === origin.file + fileStep * distance &&
+      blocker.rank === origin.rank + rankStep * distance
+    )
       return true
   }
   return false
 }
 const isEvasion = (
+  pope: string,
   checkers: readonly string[],
-  pope: string | null,
   piece: Piece,
   move: Move
 ): boolean => {
   if (piece.piece === POPE) return true
   return checkers.every(
-    square => move.captures?.includes(square) || (pope !== null && blocks(pope, square, move.to))
+    checker => move.captures?.includes(checker) || isBlocking(pope, checker, move.to)
   )
 }
-const onLine = (
-  from: string,
-  to: string,
+const isAligned = (
+  { from, to }: Step,
   [fileStep, rankStep]: readonly [number, number]
 ): boolean => {
   const origin = parseSquare(from)
   const target = parseSquare(to)
-  const files = target.file - origin.file
-  const ranks = target.rank - origin.rank
-  if (fileStep === 0) return files === 0 && Math.sign(ranks) === rankStep
-  if (rankStep === 0) return ranks === 0 && Math.sign(files) === fileStep
+  const fileDelta = target.file - origin.file
+  const rankDelta = target.rank - origin.rank
+  if (fileStep === 0) return fileDelta === 0 && Math.sign(rankDelta) === rankStep
+  if (rankStep === 0) return rankDelta === 0 && Math.sign(fileDelta) === fileStep
   return (
-    Math.abs(files) === Math.abs(ranks) &&
-    Math.sign(files) === fileStep &&
-    Math.sign(ranks) === rankStep
+    Math.abs(fileDelta) === Math.abs(rankDelta) &&
+    Math.sign(fileDelta) === fileStep &&
+    Math.sign(rankDelta) === rankStep
   )
 }
 export const candidate = (position: Position): Move[] => {
   const { pieces, occupancy, side, checkInfo, state } = position
   const { checkers, pinned } = checkInfo
+  const pope = pieces[side][POPE][0]!
   const marshalSquare = pieces[side][MARSHAL][0] ?? null
-  const pope = pieces[side][POPE][0] ?? null
   const answering = checkers.some(square => occupancy[square]?.piece === ASSASSIN)
   const doubled = checkers.length > 1 && !answering
   const moves: Move[] = []
@@ -74,8 +77,8 @@ export const candidate = (position: Position): Move[] => {
         state.promotions[side],
         state.enPassant
       )) {
-        if (pin && pope !== null && !onLine(pope, move.to, pin)) continue
-        if (checkers.length > 0 && !isEvasion(checkers, pope, piece, move)) continue
+        if (pin && pope !== null && !isAligned({ from: pope, to: move.to }, pin)) continue
+        if (checkers.length > 0 && !isEvasion(pope, checkers, piece, move)) continue
         moves.push(move)
       }
     }
