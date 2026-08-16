@@ -41,26 +41,26 @@ Back rank layout: `S T H G A E P M A G H T S`
 
 Each letter is the initial of its piece, with one exception. The Mage takes `G` because `M` belongs to the Marshal, following the same convention that gives the Knight `N` in chess. Every letter still comes from the name of its own piece. The pawn is called a Legionary, so no letter competes with the Pope's `P`.
 
-## Core mechanic: the Marshal's command aura
+## Core mechanic: the Marshal's command zone
 
-Every piece has a strong version and a weak version. Which version applies depends on where the piece stands relative to its own Marshal.
+Every piece has an enhanced version and a restricted version. Which version applies depends on where the piece stands relative to its own Marshal.
 
-| Marshal          | Effect                                                                                              |
-| ---------------- | --------------------------------------------------------------------------------------------------- |
-| On **g7**        | The entire army is strong, wherever each piece stands.                                              |
-| Any other square | Pieces within **Chebyshev distance 4** of the Marshal are strong. Every piece further away is weak. |
-| Captured         | The entire army is weak.                                                                            |
+| Marshal          | Effect                                                                                                      |
+| ---------------- | ----------------------------------------------------------------------------------------------------------- |
+| On **g7**        | The entire army is enhanced, wherever each piece stands.                                                    |
+| Any other square | Pieces within **Chebyshev distance 4** of the Marshal are enhanced. Every piece further away is restricted. |
+| Captured         | The entire army is restricted.                                                                              |
 
 Chebyshev distance is king-move distance. Take the difference in files and the difference in ranks, then use the larger of the two. Distance 4 describes a 9 × 9 square centred on the Marshal, which covers 81 of the board's 169 squares when no edge cuts it off.
 
-- The aura affects only your own pieces. The opponent's army responds to their own Marshal.
-- Promoting a Legionary into a new Marshal restores the aura.
+- The command zone affects only your own pieces. The opponent's army responds to their own Marshal.
+- Promoting a Legionary into a new Marshal restores the command zone.
 - The Emperor and the Pope are never affected.
-- A piece uses the version that matches **the square it starts its move from**, not the square it ends on. A Sentinel leaving the aura still moves at strong range on the way out.
+- A piece uses the version that matches **the square it starts its move from**, not the square it ends on. A Sentinel leaving the command zone still moves at enhanced range on the way out.
 
 g7 is the centre of the board and sits 6 ranks from either back rank, so both sides reach it on equal terms. It also sits at the middle of the rank-7 contact line, which makes it the most dangerous square on the board for the most valuable piece after the Pope. Castling clears the g-file, which is the Marshal's road to it.
 
-| Piece     | Strong                                                                                                             | Weak                                                                    |
+| Piece     | Enhanced                                                                                                           | Restricted                                                              |
 | --------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
 | Legionary | 1 or 2 tiles per move past rank 7                                                                                  | 1 tile                                                                  |
 | Sentinel  | 6 tiles without capturing, unlimited when capturing, and passes through its own pieces when closing on the Marshal | 3 tiles without capturing, 6 tiles when capturing, blocked by any piece |
@@ -69,7 +69,7 @@ g7 is the centre of the board and sits 6 ranks from either back rank, so both si
 | Mage      | The blast destroys its own pieces as well, and the Mage survives it                                                | The blast spares its own pieces, and the Mage dies with it              |
 | Assassin  | Unlimited range                                                                                                    | Range 6, counting the landing tile                                      |
 
-The weak version never carries an advantage of its own. The owner decides which pieces stand outside the aura, so any benefit available out there would be claimed deliberately rather than suffered. The Mage is the only exception, because its weak blast spares its own pieces. It pays for that with its life, and a blast that can be repeated every turn is worth more than a blast that can be used once. Its friendly fire is avoidable in any case, by keeping your own pieces off the surrounding tiles.
+The restricted version never carries an advantage of its own. The owner decides which pieces stand outside the command zone, so any benefit available out there would be claimed deliberately rather than suffered. The Mage is the only exception, because its restricted blast spares its own pieces. It pays for that with its life, and a blast that can be repeated every turn is worth more than a blast that can be used once. Its friendly fire is avoidable in any case, by keeping your own pieces off the surrounding tiles.
 
 ## Piece moves
 
@@ -77,7 +77,7 @@ The weak version never carries an advantage of its own. The owner decides which 
 
 - **Below rank 7.** Moves straight forward any distance up to rank 7, and never past it. From its starting rank that is 4 tiles, rank 3 to rank 7. If the path is blocked, it stops short, for example on rank 5 or rank 6, and it may still make a long advance later, such as rank 5 to rank 7. Standing on rank 6, its only forward move is to rank 7.
 - The path must be clear. The Legionary does not jump. Two pieces never share a tile, so a Legionary stopped in front of an enemy Legionary on rank 7 stands on rank 6 facing it.
-- **From rank 7 onward.** 1 tile per move up to rank 13. While strong, it may choose either 1 or 2 tiles.
+- **From rank 7 onward.** 1 tile per move up to rank 13. While enhanced, it may choose either 1 or 2 tiles.
 - Captures one tile diagonally forward, exactly as in chess.
 - **En passant** applies to one move only: the full 4-tile advance from the starting rank onto rank 7. White plays rank 3 to rank 7, black plays rank 11 to rank 7. An enemy Legionary standing beside the arriving piece, on rank 7 and on an adjacent file, may capture it by moving to the square directly behind it on rank 6 and removing it from rank 7.
   - Black stands on d7. White advances from e3 to e7. Black replies by moving to e6 and removes the white Legionary on e7.
@@ -90,10 +90,10 @@ The weak version never carries an advantage of its own. The owner decides which 
 
 The rook of this game. Straight lines only, and the path must be clear.
 
-| Version    | Moving without capturing                                                        | Capturing                 |
-| ---------- | ------------------------------------------------------------------------------- | ------------------------- |
-| **Strong** | Up to 6 tiles, and it passes through its own pieces when closing on the Marshal | Unlimited, the whole line |
-| **Weak**   | Up to 3 tiles, blocked by any piece                                             | Up to 6 tiles             |
+| Version        | Moving without capturing                                                        | Capturing                 |
+| -------------- | ------------------------------------------------------------------------------- | ------------------------- |
+| **Enhanced**   | Up to 6 tiles, and it passes through its own pieces when closing on the Marshal | Unlimited, the whole line |
+| **Restricted** | Up to 3 tiles, blocked by any piece                                             | Up to 6 tiles             |
 
 The long reach exists only on a move that actually captures. From rank 1, a non-capturing move stops at rank 7. Rank 13 is reachable only when an enemy piece is standing there.
 
@@ -103,33 +103,33 @@ These are plain distances and have no connection to the centre rank. A Sentinel 
 
 **Passing through its own pieces** applies only to a move that does not capture. The direction is judged once, from the square the Sentinel starts on: the Marshal must lie ahead on the axis being travelled. With the Sentinel on e5 and the Marshal on h8, moving up and moving right both qualify, because the Marshal stands above and to the right. Moving down or left does not. A Marshal on the Sentinel's own rank disqualifies both vertical directions, and a Marshal on its own file disqualifies both horizontal ones, because there is no gap on the axis being travelled.
 
-Once a direction qualifies it stays qualified for the whole of that direction's range. Any number of its own pieces may be passed, the Marshal included, and the squares beyond the Marshal are still reachable. The landing square must be empty. Enemy pieces always block, and a line that has passed through anything cannot capture for the rest of that direction. A weak Sentinel never passes through, and neither does any Sentinel whose Marshal has been captured.
+Once a direction qualifies it stays qualified for the whole of that direction's range. Any number of its own pieces may be passed, the Marshal included, and the squares beyond the Marshal are still reachable. The landing square must be empty. Enemy pieces always block, and a line that has passed through anything cannot capture for the rest of that direction. A restricted Sentinel never passes through, and neither does any Sentinel whose Marshal has been captured.
 
 ### Templar (T)
 
 The leaper of this game. It jumps to a fixed set of squares, and whatever lies in between is irrelevant: nothing on those squares is captured, and nothing on them blocks the jump.
 
-| Version    | Leap                |
-| ---------- | ------------------- |
-| **Strong** | 3 and 2, or 2 and 1 |
-| **Weak**   | 3 and 2 only        |
+| Version        | Leap                |
+| -------------- | ------------------- |
+| **Enhanced**   | 3 and 2, or 2 and 1 |
+| **Restricted** | 3 and 2 only        |
 
 Capturing works exactly as a knight's does in chess. The Templar lands on the enemy square and takes what stands there, and a square held by one of its own pieces cannot be entered. Moving and capturing use the same landing squares, because a leap has no path that can be closed. One capture per turn, always on the square it lands on.
 
-The weak Templar is deliberately not a chess knight. A 3-and-2 leap belongs to no orthodox piece, so a Templar outside the aura has to be read on its own terms. The aura does not lengthen the leap either. It adds a second shape: inside the aura the Templar keeps the long leap and gains the short one, taking it from 8 landing squares to 16.
+The restricted Templar is deliberately not a chess knight. A 3-and-2 leap belongs to no orthodox piece, so a Templar outside the command zone has to be read on its own terms. The command zone does not lengthen the leap either. It adds a second shape: inside the command zone the Templar keeps the long leap and gains the short one, taking it from 8 landing squares to 16.
 
 Both leaps change square colour on every jump, so neither confines the Templar to one colour of square. A 3-and-1 leap would, which is why it is not used.
 
-Averaged over the whole board the weak Templar reaches 5.2 squares and the strong one 11.5, against 13.2 and 19.1 for the Herald. A leaper keeps its full count in a crowded position while a slider loses most of its own, so the gap on paper is wider than the gap in play. This is the relationship the knight and the bishop have in chess, where mobility differs by 40 per cent and value by 8.
+Averaged over the whole board the restricted Templar reaches 5.2 squares and the enhanced one 11.5, against 13.2 and 19.1 for the Herald. A leaper keeps its full count in a crowded position while a slider loses most of its own, so the gap on paper is wider than the gap in play. This is the relationship the knight and the bishop have in chess, where mobility differs by 40 per cent and value by 8.
 
 ### Herald (H)
 
 The bishop of this game, plus one straight step of a single tile. That extra step lets it change square colour, so it is not confined to one colour on an odd board.
 
-| Version    | Diagonal                                      | 1-tile straight step |
-| ---------- | --------------------------------------------- | -------------------- |
-| **Strong** | Unlimited, for moving and capturing alike     | Can capture          |
-| **Weak**   | Up to 6 tiles, for moving and capturing alike | Cannot capture       |
+| Version        | Diagonal                                      | 1-tile straight step |
+| -------------- | --------------------------------------------- | -------------------- |
+| **Enhanced**   | Unlimited, for moving and capturing alike     | Can capture          |
+| **Restricted** | Up to 6 tiles, for moving and capturing alike | Cannot capture       |
 
 Unlike the Sentinel, the Herald's diagonal reach is the same whether or not it captures.
 
@@ -141,8 +141,8 @@ Its attack is a blast rather than a normal capture.
 
 - A turn is either a move or a blast, never both.
 - When it blasts, the Mage does not move. Everything on the 8 surrounding tiles is destroyed. From b2 that covers a1, a2, a3, b3, c3, c2, c1 and b1.
-- **Strong.** The blast destroys everything in the ring, including its own pieces, and the Mage survives. It may blast every turn.
-- **Weak.** Its own pieces are spared, but the Mage dies with the blast.
+- **Enhanced.** The blast destroys everything in the ring, including its own pieces, and the Mage survives. It may blast every turn.
+- **Restricted.** Its own pieces are spared, but the Mage dies with the blast.
 
 Conditions for a legal blast:
 
@@ -154,16 +154,16 @@ Conditions for a legal blast:
 
 ### Assassin (A)
 
-Moves along queen lines, unlimited while strong and up to 6 tiles while weak. It cannot be recaptured after a capture.
+Moves along queen lines, unlimited while enhanced and up to 6 tiles while restricted. It cannot be recaptured after a capture.
 
-The Assassin does not occupy the victim's square. It slides up to the victim and lands on the tile **directly behind** it. While weak, that landing tile counts inside the range of 6 and can never lie beyond it.
+The Assassin does not occupy the victim's square. It slides up to the victim and lands on the tile **directly behind** it. While restricted, that landing tile counts inside the range of 6 and can never lie beyond it.
 
 A capture is allowed only when the landing tile is:
 
 - **empty.** Any piece standing there blocks the capture, friendly or enemy.
 - **not watched by the enemy.** If the enemy could capture the Assassin on that tile, the capture is unavailable even though the tile is empty.
 
-Both conditions apply to the strong and weak versions alike.
+Both conditions apply to the enhanced and restricted versions alike.
 
 - The path up to the victim must be clear. The Assassin slides and does not jump.
 - The landing tile is always exactly one tile past the victim. **One kill per turn.** There are no chains as in checkers.
@@ -181,7 +181,7 @@ Both squares must lie on the Marshal's lines, and the landing tile is always one
 
 ### Emperor (E)
 
-The queen of chess 1.0, unchanged. The aura does not affect it. What is not unchanged is when it may be used at all.
+The queen of chess 1.0, unchanged. The command zone does not affect it. What is not unchanged is when it may be used at all.
 
 **The Emperor starts dormant and stays dormant while its own Marshal is alive.** A dormant Emperor cannot move, cannot capture, does not guard any square, and cannot be captured. Nothing removes it while it sleeps, a Mage's blast included, and that holds for its own side's Mage as much as the opponent's. It still occupies its square, so it blocks lines like any other piece.
 
@@ -194,7 +194,7 @@ It wakes in either of two ways, and once awake it stays awake for the rest of th
 
 Example. White has a dormant Emperor on e1 and a Herald on e4. Black has a Sentinel on e7. Both Popes and both Marshals stand far away on the other side of the board. The e-file is otherwise empty. White is to move.
 
-1. White plays He4–b7 and opens the e-file itself. The black Sentinel on e7 now attacks e1, six tiles away, which even a weak Sentinel captures over.
+1. White plays He4–b7 and opens the e-file itself. The black Sentinel on e7 now attacks e1, six tiles away, which even a restricted Sentinel captures over.
 2. Black plays Se7–a7 and pulls the attacker off the file.
 3. White's turn begins. e1 is not attacked, so the Emperor stays asleep.
 
@@ -220,7 +220,7 @@ Waking your own Emperor early is possible and costs a tempo. Move a piece of you
 
 ### Pope (P)
 
-The king of chess 1.0. It is the central piece of this game and stands outside the aura mechanic.
+The king of chess 1.0. It is the central piece of this game and stands outside the command zone mechanic.
 
 Castling works as in chess. The partner is the **Sentinel**, and the Pope travels **3 files** instead of 2.
 
@@ -242,7 +242,7 @@ Moves like a queen. Its captures are conditional. It may capture only a piece th
 - **The riposte.** Answering a capture in its own lines is exempt. The trigger is _where_ the opponent captured, not which piece died. If the opponent's last move captured one of your pieces **on a square that lies on one of the Marshal's eight lines, with a clear path from the Marshal to that square**, then for that one turn the Marshal may capture any enemy piece standing on its lines, with no support required. If the capture happened off its lines, nothing changes and the support rule applies as usual. The right expires if it is not used on your immediate reply.
   - The square that counts is the one your captured piece was standing on, not the square the capturing piece ended on. The two differ for an Assassin, which lands one tile beyond, for a Mage blast, where the Mage never moves, and for en passant, where the capturing Legionary ends up one rank short of its victim.
   - The line is judged at the moment your piece died, on the board the opponent's move produced. Whether the opponent closes it again afterwards does not matter, because the reply comes immediately.
-  - **The killer has to be an enemy piece.** Your own strong Mage destroying your own pieces, and your own weak Mage dying on its own square, do not arm the riposte. Without that condition a Legionary fed to your own blast would buy a free capture.
+  - **The killer has to be an enemy piece.** Your own enhanced Mage destroying your own pieces, and your own restricted Mage dying on its own square, do not arm the riposte. Without that condition a Legionary fed to your own blast would buy a free capture.
   - One enemy move arms one riposte, including a blast that kills several of your pieces at once, because the Marshal moves only once.
 
 Worked example. The Marshal stands on d4. The opponent's Herald captures your Legionary on d8 and now occupies that square. An enemy Sentinel sits on g4 and has done nothing.
@@ -254,7 +254,7 @@ Worked example. The Marshal stands on d4. The opponent's Herald captures your Le
 
 Two consequences are worth noting. The Marshal wants open lines, because closed lines never trigger the exemption, so this rule pushes it out of hiding. In addition, the enemy Pope may not capture one of your pieces on a square in the Marshal's lines, because the Marshal could answer, which makes such a capture a move into check.
 
-The Marshal carries the aura, so its position is a decision every turn. Distance 4 covers 9 of the 13 files, which is enough for one wing and the centre together but never both wings at once. Queen mobility is what makes that workable, because the aura can cross the board in a single move.
+The Marshal carries the command zone, so its position is a decision every turn. Distance 4 covers 9 of the 13 files, which is enough for one wing and the centre together but never both wings at once. Queen mobility is what makes that workable, because the command zone can cross the board in a single move.
 
 ## Piece values
 
@@ -293,20 +293,20 @@ The pawn is the third calibration. It attacks 1.75 squares on average, worth 1.7
 | Leap 3-2 only            | 880                  | 5.2071  |
 | Diagonal forward capture | 24 per rank          | 1.8462  |
 
-The Herald's strong count is 15.3846 + 3.6923 = 19.0769, its straight step being able to capture. Its weak count is the diagonal alone, 13.2308, because that step cannot capture there. The Sentinel is read on its capture range, not its quiet range, which is why the strong one counts the whole line.
+The Herald's enhanced count is 15.3846 + 3.6923 = 19.0769, its straight step being able to capture. Its restricted count is the diagonal alone, 13.2308, because that step cannot capture there. The Sentinel is read on its capture range, not its quiet range, which is why the enhanced one counts the whole line.
 
 ### Rate applied
 
-| Piece     | Pattern, strong  | Average | × rate  | Pattern, weak    | Average | × rate  |
-| --------- | ---------------- | ------- | ------- | ---------------- | ------- | ------- |
-| Emperor   | Queen unlimited  | 39.3846 | 14.7692 | same             | 39.3846 | 14.7692 |
-| Marshal   | Queen unlimited  | 39.3846 | 14.7692 | n/a              | n/a     | n/a     |
-| Assassin  | Queen unlimited  | 39.3846 | 14.7692 | Queen up to 6    | 30.7692 | 11.5385 |
-| Sentinel  | Straight unlim.  | 24.0000 | 9.0000  | Straight up to 6 | 17.5385 | 6.5769  |
-| Herald    | Diagonal + step  | 19.0769 | 7.1538  | Diagonal to 6    | 13.2308 | 4.9615  |
-| Templar   | Both leaps       | 11.4556 | 6.5297  | Leap 3-2         | 5.2071  | 2.9681  |
-| Mage      | Ring of 8        | 7.1006  | 2.6627  | same             | 7.1006  | 2.6627  |
-| Legionary | Diagonal capture | 1.8462  | 0.6923  | same             | 1.8462  | 0.6923  |
+| Piece     | Pattern, enhanced | Average | × rate  | Pattern, restricted | Average | × rate  |
+| --------- | ----------------- | ------- | ------- | ------------------- | ------- | ------- |
+| Emperor   | Queen unlimited   | 39.3846 | 14.7692 | same                | 39.3846 | 14.7692 |
+| Marshal   | Queen unlimited   | 39.3846 | 14.7692 | n/a                 | n/a     | n/a     |
+| Assassin  | Queen unlimited   | 39.3846 | 14.7692 | Queen up to 6       | 30.7692 | 11.5385 |
+| Sentinel  | Straight unlim.   | 24.0000 | 9.0000  | Straight up to 6    | 17.5385 | 6.5769  |
+| Herald    | Diagonal + step   | 19.0769 | 7.1538  | Diagonal to 6       | 13.2308 | 4.9615  |
+| Templar   | Both leaps        | 11.4556 | 6.5297  | Leap 3-2            | 5.2071  | 2.9681  |
+| Mage      | Ring of 8         | 7.1006  | 2.6627  | same                | 7.1006  | 2.6627  |
+| Legionary | Diagonal capture  | 1.8462  | 0.6923  | same                | 1.8462  | 0.6923  |
 
 The Templar's two figures carry the leaper premium: 11.4556 × 0.375 × 1.52 = 6.5297 and 5.2071 × 0.375 × 1.52 = 2.9681.
 
@@ -314,15 +314,15 @@ The Templar's two figures carry the leaper premium: 11.4556 × 0.375 × 1.52 = 6
 
 Mobility cannot see a condition attached to a capture, and it cannot see a capture that takes more than one piece. Four pieces need a factor, and the factor is stated rather than hidden:
 
-| Piece     | Factor | Why                                                                                                                                                       |
-| --------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Marshal   | × 0.78 | It holds every queen line for moving but may only capture what its own army already attacks, so a large part of what it reaches it cannot take.           |
-| Assassin  | × 0.61 | The landing tile must be empty and unwatched, which strikes out most of what it attacks. What holds it as high as it is, is that it cannot be recaptured. |
-| Mage      | × 3.00 | Its ring is only 7.1006 squares, but a blast destroys everything standing in it at once. Mobility prices one capture per turn, and this is up to eight.   |
-| Mage weak | × 1.50 | The same blast used once. The Mage dies with it, so the ring is worth half again rather than three times.                                                 |
-| Legionary | + 0.34 | Promotion, the same premium chess pays its pawn, added rather than multiplied because it does not scale with what the piece attacks.                      |
+| Piece            | Factor | Why                                                                                                                                                       |
+| ---------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Marshal          | × 0.78 | It holds every queen line for moving but may only capture what its own army already attacks, so a large part of what it reaches it cannot take.           |
+| Assassin         | × 0.61 | The landing tile must be empty and unwatched, which strikes out most of what it attacks. What holds it as high as it is, is that it cannot be recaptured. |
+| Mage, enhanced   | × 3.00 | Its ring is only 7.1006 squares, but a blast destroys everything standing in it at once. Mobility prices one capture per turn, and this is up to eight.   |
+| Mage, restricted | × 1.50 | The same blast used once. The Mage dies with it, so the ring is worth half again rather than three times.                                                 |
+| Legionary        | + 0.34 | Promotion, the same premium chess pays its pawn, added rather than multiplied because it does not scale with what the piece attacks.                      |
 
-Working them through: 14.7692 × 0.78 = 11.5200. 14.7692 × 0.61 = 9.0092 and 11.5385 × 0.61 = 7.0385. 2.6627 × 3.00 = 7.9880 and 2.6627 × 1.50 = 3.9940. 0.6923 + 0.3437 = 1.0360. The weak Legionary attacks exactly what the strong one attacks and differs only in how fast it walks, so it takes a notch of its own to 0.9.
+Working them through: 14.7692 × 0.78 = 11.5200. 14.7692 × 0.61 = 9.0092 and 11.5385 × 0.61 = 7.0385. 2.6627 × 3.00 = 7.9880 and 2.6627 × 1.50 = 3.9940. 0.6923 + 0.3437 = 1.0360. The restricted Legionary attacks exactly what the enhanced one attacks and differs only in how fast it walks, so it takes a notch of its own to 0.9.
 
 ### The table
 
@@ -340,13 +340,13 @@ Rounded to whole points, half up, the way chess carries its 1, 3, 5 and 9:
 | Templar   | 6.5297 → 7   | 2.9681 → 3   |
 | Legionary | 1.0360 → 1   | 0.9000 → 1   |
 
-The Pope carries no number at all. Losing it ends the game, so it is never traded and there is nothing to price it against, which is the reading chess gives its own king. It also stands outside the aura, so both columns hold the same mark.
+The Pope carries no number at all. Losing it ends the game, so it is never traded and there is nothing to price it against, which is the reading chess gives its own king. It also stands outside the command zone, so both columns hold the same mark.
 
 One piece stands well clear at the top of the rest. Below it the ladder ties twice, at 9 between the Assassin and the Sentinel and at 7 between the Herald and the Templar, in the way the bishop and the knight tie in chess. The two Legionaries land on the same point as well: the restricted one walks slower but attacks exactly what the enhanced one attacks, and that difference sits below the resolution of whole points.
 
 Three numbers turn on the rounding rather than on the count. The restricted Sentinel at 6.5769 and the Templar at 6.5297 both cross to 7 from just above the halfway mark, and the Marshal reaches 12 by two hundredths.
 
-Two warnings apply. The rate is read off chess and the adjustments are judgments, so the error on each number is roughly ±1.5, wider than any tie in the table, which makes those ties an accident of arithmetic rather than a measured equality. In addition, the aura is positional value rather than material. Like space or king safety, it is not priced into the Marshal. Capturing the Marshal is worth its 12 plus whatever the aura was contributing at that moment.
+Two warnings apply. The rate is read off chess and the adjustments are judgments, so the error on each number is roughly ±1.5, wider than any tie in the table, which makes those ties an accident of arithmetic rather than a measured equality. In addition, the command zone is positional value rather than material. Like space or king safety, it is not priced into the Marshal. Capturing the Marshal is worth its 12 plus whatever the command zone was contributing at that moment.
 
 ## Promotion
 
@@ -390,7 +390,7 @@ Because slots depend on **your own** losses, the side that is behind always has 
 
 **Repeating a position for the third time loses the game for whoever does it.** This removes endless checking as an escape. A losing side can no longer check forever, because the move that completes the third repetition loses. The move remains legal, it is simply fatal, and a player left with nothing but repetitions has to play one.
 
-A position is identified as in chess 1.0: piece placement, side to move, castling rights and en passant rights, plus the Marshal's riposte right, which is a one-reply right of the same kind. The aura needs no separate term, because it follows from where the Marshal stands.
+A position is identified as in chess 1.0: piece placement, side to move, castling rights and en passant rights, plus the Marshal's riposte right, which is a one-reply right of the same kind. The command zone needs no separate term, because it follows from where the Marshal stands.
 
 **Only two genuine draws exist: insufficient material and the no-progress rule.**
 
@@ -425,7 +425,7 @@ Each number in it:
 - **4** is the sparse end of the table, a Pope and one other piece on each side, which is the thinnest material this game can still force mate with.
 - **13/8 = 1.625** is the scale between this board and the chess board. It is taken on the edge rather than the area, because forcing mate is a matter of driving the enemy king to an edge, so the work grows with the length of a side and not with the number of squares.
 - **60**, the dense end, is a chess figure carried over by that scale. Stretches of 30 to 40 moves without a capture or a pawn move are ordinary in locked positions; 30–40 scaled is 49–65, and 60 is the round number taken from inside that band. The band is an estimate rather than a measurement, and it cannot be measured upward: the fifty-move rule ends the game at 50, so no longer stretch is ever recorded. The known game that reached that ceiling is Filipowicz–Smederevac, Polanica-Zdrój 1966, drawn on move 70 with the last pawn move on Black's 20th and all 32 pieces still standing.
-- **156**, the sparse end, is set at about twice the longest forced mate this game is expected to hold. The two chess anchors under it are exact, both settled by tablebase: king and rook mate a lone king in at most 16 moves, king, bishop and knight in at most 33. Scaled by 1.63 those become roughly 26 and 54, and twice 54 is 108. The rest of the way to 156 is headroom for the weak versions, which mate more slowly than anything chess has, and that headroom is the one figure here with no anchor at all.
+- **156**, the sparse end, is set at about twice the longest forced mate this game is expected to hold. The two chess anchors under it are exact, both settled by tablebase: king and rook mate a lone king in at most 16 moves, king, bishop and knight in at most 33. Scaled by 1.63 those become roughly 26 and 54, and twice 54 is 108. The rest of the way to 156 is headroom for the restricted versions, which mate more slowly than anything chess has, and that headroom is the one figure here with no anchor at all.
 
 So two of the numbers are exact, 52 and 4 by counting and 16 and 33 by tablebase; one is a scale chosen on the board's edge, 1.63; and two rest on estimates, the 30–40 band under 60 and the headroom above 108 that produces 156. The coefficient 2 is not an estimate of its own, it only reports the slope between whatever those two ends are set to.
 
@@ -439,5 +439,5 @@ Moving first is worth something, and an odd board does not reduce it. Profession
 
 ## Open
 
-- **Which material counts as insufficient.** The chess list does not carry over. A lone Mage only kills at range 1, a lone Marshal cannot capture unsupported pieces, and every piece has a weak version.
-- **Verifying the no-progress numbers.** Both ends of that formula rest on scaled estimates of how long a forced mate runs in this game, not on measurement. A retrograde tablebase covering the Pope plus one piece against the Pope comes to only about 9.5 million states on this board, which is cheap to compute exactly once the move generator exists. Run it for both the strong and the weak version, since weak pieces mate more slowly. The insufficient-material list comes out of the same run.
+- **Which material counts as insufficient.** The chess list does not carry over. A lone Mage only kills at range 1, a lone Marshal cannot capture unsupported pieces, and every piece has a restricted version.
+- **Verifying the no-progress numbers.** Both ends of that formula rest on scaled estimates of how long a forced mate runs in this game, not on measurement. A retrograde tablebase covering the Pope plus one piece against the Pope comes to only about 9.5 million states on this board, which is cheap to compute exactly once the move generator exists. Run it for both the enhanced and the restricted version, since restricted pieces mate more slowly. The insufficient-material list comes out of the same run.

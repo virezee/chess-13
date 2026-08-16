@@ -299,7 +299,7 @@ Written out:
   places where chess has no form of its own:
   - a move made by a piece its own Marshal had enhanced ends in `^`, `Tg1-h3^` against
     `Tg1-h3`, so a move written without it was made restricted. A Pope's move and an Emperor's
-    move never carry it, since the aura never reaches either
+    move never carry it, since the command zone never reaches either
   - castling writes `O-O-O` to the Emperor's wing and `O-O` to the Marshal's. The count of O's
     marks the wing and nothing else here, the two sides being equal in length
   - a Mage blast writes the Mage's own square on both sides of the `x`, `Gg5xg5`, since a Mage
