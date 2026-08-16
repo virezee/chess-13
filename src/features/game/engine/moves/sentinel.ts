@@ -30,8 +30,8 @@ const line = (
   for (let distance = 1; distance <= Math.max(quiet, capture); distance += 1) {
     const file = origin.file + fileDelta * distance
     const rank = origin.rank + rankDelta * distance
-    if (!isOnBoard(file, rank)) break
-    const to = makeSquare(file, rank)
+    if (!isOnBoard({ file, rank })) break
+    const to = makeSquare({ file, rank })
     const occupant = occupancy[to]
     if (!occupant) {
       if (distance <= quiet) moves.push({ from, to })

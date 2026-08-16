@@ -6,8 +6,8 @@ import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/pie
 import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
 import { parseSquare, makeSquare, isOnBoard } from '../lib/coordinate'
 import { isEnhanced } from './generate'
-import { candidate } from './candidate'
 import { isReachable, isAssassinReachable, threats } from './threats'
+import { candidate } from './candidate'
 
 const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
 const makeMove = (occupancy: SquareOccupant, move: Move): View => {
@@ -23,7 +23,7 @@ const castlingPath = ({ from, to }: Step): string[] => {
   const fileStep = Math.sign(target.file - origin.file)
   const squares: string[] = []
   for (let file = origin.file + fileStep; file !== target.file + fileStep; file += fileStep)
-    squares.push(makeSquare(file, origin.rank))
+    squares.push(makeSquare({ file, rank: origin.rank }))
   return squares
 }
 const isInRing = ({ from, to }: Step): boolean => {
@@ -43,8 +43,8 @@ const scanLine = (
   for (let distance = 1; distance <= SIZE; distance += 1) {
     const file = origin.file + fileStep * distance
     const rank = origin.rank + rankStep * distance
-    if (!isOnBoard(file, rank)) return null
-    const square = makeSquare(file, rank)
+    if (!isOnBoard({ file, rank })) return null
+    const square = makeSquare({ file, rank })
     const occupant = occupancy[square]
     if (!occupant) continue
     if (occupant.side === side) {
@@ -80,7 +80,7 @@ const sliderCheckers = (
       case ASSASSIN: {
         const dest = CORNERS.includes(pope)
           ? pope
-          : makeSquare(origin.file - fileStep, origin.rank - rankStep)
+          : makeSquare({ file: origin.file - fileStep, rank: origin.rank - rankStep })
         isAttacked =
           isAssassinReachable(occupancy, {}, pope, fileStep, rankStep, enhanced, distance) &&
           !threats(board, side, {}, false, dest).some(defender => defender !== pope)

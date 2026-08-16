@@ -11,7 +11,7 @@ const ring = (from: string): string[] => {
   for (const [fileStep, rankStep] of EVERY) {
     const file = origin.file + fileStep
     const rank = origin.rank + rankStep
-    if (isOnBoard(file, rank)) squares.push(makeSquare(file, rank))
+    if (isOnBoard({ file, rank })) squares.push(makeSquare({ file, rank }))
   }
   return squares
 }

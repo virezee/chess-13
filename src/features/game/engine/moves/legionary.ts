@@ -23,7 +23,7 @@ const quiets = (
   for (let distance = 1; distance <= reach; distance += 1) {
     const toRank = rank + up * distance
     if (toRank < 1 || toRank > SIZE) break
-    const to = makeSquare(file, toRank)
+    const to = makeSquare({ file, rank: toRank })
     if (occupancy[to]) break
     moves.push({ from, to })
   }
@@ -40,8 +40,8 @@ const captures = (
   const moves: Move[] = []
   for (const offset of [-1, 1]) {
     const adjFile = file + offset
-    if (!isOnBoard(adjFile, toRank)) continue
-    const to = makeSquare(adjFile, toRank)
+    if (!isOnBoard({ file: adjFile, rank: toRank })) continue
+    const to = makeSquare({ file: adjFile, rank: toRank })
     const occupant = occupancy[to]
     if (occupant) {
       if (occupant.side !== side && !isDormant(occupant)) moves.push({ from, to, captures: [to] })

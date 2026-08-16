@@ -27,8 +27,8 @@ export const pope = (
   for (const [fileStep, rankStep] of EVERY) {
     const file = origin.file + fileStep
     const rank = origin.rank + rankStep
-    if (!isOnBoard(file, rank)) continue
-    const to = makeSquare(file, rank)
+    if (!isOnBoard({ file, rank })) continue
+    const to = makeSquare({ file, rank })
     const occupant = occupancy[to]
     if (!occupant) {
       moves.push({ from, to })

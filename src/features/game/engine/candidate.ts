@@ -1,5 +1,5 @@
-import type { Move, Position, Step } from '@/types/game'
-import type { Piece, PieceName } from '@/types/material'
+import type { Move, Step, Position } from '@/types/game'
+import type { PieceName, Piece } from '@/types/material'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
 import { parseSquare } from '../lib/coordinate'
 import { generate } from './generate'
@@ -55,29 +55,29 @@ export const candidate = (position: Position): Move[] => {
   const { pieces, occupancy, side, checkInfo, state } = position
   const { checkers, pinned } = checkInfo
   const pope = pieces[side][POPE][0]!
-  const marshalSquare = pieces[side][MARSHAL][0] ?? null
-  const answering = checkers.some(square => occupancy[square]?.piece === ASSASSIN)
-  const doubled = checkers.length > 1 && !answering
+  const marshalSq = pieces[side][MARSHAL][0] ?? null
+  const isAssCheck = checkers.some(square => occupancy[square]?.piece === ASSASSIN)
+  const doubleCheck = checkers.length > 1 && !isAssCheck
   const moves: Move[] = []
   for (const name of Object.keys(pieces[side]) as PieceName[]) {
-    if (doubled && name !== POPE && name !== MAGE && name !== ASSASSIN) continue
+    if (doubleCheck && name !== POPE && name !== MAGE && name !== ASSASSIN) continue
     for (const square of pieces[side][name]) {
       const piece = occupancy[square]
       if (!piece) continue
       if (name === EMPEROR && piece.awake !== true) continue
-      const pin = pinned.get(square)
-      if (pin && name === TEMPLAR) continue
+      const pinDirection = pinned.get(square)
+      if (pinDirection && name === TEMPLAR) continue
       for (const move of generate(
         side,
         name,
         occupancy,
-        marshalSquare,
+        marshalSq,
         square,
         state.castlingSide[side],
         state.promotions[side],
         state.enPassant
       )) {
-        if (pin && pope !== null && !isAligned({ from: pope, to: move.to }, pin)) continue
+        if (pinDirection && !isAligned({ from: pope, to: move.to }, pinDirection)) continue
         if (checkers.length > 0 && !isEvasion(pope, checkers, piece, move)) continue
         moves.push(move)
       }

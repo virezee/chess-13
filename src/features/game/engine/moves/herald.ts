@@ -19,8 +19,8 @@ const diagonals = (
     for (let distance = 1; distance <= diagonal; distance += 1) {
       const file = origin.file + fileStep * distance
       const rank = origin.rank + rankStep * distance
-      if (!isOnBoard(file, rank)) break
-      const to = makeSquare(file, rank)
+      if (!isOnBoard({ file, rank })) break
+      const to = makeSquare({ file, rank })
       const occupant = occupancy[to]
       if (!occupant) {
         moves.push({ from, to })
@@ -43,8 +43,8 @@ const steps = (
   for (const [fileStep, rankStep] of ORTHOGONAL) {
     const file = origin.file + fileStep
     const rank = origin.rank + rankStep
-    if (!isOnBoard(file, rank)) continue
-    const to = makeSquare(file, rank)
+    if (!isOnBoard({ file, rank })) continue
+    const to = makeSquare({ file, rank })
     const occupant = occupancy[to]
     if (!occupant) {
       moves.push({ from, to })

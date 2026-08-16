@@ -4,6 +4,10 @@ export interface Board {
   pieces: Record<Side, PieceSquares>
   occupancy: SquareOccupant
 }
+export interface Square {
+  file: number
+  rank: number
+}
 export interface CheckInfo {
   checkers: string[]
   pinned: Map<string, readonly [number, number]>

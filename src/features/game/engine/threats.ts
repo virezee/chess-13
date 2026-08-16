@@ -42,8 +42,8 @@ const leapers = (
     for (const [fileStep, rankStep] of offsets) {
       const file = target.file + fileStep
       const rank = target.rank + rankStep
-      if (!isOnBoard(file, rank)) continue
-      const from = makeSquare(file, rank)
+      if (!isOnBoard({ file, rank })) continue
+      const from = makeSquare({ file, rank })
       const occupant = occupantAt(occupancy, view, from)
       if (!occupant || occupant.side !== side || occupant.piece !== TEMPLAR) continue
       if (enhancedOnly && !isEnhanced(marshalSquare, from)) continue
@@ -93,8 +93,8 @@ export const isAssassinReachable = (
   const target = parseSquare(square)
   const file = target.file - fileStep
   const rank = target.rank - rankStep
-  if (!isOnBoard(file, rank)) return false
-  return !occupantAt(occupancy, view, makeSquare(file, rank))
+  if (!isOnBoard({ file, rank })) return false
+  return !occupantAt(occupancy, view, makeSquare({ file, rank }))
 }
 export const threats = (
   board: Board,
@@ -114,8 +114,8 @@ export const threats = (
     for (let distance = 1; distance <= SIZE; distance += 1) {
       const file = target.file + fileStep * distance
       const rank = target.rank + rankStep * distance
-      if (!isOnBoard(file, rank)) break
-      const attacker = makeSquare(file, rank)
+      if (!isOnBoard({ file, rank })) break
+      const attacker = makeSquare({ file, rank })
       const occupant = occupantAt(occupancy, view, attacker)
       if (!occupant) continue
       if (occupant.side !== side) break
@@ -125,7 +125,7 @@ export const threats = (
       } else if (occupant.piece === ASSASSIN) {
         const dest = CORNERS.includes(square)
           ? square
-          : makeSquare(target.file - fileStep, target.rank - rankStep)
+          : makeSquare({ file: target.file - fileStep, rank: target.rank - rankStep })
         if (
           isAssassinReachable(occupancy, view, square, fileStep, rankStep, enhanced, distance) &&
           !threats(board, side === WHITE ? BLACK : WHITE, view, false, dest).some(

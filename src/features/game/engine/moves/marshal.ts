@@ -14,8 +14,8 @@ export const marshal = (side: Side, occupancy: SquareOccupant, from: string): Mo
     for (let distance = 1; distance <= SIZE; distance += 1) {
       const file = origin.file + fileStep * distance
       const rank = origin.rank + rankStep * distance
-      if (!isOnBoard(file, rank)) break
-      const to = makeSquare(file, rank)
+      if (!isOnBoard({ file, rank })) break
+      const to = makeSquare({ file, rank })
       const occupant = occupancy[to]
       if (!occupant) {
         moves.push({ from, to })
