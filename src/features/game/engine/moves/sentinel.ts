@@ -12,13 +12,13 @@ const line = (
   from: string,
   marshalSquare: string | null,
   isEnhanced: boolean,
-  deltaFile: number,
-  deltaRank: number
+  fileDelta: number,
+  rankDelta: number
 ): Move[] => {
   const origin = parseSquare(from)
-  const isAlongRank = deltaFile !== 0
+  const isAlongRank = fileDelta !== 0
   const axisOrigin = isAlongRank ? origin.file : origin.rank
-  const axisStep = isAlongRank ? deltaFile : deltaRank
+  const axisStep = isAlongRank ? fileDelta : rankDelta
   let isTowardMarshal = false
   if (marshalSquare !== null) {
     const { file: marshalFile, rank: marshalRank } = parseSquare(marshalSquare)
@@ -28,8 +28,8 @@ const line = (
   const moves: Move[] = []
   let through = false
   for (let distance = 1; distance <= Math.max(quiet, capture); distance += 1) {
-    const file = origin.file + deltaFile * distance
-    const rank = origin.rank + deltaRank * distance
+    const file = origin.file + fileDelta * distance
+    const rank = origin.rank + rankDelta * distance
     if (!isOnBoard(file, rank)) break
     const to = makeSquare(file, rank)
     const occupant = occupancy[to]
@@ -54,6 +54,6 @@ export const sentinel = (
   marshalSquare: string | null,
   isEnhanced: boolean
 ): Move[] =>
-  ORTHOGONAL.flatMap(([deltaFile, deltaRank]) =>
-    line(side, occupancy, from, marshalSquare, isEnhanced, deltaFile, deltaRank)
+  ORTHOGONAL.flatMap(([fileDelta, rankDelta]) =>
+    line(side, occupancy, from, marshalSquare, isEnhanced, fileDelta, rankDelta)
   )

@@ -61,3 +61,9 @@ export interface Match {
   whitePlayer: string | null
   history: string[]
 }
+export interface Save {
+  occupancy: SquareOccupant
+  side: Side
+  state: State
+  match: Match
+}

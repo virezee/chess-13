@@ -21,15 +21,15 @@ export const assassin = (
       const file = origin.file + fileStep * distance
       const rank = origin.rank + rankStep * distance
       if (!isOnBoard(file, rank)) break
-      const square = makeSquare(file, rank)
-      const occupant = occupancy[square]
+      const to = makeSquare(file, rank)
+      const occupant = occupancy[to]
       if (!occupant) {
-        moves.push({ from, to: square })
+        moves.push({ from, to })
         continue
       }
       if (occupant.side === side || isDormant(occupant)) break
-      if (CORNERS.includes(square)) {
-        moves.push({ from, to: square, captures: [square] })
+      if (CORNERS.includes(to)) {
+        moves.push({ from, to, captures: [to] })
         break
       }
       if (distance + 1 > reach) break
@@ -37,7 +37,7 @@ export const assassin = (
       const landRank = rank + rankStep
       if (!isOnBoard(landFile, landRank)) break
       const landing = makeSquare(landFile, landRank)
-      if (!occupancy[landing]) moves.push({ from, to: landing, captures: [square] })
+      if (!occupancy[landing]) moves.push({ from, to: landing, captures: [to] })
       break
     }
   }

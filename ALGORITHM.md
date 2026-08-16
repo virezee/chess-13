@@ -88,13 +88,18 @@ whether it could capture the Emperor's square, measured from the square it stand
 as enhanced or restricted by the black Marshal's command zone. The first yes wakes the
 Emperor and ends the step.
 
-Three kinds cannot supply that yes, and their reasons are not step 1's:
+Two kinds cannot supply that yes, and their reasons are not step 1's:
 
 - A dormant Emperor attacks nothing.
 - A Marshal takes the Emperor only with support from another black piece, and that piece
   already attacks the square on its own, so the Marshal is skipped. Its exemption reaches the
   white Pope and nothing else.
-- A Mage is skipped as well, because nothing it takes is ever a dormant Emperor.
+
+A Mage answers at distance 1 like any other piece, and the only question asked of it is whether
+it stands in the ring when White's turn opens. Where it came from is never asked, so a Mage that
+walked in on Black's move and a Mage that has held that square since the opening position wake
+the Emperor alike, and a Mage that walked out before the turn opened wakes nothing. Its blast
+can never take a dormant Emperor, so the Emperor sleeps unharmed until the turn that wakes it.
 
 An Assassin answers as it does in step 1, with the square one further along the line, past the
 Emperor, empty and not defended by White, and the corner rule unchanged.

@@ -1,5 +1,5 @@
 import type { Side, PieceSquares, SquareOccupant } from '@/types/material'
-import type { Board, Position, State } from '@/types/game'
+import type { Board, State, Position } from '@/types/game'
 import { WHITE, BLACK } from '@/constants/colour'
 import {
   POPE,
@@ -38,11 +38,7 @@ const awaken = (board: Board, side: Side, awake: boolean): SquareOccupant => {
   if (square === null) return occupancy
   const enemy = side === WHITE ? BLACK : WHITE
   const marshalSq = pieces[side][MARSHAL][0] ?? null
-  if (
-    !awake &&
-    marshalSq !== null &&
-    !threats(board, enemy, {}, false, square).some(from => occupancy[from]?.piece !== MAGE)
-  )
+  if (!awake && marshalSq !== null && threats(board, enemy, {}, false, square).length === 0)
     return occupancy
   return { ...occupancy, [square]: { ...occupancy[square]!, awake: true } }
 }
@@ -52,7 +48,7 @@ export const position = (side: Side, occupancy: SquareOccupant, state: State): P
   const board: Board = { pieces, occupancy: awaken({ pieces, occupancy }, side, awake[side]) }
   const kept: State['awake'] = {
     ...awake,
-    [side]: awake[side] || dormantEmperor(board, side) === null
+    [side]: awake[side] || dormantSquare(board, side) === null
   }
   return {
     ...board,

@@ -6,8 +6,8 @@ import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/pie
 import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
 import { parseSquare, makeSquare, isOnBoard } from '../lib/coordinate'
 import { isEnhanced } from './generate'
-import { reaches, assassinReaches, threats } from './threats'
 import { candidate } from './candidate'
+import { reaches, assassinReaches, threats } from './threats'
 
 const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
 const makeMove = (occupancy: SquareOccupant, move: Move): View => {
@@ -20,22 +20,17 @@ const makeMove = (occupancy: SquareOccupant, move: Move): View => {
 const castlingPath = ({ from, to }: Step): string[] => {
   const origin = parseSquare(from)
   const target = parseSquare(to)
-  const step = Math.sign(target.file - origin.file)
+  const fileStep = Math.sign(target.file - origin.file)
   const squares: string[] = []
-  for (let file = origin.file + step; file !== target.file + step; file += step)
+  for (let file = origin.file + fileStep; file !== target.file + fileStep; file += fileStep)
     squares.push(makeSquare(file, origin.rank))
   return squares
 }
 const isInRing = ({ from, to }: Step): boolean => {
-  const origin = parseSquare(from)
-  const target = parseSquare(to)
-  return Math.max(Math.abs(origin.file - target.file), Math.abs(origin.rank - target.rank)) === 1
+  const { file: ff, rank: fr } = parseSquare(from)
+  const { file: tf, rank: tr } = parseSquare(to)
+  return Math.max(Math.abs(ff - tf), Math.abs(fr - tr)) === 1
 }
-const isLeap = (
-  files: number,
-  ranks: number,
-  offsets: readonly (readonly [number, number])[]
-): boolean => offsets.some(([fileStep, rankStep]) => fileStep === files && rankStep === ranks)
 const scanLine = (
   pope: string,
   side: Side,
@@ -65,7 +60,7 @@ const sliderCheckers = (
   board: Board,
   pope: string,
   side: Side,
-  enemyPope: string | null,
+  enemyPope: string,
   enemyMarshal: string | null,
   pinned: CheckInfo['pinned']
 ): string[] => {
@@ -77,25 +72,25 @@ const sliderCheckers = (
     if (line === null) continue
     const { occupant, square, blocker, distance } = line
     const enhanced = isEnhanced(enemyMarshal, square)
-    let hits: boolean
+    let isAttacked: boolean
     switch (occupant.piece) {
       case MARSHAL:
-        hits = true
+        isAttacked = true
         break
       case ASSASSIN: {
-        const destination = CORNERS.includes(pope)
+        const dest = CORNERS.includes(pope)
           ? pope
           : makeSquare(origin.file - fileStep, origin.rank - rankStep)
-        hits =
+        isAttacked =
           assassinReaches(occupancy, {}, pope, fileStep, rankStep, enhanced, distance) &&
-          !threats(board, side, {}, false, destination).some(from => from !== pope)
+          !threats(board, side, {}, false, dest).some(defender => defender !== pope)
         break
       }
       case MAGE:
-        hits = distance === 1 && (enemyPope === null || !isInRing({ from: square, to: enemyPope }))
+        isAttacked = distance === 1 && !isInRing({ from: square, to: enemyPope })
         break
       default:
-        hits = reaches(
+        isAttacked = reaches(
           occupant,
           false,
           fileStep !== 0 && rankStep !== 0,
@@ -104,12 +99,18 @@ const sliderCheckers = (
           distance
         )
     }
-    if (!hits) continue
+    if (!isAttacked) continue
     if (blocker === null) checkers.push(square)
     else pinned.set(blocker, [fileStep, rankStep])
   }
   return checkers
 }
+const isLeap = (
+  fileDelta: number,
+  rankDelta: number,
+  offsets: readonly (readonly [number, number])[]
+): boolean =>
+  offsets.some(([fileStep, rankStep]) => fileStep === fileDelta && rankStep === rankDelta)
 const templarCheckers = (
   pope: string,
   enemyMarshal: string | null,
@@ -119,11 +120,11 @@ const templarCheckers = (
   const checkers: string[] = []
   for (const templar of enemyTemplars) {
     const { file, rank } = parseSquare(templar)
-    const files = file - origin.file
-    const ranks = rank - origin.rank
+    const fileDelta = file - origin.file
+    const rankDelta = rank - origin.rank
     if (
-      isLeap(files, ranks, LEAP_3_2) ||
-      (isLeap(files, ranks, LEAP_2_1) && isEnhanced(enemyMarshal, templar))
+      isLeap(fileDelta, rankDelta, LEAP_3_2) ||
+      (isLeap(fileDelta, rankDelta, LEAP_2_1) && isEnhanced(enemyMarshal, templar))
     )
       checkers.push(templar)
   }
@@ -151,20 +152,19 @@ export const dormantSquare = (board: Board, side: Side): string | null => {
 export const legality = (position: Position): Move[] => {
   const { pieces, occupancy, side, checkInfo: info, state } = position
   const enemy = opponent(side)
-  const pope = pieces[side][POPE][0] ?? null
+  const pope = pieces[side][POPE][0]!
   const enemyMarshal = pieces[enemy][MARSHAL][0] ?? null
-  const dormant = dormantEmperor(position, enemy)
+  const dormantSq = dormantSquare(position, enemy)
   return candidate(position).filter(move => {
     const mover = occupancy[move.from]
     if (!mover) return false
     const view = makeMove(occupancy, move)
-    const guarded = mover.piece === POPE ? move.to : pope
+    const popeAfter = mover.piece === POPE ? move.to : pope
     if (
-      dormant !== null &&
-      guarded !== null &&
+      dormantSq !== null &&
       ((enemyMarshal !== null && move.captures?.includes(enemyMarshal)) ||
-        threats(position, side, view, false, dormant).length > 0) &&
-      threats(position, enemy, view, true, guarded).includes(dormant)
+        threats(position, side, view, false, dormantSq).length > 0) &&
+      threats(position, enemy, view, true, popeAfter).includes(dormantSq)
     )
       return false
     if (mover.piece === POPE) {
@@ -176,7 +176,6 @@ export const legality = (position: Position): Move[] => {
       })
     }
     if (
-      pope !== null &&
       (info.checkers.length > 0 || move.captures?.some(square => square !== move.to)) &&
       threats(position, enemy, view, false, pope).length > 0
     )

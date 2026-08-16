@@ -24,6 +24,34 @@ const occupantAt = (occupancy: SquareOccupant, view: View, square: string): Piec
   if (view.vacated?.includes(square)) return
   return occupancy[square]
 }
+const leapers = (
+  board: Board,
+  side: Side,
+  view: View,
+  marshalSquare: string | null,
+  square: string
+): string[] => {
+  const { pieces, occupancy } = board
+  if (pieces[side][TEMPLAR].length === 0) return []
+  const target = parseSquare(square)
+  const templars: string[] = []
+  for (const [offsets, enhancedOnly] of [
+    [LEAP_3_2, false],
+    [LEAP_2_1, true]
+  ] as const) {
+    for (const [fileStep, rankStep] of offsets) {
+      const file = target.file + fileStep
+      const rank = target.rank + rankStep
+      if (!isOnBoard(file, rank)) continue
+      const from = makeSquare(file, rank)
+      const occupant = occupantAt(occupancy, view, from)
+      if (!occupant || occupant.side !== side || occupant.piece !== TEMPLAR) continue
+      if (enhancedOnly && !isEnhanced(marshalSquare, from)) continue
+      templars.push(from)
+    }
+  }
+  return templars
+}
 export const reaches = (
   piece: Piece,
   dormant: boolean,
@@ -68,34 +96,6 @@ export const assassinReaches = (
   if (!isOnBoard(file, rank)) return false
   return !occupantAt(occupancy, view, makeSquare(file, rank))
 }
-export const leapers = (
-  board: Board,
-  side: Side,
-  view: View,
-  marshalSquare: string | null,
-  square: string
-): string[] => {
-  const { pieces, occupancy } = board
-  if (pieces[side][TEMPLAR].length === 0) return []
-  const origin = parseSquare(square)
-  const templars: string[] = []
-  for (const [offsets, enhancedOnly] of [
-    [LEAP_3_2, false],
-    [LEAP_2_1, true]
-  ] as const) {
-    for (const [fileStep, rankStep] of offsets) {
-      const file = origin.file + fileStep
-      const rank = origin.rank + rankStep
-      if (!isOnBoard(file, rank)) continue
-      const from = makeSquare(file, rank)
-      const occupant = occupantAt(occupancy, view, from)
-      if (!occupant || occupant.side !== side || occupant.piece !== TEMPLAR) continue
-      if (enhancedOnly && !isEnhanced(marshalSquare, from)) continue
-      templars.push(from)
-    }
-  }
-  return templars
-}
 export const threats = (
   board: Board,
   side: Side,
@@ -105,36 +105,36 @@ export const threats = (
 ): string[] => {
   const { pieces, occupancy } = board
   const marshalSq = pieces[side][MARSHAL][0] ?? null
-  const origin = parseSquare(square)
-  const victim = occupantAt(occupancy, view, square)
-  const isEnemyPope = victim?.piece === POPE && victim.side !== side
+  const target = parseSquare(square)
+  const targetPiece = occupantAt(occupancy, view, square)
+  const isEnemyPope = targetPiece?.piece === POPE && targetPiece.side !== side
   const attackers: string[] = []
   for (const [fileStep, rankStep] of EVERY) {
     const isDiagonal = fileStep !== 0 && rankStep !== 0
     for (let distance = 1; distance <= SIZE; distance += 1) {
-      const file = origin.file + fileStep * distance
-      const rank = origin.rank + rankStep * distance
+      const file = target.file + fileStep * distance
+      const rank = target.rank + rankStep * distance
       if (!isOnBoard(file, rank)) break
-      const from = makeSquare(file, rank)
-      const occupant = occupantAt(occupancy, view, from)
+      const attacker = makeSquare(file, rank)
+      const occupant = occupantAt(occupancy, view, attacker)
       if (!occupant) continue
       if (occupant.side !== side) break
-      const enhanced = isEnhanced(marshalSq, from)
+      const enhanced = isEnhanced(marshalSq, attacker)
       if (occupant.piece === MARSHAL) {
-        if (isEnemyPope) attackers.push(from)
+        if (isEnemyPope) attackers.push(attacker)
       } else if (occupant.piece === ASSASSIN) {
         const dest = CORNERS.includes(square)
           ? square
-          : makeSquare(origin.file - fileStep, origin.rank - rankStep)
+          : makeSquare(target.file - fileStep, target.rank - rankStep)
         if (
           assassinReaches(occupancy, view, square, fileStep, rankStep, enhanced, distance) &&
           !threats(board, side === WHITE ? BLACK : WHITE, view, false, dest).some(
             defender => defender !== square
           )
         )
-          attackers.push(from)
+          attackers.push(attacker)
       } else if (reaches(occupant, dormant, isDiagonal, rankStep, enhanced, distance))
-        attackers.push(from)
+        attackers.push(attacker)
       break
     }
   }
