@@ -13,10 +13,6 @@ import {
 } from '@/constants/outcome'
 import { makeSquare } from '../lib/coordinate'
 
-// The full list of material is insufficient to mate is still open, so only the one case that needs no
-// list is answered here: both Popes alone, where neither side owns anything left to mate with.
-const isInsufficientMaterial = (occupancy: SquareOccupant): boolean =>
-  Object.values(occupancy).every(occupant => occupant.piece === POPE)
 const placement = (occupancy: SquareOccupant): string => {
   const ranks: string[] = []
   for (let rank = SIZE; rank >= 1; rank -= 1) {
@@ -48,6 +44,10 @@ const castling = (castlingSide: State['castlingSide']): string => {
     .join('')
   return written === '' ? '-' : written
 }
+const repetitionCount = (key: string, history: readonly string[]): number =>
+  history.filter(entry => entry === key).length
+const isInsufficientMaterial = (occupancy: SquareOccupant): boolean =>
+  Object.values(occupancy).every(occupant => occupant.piece === POPE)
 export const repetitionKey = (side: Side, occupancy: SquareOccupant, state: State): string =>
   [
     placement(occupancy),
@@ -56,12 +56,10 @@ export const repetitionKey = (side: Side, occupancy: SquareOccupant, state: Stat
     castling(state.castlingSide),
     state.enPassant?.target ?? '-'
   ].join(' ')
-export const repetitionCount = (key: string, history: readonly string[]): number =>
-  history.filter(entry => entry === key).length + 1
 export const outcome = (
   position: Position,
   moves: Move[],
-  repetition: number
+  history: readonly string[]
 ): {
   winner: Side | null
   reason:
@@ -76,9 +74,9 @@ export const outcome = (
     return checkInfo.checkers.length > 0
       ? { winner: side === WHITE ? BLACK : WHITE, reason: CHECKMATE }
       : { winner: side, reason: STALEMATE }
-  if (state.noProgress.count >= state.noProgress.limit) return { winner: null, reason: NO_PROGRESS }
-  if (repetition >= REPETITION_LIMIT)
+  if (repetitionCount(repetitionKey(side, occupancy, state), history) >= REPETITION_LIMIT)
     return { winner: side === WHITE ? BLACK : WHITE, reason: REPETITION }
+  if (state.noProgress.count >= state.noProgress.limit) return { winner: null, reason: NO_PROGRESS }
   if (isInsufficientMaterial(occupancy)) return { winner: null, reason: INSUFFICIENT_MATERIAL }
   return null
 }

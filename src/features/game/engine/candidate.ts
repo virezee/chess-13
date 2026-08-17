@@ -1,8 +1,8 @@
-import type { Move, Step, Position, Match } from '@/types/game'
-import type { PieceName, Piece } from '@/types/material'
-import { BLACK } from '@/constants/colour'
+import type { Step, Move, Position } from '@/types/game'
+import type { PieceName, Piece, SquareOccupant } from '@/types/material'
+import { CORNERS } from '@/constants/board'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
-import { parseSquare } from '../lib/coordinate'
+import { parseSquare, makeSquare } from '../lib/coordinate'
 import { generate } from './generate'
 
 const isBlocking = (pope: string, checker: string, square: string): boolean => {
@@ -28,12 +28,23 @@ const isBlocking = (pope: string, checker: string, square: string): boolean => {
 const isEvasion = (
   pope: string,
   checkers: readonly string[],
+  occupancy: SquareOccupant,
   piece: Piece,
   move: Move
 ): boolean => {
   if (piece.piece === POPE) return true
+  const origin = parseSquare(pope)
   return checkers.every(
-    checker => move.captures?.includes(checker) || isBlocking(pope, checker, move.to)
+    checker =>
+      move.captures?.includes(checker) ||
+      isBlocking(pope, checker, move.to) ||
+      (occupancy[checker]?.piece === ASSASSIN &&
+        !CORNERS.includes(pope) &&
+        move.to ===
+          makeSquare({
+            file: origin.file + Math.sign(origin.file - parseSquare(checker).file),
+            rank: origin.rank + Math.sign(origin.rank - parseSquare(checker).rank)
+          }))
   )
 }
 const isAligned = (
@@ -52,18 +63,16 @@ const isAligned = (
     Math.sign(rankDelta) === rankStep
   )
 }
-export const canSwap = (position: Position, match: Match): boolean =>
-  position.side === BLACK && match.swap
 export const candidate = (position: Position): Move[] => {
   const { pieces, occupancy, side, checkInfo, state } = position
   const { checkers, pinned } = checkInfo
   const pope = pieces[side][POPE][0]!
   const marshalSq = pieces[side][MARSHAL][0] ?? null
   const isAssCheck = checkers.some(square => occupancy[square]?.piece === ASSASSIN)
-  const doubleCheck = checkers.length > 1 && !isAssCheck
+  const isDoubleCheck = checkers.length > 1 && !isAssCheck
   const moves: Move[] = []
   for (const name of Object.keys(pieces[side]) as PieceName[]) {
-    if (doubleCheck && name !== POPE && name !== MAGE && name !== ASSASSIN) continue
+    if (isDoubleCheck && name !== POPE && name !== MAGE && name !== ASSASSIN) continue
     for (const square of pieces[side][name]) {
       const piece = occupancy[square]
       if (!piece) continue
@@ -81,7 +90,7 @@ export const candidate = (position: Position): Move[] => {
         state.enPassant
       )) {
         if (pinDirection && !isAligned({ from: pope, to: move.to }, pinDirection)) continue
-        if (checkers.length > 0 && !isAssCheck && !isEvasion(pope, checkers, piece, move)) continue
+        if (checkers.length > 0 && !isEvasion(pope, checkers, occupancy, piece, move)) continue
         moves.push(move)
       }
     }
