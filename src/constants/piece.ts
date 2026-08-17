@@ -34,7 +34,9 @@ export const REACH = {
 } as const satisfies Partial<Record<PieceName, Record<Zone, object>>>
 export const LEAP = {
   templar: { restricted: LEAP_3_2, enhanced: [...LEAP_3_2, ...LEAP_2_1] }
-} as const satisfies Partial<Record<PieceName, Record<Zone, object>>>
+} as const satisfies Partial<
+  Record<PieceName, Record<Zone, readonly (readonly [number, number])[]>>
+>
 export const CASTLING = {
   white: {
     home: 'g1',
@@ -72,17 +74,6 @@ export const BACK_RANK = [
   TEMPLAR,
   SENTINEL
 ] as const satisfies readonly PieceName[]
-export const VALUE = {
-  pope: { restricted: Infinity, enhanced: Infinity },
-  emperor: { restricted: 15, enhanced: 15 },
-  marshal: { restricted: 12, enhanced: 12 },
-  assassin: { restricted: 7, enhanced: 9 },
-  sentinel: { restricted: 7, enhanced: 9 },
-  mage: { restricted: 4, enhanced: 8 },
-  herald: { restricted: 5, enhanced: 7 },
-  templar: { restricted: 3, enhanced: 7 },
-  legionary: { restricted: 1, enhanced: 1 }
-} as const satisfies Record<PieceName, Record<Zone, number>>
 export const LETTER: Record<PieceName, string> = {
   [POPE]: 'P',
   [EMPEROR]: 'E',
@@ -94,3 +85,14 @@ export const LETTER: Record<PieceName, string> = {
   [TEMPLAR]: 'T',
   [LEGIONARY]: 'L'
 } as const satisfies Record<PieceName, string>
+export const VALUE = {
+  pope: { restricted: Infinity, enhanced: Infinity },
+  emperor: { restricted: 15, enhanced: 15 },
+  marshal: { restricted: 12, enhanced: 12 },
+  assassin: { restricted: 7, enhanced: 9 },
+  sentinel: { restricted: 7, enhanced: 9 },
+  mage: { restricted: 4, enhanced: 8 },
+  herald: { restricted: 5, enhanced: 7 },
+  templar: { restricted: 3, enhanced: 7 },
+  legionary: { restricted: 1, enhanced: 1 }
+} as const satisfies Record<PieceName, Record<Zone, number>>
