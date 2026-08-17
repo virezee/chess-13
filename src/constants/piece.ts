@@ -1,7 +1,10 @@
-import type { PieceName } from '@/types/material'
+import type { PieceName, Side } from '@/types/material'
+import type { Castling, CastlingSide } from '@/types/game'
+import type { ENHANCED, RESTRICTED } from './zone'
 import { SIZE } from './board'
 import { LEAP_3_2, LEAP_2_1 } from './direction'
 
+type Zone = typeof ENHANCED | typeof RESTRICTED
 export const POPE = 'pope'
 export const EMPEROR = 'emperor'
 export const MARSHAL = 'marshal'
@@ -28,10 +31,10 @@ export const REACH = {
     restricted: { quiet: 1 },
     enhanced: { quiet: 2 }
   }
-} as const
+} as const satisfies Partial<Record<PieceName, Record<Zone, object>>>
 export const LEAP = {
   templar: { restricted: LEAP_3_2, enhanced: [...LEAP_3_2, ...LEAP_2_1] }
-} as const
+} as const satisfies Partial<Record<PieceName, Record<Zone, object>>>
 export const CASTLING = {
   white: {
     home: 'g1',
@@ -53,18 +56,7 @@ export const CASTLING = {
       between: ['h13', 'i13', 'j13', 'k13', 'l13']
     }
   }
-} as const
-export const LETTER: Record<PieceName, string> = {
-  [POPE]: 'P',
-  [EMPEROR]: 'E',
-  [MARSHAL]: 'M',
-  [ASSASSIN]: 'A',
-  [SENTINEL]: 'S',
-  [MAGE]: 'G',
-  [HERALD]: 'H',
-  [TEMPLAR]: 'T',
-  [LEGIONARY]: 'L'
-} as const satisfies Record<PieceName, string>
+} as const satisfies Record<Side, { home: string } & Record<keyof CastlingSide, Castling>>
 export const BACK_RANK = [
   SENTINEL,
   TEMPLAR,
@@ -80,3 +72,25 @@ export const BACK_RANK = [
   TEMPLAR,
   SENTINEL
 ] as const satisfies readonly PieceName[]
+export const VALUE = {
+  pope: { restricted: Infinity, enhanced: Infinity },
+  emperor: { restricted: 15, enhanced: 15 },
+  marshal: { restricted: 12, enhanced: 12 },
+  assassin: { restricted: 7, enhanced: 9 },
+  sentinel: { restricted: 7, enhanced: 9 },
+  mage: { restricted: 4, enhanced: 8 },
+  herald: { restricted: 5, enhanced: 7 },
+  templar: { restricted: 3, enhanced: 7 },
+  legionary: { restricted: 1, enhanced: 1 }
+} as const satisfies Record<PieceName, Record<Zone, number>>
+export const LETTER: Record<PieceName, string> = {
+  [POPE]: 'P',
+  [EMPEROR]: 'E',
+  [MARSHAL]: 'M',
+  [ASSASSIN]: 'A',
+  [SENTINEL]: 'S',
+  [MAGE]: 'G',
+  [HERALD]: 'H',
+  [TEMPLAR]: 'T',
+  [LEGIONARY]: 'L'
+} as const satisfies Record<PieceName, string>
