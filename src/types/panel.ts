@@ -1,5 +1,5 @@
 import type { Side } from './material'
-import type { NoProgress, Promotion } from './game'
+import type { Promotion, NoProgress } from './game'
 
 export type EmperorState = { square: string; awake: boolean } | null
 export type MarshalState = 'full' | 'partial' | 'none'
@@ -16,9 +16,9 @@ export interface ArmyState {
   material: number
 }
 export interface LoggedTurn {
-  number: number
   white: string
   black: string | null
+  number: number
 }
 export interface GameCounters {
   repetition: number

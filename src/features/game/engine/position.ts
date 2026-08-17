@@ -46,7 +46,7 @@ export const position = (side: Side, occupancy: SquareOccupant, state: State): P
   const pieces = lists(occupancy)
   const { awake } = state
   const board: Board = { pieces, occupancy: awaken({ pieces, occupancy }, side, awake[side]) }
-  const kept: State['awake'] = {
+  const awakened: State['awake'] = {
     ...awake,
     [side]: awake[side] || dormantSquare(board, side) === null
   }
@@ -54,6 +54,6 @@ export const position = (side: Side, occupancy: SquareOccupant, state: State): P
     ...board,
     side,
     checkInfo: checkInfo({ pieces, occupancy }, side),
-    state: { ...state, awake: kept }
+    state: { ...state, awake: awakened }
   }
 }

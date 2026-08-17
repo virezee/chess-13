@@ -1,5 +1,5 @@
 import type { SquareOccupant } from '@/types/material'
-import type { EnPassant, Move, State, Step, Position, NoProgress } from '@/types/game'
+import type { Step, Move, EnPassant, NoProgress, State, Position } from '@/types/game'
 import { CENTRE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, MARSHAL, LEGIONARY, CASTLING } from '@/constants/piece'
@@ -26,92 +26,24 @@ const board = (occupancy: SquareOccupant, move: Move): SquareOccupant => {
     next[move.to] = move.promotesTo ? { side: mover.side, piece: move.promotesTo } : mover
   return next
 }
-const castling = (
-  occupancy: SquareOccupant,
-  move: Move,
-  held: State['castlingSide']
-): State['castlingSide'] => {
-  const mover = occupancy[move.from]
-  const kept = { [WHITE]: held[WHITE], [BLACK]: held[BLACK] }
-  for (const side of [WHITE, BLACK] as const) {
-    const wings = CASTLING[side]
-    const stepped = mover?.side === side
-    if (stepped && mover.piece === POPE) {
-      kept[side] = { left: false, right: false }
-      continue
-    }
-    kept[side] = {
-      left:
-        kept[side].left &&
-        !(stepped && move.from === wings.left.sentinel) &&
-        !move.captures?.includes(wings.left.sentinel),
-      right:
-        kept[side].right &&
-        !(stepped && move.from === wings.right.sentinel) &&
-        !move.captures?.includes(wings.right.sentinel)
-    }
-  }
-  return kept
-}
-const promotion = (
-  occupancy: SquareOccupant,
-  move: Move,
-  open: State['promotions']
-): State['promotions'] => {
-  const mover = occupancy[move.from]
-  const next = {
-    [WHITE]: open[WHITE].map(slot => ({ ...slot, piece: [...slot.piece] })),
-    [BLACK]: open[BLACK].map(slot => ({ ...slot, piece: [...slot.piece] }))
-  }
-  const promotesTo = move.promotesTo
-  if (mover && promotesTo !== undefined) {
-    const arrived = parseSquare(move.to).file
-    const taken = next[mover.side].findIndex(
-      slot => slot.piece.includes(promotesTo) && Math.abs(slot.file - arrived) <= 1
-    )
-    const slot = next[mover.side][taken]
-    if (slot) {
-      slot.piece.splice(slot.piece.indexOf(promotesTo), 1)
-      if (slot.piece.length === 0) next[mover.side].splice(taken, 1)
-    }
-  }
-  move.captures?.forEach(square => {
-    const dead = occupancy[square]
-    if (!dead || dead.piece === POPE) return
-    const file = parseSquare(square).file
-    const slot = next[dead.side].find(held => held.file === file)
-    if (slot) slot.piece.push(dead.piece)
-    else next[dead.side].push({ file, piece: [dead.piece] })
-  })
-  return next
-}
-const enPassant = (occupancy: SquareOccupant, move: Move): EnPassant | null => {
-  const mover = occupancy[move.from]
-  const step = mover?.side === WHITE ? 1 : -1
-  const origin = parseSquare(move.from)
-  const target = parseSquare(move.to)
-  if (
-    mover?.piece !== LEGIONARY ||
-    target.rank !== CENTRE ||
-    origin.rank !== CENTRE - step * (CENTRE - 3)
-  )
-    return null
-  return { target: makeSquare({ file: target.file, rank: CENTRE - step }), captured: move.to }
-}
-const clearLine = (occupancy: SquareOccupant, { from, to }: Step): boolean => {
+const isLineClear = (occupancy: SquareOccupant, { from, to }: Step): boolean => {
   if (from === to) return false
   const origin = parseSquare(from)
   const target = parseSquare(to)
-  const files = target.file - origin.file
-  const ranks = target.rank - origin.rank
-  if (files !== 0 && ranks !== 0 && Math.abs(files) !== Math.abs(ranks)) return false
-  const fileStep = Math.sign(files)
-  const rankStep = Math.sign(ranks)
-  const distance = Math.max(Math.abs(files), Math.abs(ranks))
-  for (let step = 1; step < distance; step += 1) {
+  const fileDelta = target.file - origin.file
+  const rankDelta = target.rank - origin.rank
+  if (fileDelta !== 0 && rankDelta !== 0 && Math.abs(fileDelta) !== Math.abs(rankDelta))
+    return false
+  const fileStep = Math.sign(fileDelta)
+  const rankStep = Math.sign(rankDelta)
+  const fromOrigin = Math.max(Math.abs(fileDelta), Math.abs(rankDelta))
+  for (let distance = 1; distance < fromOrigin; distance += 1) {
     if (
       occupancy[
-        makeSquare({ file: origin.file + fileStep * step, rank: origin.rank + rankStep * step })
+        makeSquare({
+          file: origin.file + fileStep * distance,
+          rank: origin.rank + rankStep * distance
+        })
       ]
     )
       return false
@@ -122,12 +54,84 @@ const riposte = (position: Position, move: Move, next: SquareOccupant): boolean 
   const { pieces, occupancy } = position
   const mover = occupancy[move.from]
   if (!mover) return false
-  const side = mover.side === WHITE ? BLACK : WHITE
-  const marshalSquare = pieces[side][MARSHAL][0]
-  if (marshalSquare === undefined || move.captures?.includes(marshalSquare)) return false
+  const enemy = mover.side === WHITE ? BLACK : WHITE
+  const marshalSq = pieces[enemy][MARSHAL][0] ?? null
+  if (marshalSq === null || move.captures?.includes(marshalSq)) return false
   return riposteSquares(mover.side, occupancy, move).some(square =>
-    clearLine(next, { from: marshalSquare, to: square })
+    isLineClear(next, { from: marshalSq, to: square })
   )
+}
+const castling = (
+  occupancy: SquareOccupant,
+  castlingSide: State['castlingSide'],
+  move: Move
+): State['castlingSide'] => {
+  const mover = occupancy[move.from]
+  const next = { [WHITE]: castlingSide[WHITE], [BLACK]: castlingSide[BLACK] }
+  for (const side of [WHITE, BLACK] as const) {
+    const wings = CASTLING[side]
+    const isMoving = mover?.side === side
+    if (isMoving && mover.piece === POPE) {
+      next[side] = { left: false, right: false }
+      continue
+    }
+    next[side] = {
+      left:
+        next[side].left &&
+        !(isMoving && move.from === wings.left.sentinel) &&
+        !move.captures?.includes(wings.left.sentinel),
+      right:
+        next[side].right &&
+        !(isMoving && move.from === wings.right.sentinel) &&
+        !move.captures?.includes(wings.right.sentinel)
+    }
+  }
+  return next
+}
+const promotion = (
+  occupancy: SquareOccupant,
+  promotions: State['promotions'],
+  move: Move
+): State['promotions'] => {
+  const mover = occupancy[move.from]
+  const next = {
+    [WHITE]: promotions[WHITE].map(slot => ({ ...slot, piece: [...slot.piece] })),
+    [BLACK]: promotions[BLACK].map(slot => ({ ...slot, piece: [...slot.piece] }))
+  }
+  const promotesTo = move.promotesTo
+  if (mover && promotesTo !== undefined) {
+    const file = parseSquare(move.to).file
+    const index = next[mover.side].findIndex(
+      slot => slot.piece.includes(promotesTo) && Math.abs(slot.file - file) <= 1
+    )
+    const slot = next[mover.side][index]
+    if (slot) {
+      slot.piece.splice(slot.piece.indexOf(promotesTo), 1)
+      if (slot.piece.length === 0) next[mover.side].splice(index, 1)
+    }
+  }
+  move.captures?.forEach(square => {
+    const captured = occupancy[square]
+    if (!captured || captured.piece === POPE) return
+    const captfile = parseSquare(square).file
+    const slot = next[captured.side].find(({ file }) => file === captfile)
+    if (slot) slot.piece.push(captured.piece)
+    else next[captured.side].push({ file: captfile, piece: [captured.piece] })
+  })
+  return next
+}
+const enPassant = (occupancy: SquareOccupant, move: Move): EnPassant | null => {
+  const mover = occupancy[move.from]
+  const push = mover?.side === WHITE ? 1 : -1
+  const origin = parseSquare(move.from)
+  const target = parseSquare(move.to)
+  if (
+    mover?.piece !== LEGIONARY ||
+    target.rank !== CENTRE ||
+    origin.rank !== CENTRE - push * (CENTRE - 3)
+  )
+    return null
+  return { target: makeSquare({ file: target.file, rank: CENTRE - push }), captured: move.to }
 }
 const progress = (
   occupancy: SquareOccupant,
@@ -146,20 +150,17 @@ const progress = (
     limit: (NO_PROGRESS_BASE + NO_PROGRESS_PER_PIECE * (STARTING_PIECES - pieces)) * PLIES_PER_MOVE
   }
 }
-export const apply = (
-  position: Position,
-  move: Move
-): { occupancy: SquareOccupant; state: State } => {
+export const apply = (position: Position, move: Move): Pick<Position, 'occupancy' | 'state'> => {
   const { occupancy, state } = position
   const next = board(occupancy, move)
   return {
     occupancy: next,
     state: {
-      castlingSide: castling(occupancy, move, state.castlingSide),
-      promotions: promotion(occupancy, move, state.promotions),
-      enPassant: enPassant(occupancy, move),
       awake: state.awake,
       riposte: riposte(position, move, next),
+      castlingSide: castling(occupancy, state.castlingSide, move),
+      promotions: promotion(occupancy, state.promotions, move),
+      enPassant: enPassant(occupancy, move),
       noProgress: progress(occupancy, next, move, state.noProgress)
     }
   }
