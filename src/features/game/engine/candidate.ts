@@ -1,5 +1,6 @@
-import type { Move, Step, Position } from '@/types/game'
+import type { Move, Step, Position, Match } from '@/types/game'
 import type { PieceName, Piece } from '@/types/material'
+import { BLACK } from '@/constants/colour'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
 import { parseSquare } from '../lib/coordinate'
 import { generate } from './generate'
@@ -51,6 +52,8 @@ const isAligned = (
     Math.sign(rankDelta) === rankStep
   )
 }
+export const canSwap = (position: Position, match: Match): boolean =>
+  position.side === BLACK && match.swap
 export const candidate = (position: Position): Move[] => {
   const { pieces, occupancy, side, checkInfo, state } = position
   const { checkers, pinned } = checkInfo

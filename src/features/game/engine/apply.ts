@@ -1,5 +1,5 @@
-import type { SquareOccupant } from '@/types/material'
-import type { Step, Move, EnPassant, NoProgress, State, Position } from '@/types/game'
+import type { Side, SquareOccupant } from '@/types/material'
+import type { Step, Move, EnPassant, Counter, State, Position, Match, Save } from '@/types/game'
 import { CENTRE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, MARSHAL, LEGIONARY, CASTLING } from '@/constants/piece'
@@ -137,8 +137,8 @@ const progress = (
   occupancy: SquareOccupant,
   next: SquareOccupant,
   move: Move,
-  noProgress: NoProgress
-): NoProgress => {
+  noProgress: Counter
+): Counter => {
   const made =
     (move.captures?.length ?? 0) > 0 ||
     occupancy[move.from]?.piece === LEGIONARY ||
@@ -150,9 +150,23 @@ const progress = (
     limit: (NO_PROGRESS_BASE + NO_PROGRESS_PER_PIECE * (STARTING_PIECES - pieces)) * PLIES_PER_MOVE
   }
 }
-export const apply = (position: Position, move: Move): Pick<Position, 'occupancy' | 'state'> => {
+// Black loses the swap right the moment its first turn is over, whether it took the swap or replied
+// with a move. Nothing behind the last reset of the no-progress count is ever read again, so the
+// history is cut back to the key the resetting move itself leaves.
+const record = (side: Side, match: Match, key: string, noProgress: Counter): Match => ({
+  ...match,
+  swap: match.swap && side !== BLACK,
+  history: noProgress.count === 0 ? [key] : [...match.history, key]
+})
+export const apply = (
+  position: Position,
+  move: Move,
+  match: Match,
+  key: string
+): Pick<Save, 'occupancy' | 'state' | 'match'> => {
   const { occupancy, state } = position
   const next = board(occupancy, move)
+  const noProgress = progress(occupancy, next, move, state.noProgress)
   return {
     occupancy: next,
     state: {
@@ -161,7 +175,16 @@ export const apply = (position: Position, move: Move): Pick<Position, 'occupancy
       castlingSide: castling(occupancy, state.castlingSide, move),
       promotions: promotion(occupancy, state.promotions, move),
       enPassant: enPassant(occupancy, move),
-      noProgress: progress(occupancy, next, move, state.noProgress)
-    }
+      noProgress
+    },
+    match: record(position.side, match, key, noProgress)
   }
 }
+// There is no move to apply, so nothing is written again except the swap right and the player who
+// owns White from here on, and no key is pushed: the board and the side to move are the ones the
+// last key already holds.
+export const takeSwap = (match: Match, owner: string): Match => ({
+  ...match,
+  swap: false,
+  whitePlayer: owner
+})
