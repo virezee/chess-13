@@ -65,3 +65,18 @@ export const LETTER: Record<PieceName, string> = {
   [TEMPLAR]: 'T',
   [LEGIONARY]: 'L'
 } as const satisfies Record<PieceName, string>
+export const BACK_RANK = [
+  SENTINEL,
+  TEMPLAR,
+  HERALD,
+  MAGE,
+  ASSASSIN,
+  EMPEROR,
+  POPE,
+  MARSHAL,
+  ASSASSIN,
+  MAGE,
+  HERALD,
+  TEMPLAR,
+  SENTINEL
+] as const satisfies readonly PieceName[]
