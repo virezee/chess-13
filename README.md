@@ -328,17 +328,22 @@ Working them through: 14.7692 × 0.78 = 11.5200. 14.7692 × 0.61 = 9.0092 and 11
 
 Rounded to whole points, half up, the way chess carries its 1, 3, 5 and 9:
 
-| Piece     | Enhanced     | Restricted   |
-| --------- | ------------ | ------------ |
-| Pope      | ∞            | ∞            |
-| Emperor   | 14.7692 → 15 | 14.7692 → 15 |
-| Marshal   | 11.5200 → 12 | n/a          |
-| Assassin  | 9.0092 → 9   | 7.0385 → 7   |
-| Sentinel  | 9.0000 → 9   | 6.5769 → 7   |
-| Mage      | 7.9880 → 8   | 3.9940 → 4   |
-| Herald    | 7.1538 → 7   | 4.9615 → 5   |
-| Templar   | 6.5297 → 7   | 2.9681 → 3   |
-| Legionary | 1.0360 → 1   | 0.9000 → 1   |
+<table>
+  <thead>
+    <tr><th>Piece</th><th>Enhanced</th><th>Restricted</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Pope</td><td colspan="2" align="center">∞</td></tr>
+    <tr><td>Emperor</td><td colspan="2" align="center">14.7692 → 15</td></tr>
+    <tr><td>Marshal</td><td colspan="2" align="center">11.5200 → 12</td></tr>
+    <tr><td>Assassin</td><td>9.0092 → 9</td><td>7.0385 → 7</td></tr>
+    <tr><td>Sentinel</td><td>9.0000 → 9</td><td>6.5769 → 7</td></tr>
+    <tr><td>Mage</td><td>7.9880 → 8</td><td>3.9940 → 4</td></tr>
+    <tr><td>Herald</td><td>7.1538 → 7</td><td>4.9615 → 5</td></tr>
+    <tr><td>Templar</td><td>6.5297 → 7</td><td>2.9681 → 3</td></tr>
+    <tr><td>Legionary</td><td>1.0360 → 1</td><td>0.9000 → 1</td></tr>
+  </tbody>
+</table>
 
 The Pope carries no number at all. Losing it ends the game, so it is never traded and there is nothing to price it against, which is the reading chess gives its own king. It also stands outside the command zone, so both columns hold the same mark.
 
