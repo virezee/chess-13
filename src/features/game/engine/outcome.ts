@@ -44,8 +44,6 @@ const castling = (castlingSide: State['castlingSide']): string => {
     .join('')
   return written === '' ? '-' : written
 }
-const repetitionCount = (key: string, history: readonly string[]): number =>
-  history.filter(entry => entry === key).length
 const isInsufficientMaterial = (occupancy: SquareOccupant): boolean =>
   Object.values(occupancy).every(occupant => occupant.piece === POPE)
 export const repetitionKey = (side: Side, occupancy: SquareOccupant, state: State): string =>
@@ -56,6 +54,8 @@ export const repetitionKey = (side: Side, occupancy: SquareOccupant, state: Stat
     castling(state.castlingSide),
     state.enPassant?.target ?? '-'
   ].join(' ')
+export const repetitionCount = (key: string, history: readonly string[]): number =>
+  history.filter(entry => entry === key).length
 export const outcome = (
   position: Position,
   moves: Move[],

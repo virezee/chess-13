@@ -1,18 +1,18 @@
 import type { Side } from './material'
 import type { Promotion, Counter } from './game'
 
-export type EmperorState = { square: string; awake: boolean } | null
-export type MarshalState = 'full' | 'partial' | 'none'
+export type EmperorState = 'dormant' | 'awake' | null
+export type CommandZone = 'full' | 'partial' | 'none'
 export interface ArmyState {
   player: string
   side: Side
-  pieceCount: number
-  marshalSquare: string | null
-  aura: MarshalState
-  enhancedCount: number
   emperor: EmperorState
+  marshalSquare: string | null
+  commandZone: CommandZone
+  pieceCount: number
+  enhancedCount: number
   lost: string[]
-  promotionSlots: Promotion[]
+  promotions: Promotion[]
   material: number
 }
 export interface LoggedTurn {
