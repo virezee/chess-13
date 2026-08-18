@@ -175,13 +175,16 @@ export function GameStatus({
       </header>
       <RepetitionGauge count={repetition} limit={REPETITION_LIMIT} />
       <NoProgressGauge count={noProgress.count} limit={noProgress.limit} />
-      {canSwap && <Prompt label='Swap Sides?' onDecline={onDecline} onAccept={onAccept} />}
-      <Controls
-        pending={pending}
-        setPending={setPending}
-        onResign={onResign}
-        onNewGame={onNewGame}
-      />
+      {canSwap ? (
+        <Prompt label='Swap Sides?' onDecline={onDecline} onAccept={onAccept} />
+      ) : (
+        <Controls
+          pending={pending}
+          setPending={setPending}
+          onResign={onResign}
+          onNewGame={onNewGame}
+        />
+      )}
     </section>
   )
 }
