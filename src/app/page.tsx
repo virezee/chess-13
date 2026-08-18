@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import type { Side, SquareOccupant } from '@/types/material'
 import type { Move, State, Save } from '@/types/game'
-import type { LoggedMove } from '@/types/panel'
+import type { FullMove } from '@/types/panel'
 import { SIZE, FILES } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { EMPEROR, LEGIONARY, BACK_RANK } from '@/constants/piece'
@@ -61,7 +61,7 @@ export default function Home() {
   const [selected, setSelected] = useState<string | null>(null)
   const [choices, setChoices] = useState<Move[]>([])
   const [marks, setMarks] = useState<Record<string, string>>({})
-  const [log, setLog] = useState<LoggedMove[]>([])
+  const [log, setLog] = useState<FullMove[]>([])
 
   const { position, moves, outcome } = useMemo(() => turn(save, null), [save])
   // Black is offered white before its first move, and the offer holds the board:
