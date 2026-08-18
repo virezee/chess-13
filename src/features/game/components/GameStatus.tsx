@@ -73,9 +73,9 @@ function Action({
       type='button'
       onClick={onClick}
       className={cn(
-        'h-9 flex-1 rounded-[3px] border text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors',
+        'h-9 flex-1 cursor-pointer rounded-[3px] border text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors',
         tone === 'quiet' &&
-          'border-line bg-surface-2 text-ink-dim hover:border-line-strong hover:text-ink',
+          'border-line bg-surface-2 text-ink-dim hover:border-line-strong hover:bg-line/60 hover:text-ink',
         tone === 'accept' && 'border-good/60 bg-good/10 text-good hover:bg-good/20',
         tone === 'decline' && 'border-alert/60 bg-alert/10 text-alert hover:bg-alert/20'
       )}>
@@ -83,11 +83,19 @@ function Action({
     </button>
   )
 }
-function SwapPrompt({ onDecline, onAccept }: { onDecline: () => void; onAccept: () => void }) {
+function Prompt({
+  label,
+  onDecline,
+  onAccept
+}: {
+  label: string
+  onDecline: () => void
+  onAccept: () => void
+}) {
   return (
     <div className='border-t border-line px-3.5 py-3'>
       <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-        Swap Sides?
+        {label}
       </p>
       <div className='mt-2 flex gap-2'>
         <Action tone='decline' onClick={onDecline}>
@@ -100,12 +108,47 @@ function SwapPrompt({ onDecline, onAccept }: { onDecline: () => void; onAccept: 
     </div>
   )
 }
+function Controls({
+  pending,
+  setPending,
+  onResign,
+  onNewGame
+}: {
+  pending: 'resign' | 'new' | null
+  setPending: (pending: 'resign' | 'new' | null) => void
+  onResign?: () => void
+  onNewGame?: () => void
+}) {
+  if (pending !== null)
+    return (
+      <Prompt
+        label={pending === 'resign' ? 'Resign?' : 'Start A New Game?'}
+        onDecline={() => setPending(null)}
+        onAccept={() => {
+          setPending(null)
+          if (pending === 'resign') onResign?.()
+          else onNewGame?.()
+        }}
+      />
+    )
+  return (
+    <div className='border-t border-line px-3.5 py-3'>
+      <div className='flex gap-2'>
+        <Action onClick={() => setPending('resign')}>Resign</Action>
+        <Action onClick={() => setPending('new')}>New Game</Action>
+      </div>
+    </div>
+  )
+}
 export function GameStatus({
   position,
   history,
   canSwap,
   onDecline,
   onAccept,
+  pending,
+  setPending,
+  onResign,
   onNewGame
 }: {
   position: Position
@@ -113,6 +156,9 @@ export function GameStatus({
   canSwap: boolean
   onDecline: () => void
   onAccept: () => void
+  pending: 'resign' | 'new' | null
+  setPending: (pending: 'resign' | 'new' | null) => void
+  onResign?: () => void
   onNewGame?: () => void
 }) {
   const { noProgress } = position.state
@@ -129,13 +175,13 @@ export function GameStatus({
       </header>
       <RepetitionGauge count={repetition} limit={REPETITION_LIMIT} />
       <NoProgressGauge count={noProgress.count} limit={noProgress.limit} />
-      {canSwap && <SwapPrompt onDecline={onDecline} onAccept={onAccept} />}
-      <div className='border-t border-line px-3.5 py-3'>
-        <div className='flex gap-2'>
-          <Action>Resign</Action>
-          <Action onClick={onNewGame}>New Game</Action>
-        </div>
-      </div>
+      {canSwap && <Prompt label='Swap Sides?' onDecline={onDecline} onAccept={onAccept} />}
+      <Controls
+        pending={pending}
+        setPending={setPending}
+        onResign={onResign}
+        onNewGame={onNewGame}
+      />
     </section>
   )
 }

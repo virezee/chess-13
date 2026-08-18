@@ -62,6 +62,7 @@ export default function Home() {
   const [choices, setChoices] = useState<Move[]>([])
   const [marks, setMarks] = useState<Record<string, string>>({})
   const [log, setLog] = useState<FullMove[]>([])
+  const [pending, setPending] = useState<'resign' | 'new' | null>(null)
 
   const { position, moves, outcome } = useMemo(() => turn(save, null), [save])
   // Black is offered white before its first move, and the offer holds the board:
@@ -100,7 +101,7 @@ export default function Home() {
     setMarks({})
   }
   const select = (square: string) => {
-    if (swapAsked) return
+    if (swapAsked || pending !== null) return
     setMarks({})
     setChoices([])
     if (selected !== null) {
@@ -182,6 +183,8 @@ export default function Home() {
           canSwap={canSwap(position, save.match)}
           onDecline={() => setSave({ ...save, match: { ...save.match, swap: false } })}
           onAccept={() => setSave(takeSwap(position, save.match, PLAYERS[BLACK]))}
+          pending={pending}
+          setPending={setPending}
           onNewGame={() => {
             setSave(opening())
             setLog([])
