@@ -32,7 +32,13 @@ const army = (position: Position, side: Side, player: string): ArmyState => {
   const { pieces, occupancy, state } = position
   const marshalSquare = pieces[side][MARSHAL][0] ?? null
   const emperorSq = pieces[side][EMPEROR][0] ?? null
-  const remaining = Object.entries(occupancy).filter(([, piece]) => piece.side === side)
+  const remaining = Object.entries(occupancy).filter(
+    ([, piece]) =>
+      piece.side === side &&
+      piece.piece !== POPE &&
+      piece.piece !== EMPEROR &&
+      piece.piece !== MARSHAL
+  )
   return {
     player,
     side,
