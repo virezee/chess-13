@@ -4,11 +4,9 @@ import { useTheme } from 'next-themes'
 import { IconButton } from './ui/IconButton'
 
 export function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
   return (
-    <IconButton
-      label='Switch theme'
-      onClick={() => setTheme(resolvedTheme === 'light' ? 'dark' : 'light')}>
+    <IconButton label='Switch theme' onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
       <svg viewBox='0 0 16 16' className='h-4 w-4 light:hidden' aria-hidden>
         <circle cx='8' cy='8' r='3' fill='none' stroke='currentColor' strokeWidth='1.1' />
         <path

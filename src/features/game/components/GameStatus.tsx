@@ -60,13 +60,13 @@ function NoProgressGauge({ count, limit }: Counter) {
   )
 }
 function Action({
-  children,
   tone = 'quiet',
-  onClick
+  onClick,
+  children
 }: {
-  children: React.ReactNode
   tone?: 'quiet' | 'accept' | 'decline'
   onClick?: () => void
+  children: React.ReactNode
 }) {
   return (
     <button
@@ -87,7 +87,7 @@ function SwapPrompt({ onDecline, onAccept }: { onDecline: () => void; onAccept: 
   return (
     <div className='border-t border-line px-3.5 py-3'>
       <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-        Swap sides?
+        Swap Sides?
       </p>
       <div className='mt-2 flex gap-2'>
         <Action tone='decline' onClick={onDecline}>
@@ -133,7 +133,7 @@ export function GameStatus({
       <div className='border-t border-line px-3.5 py-3'>
         <div className='flex gap-2'>
           <Action>Resign</Action>
-          <Action onClick={onNewGame}>New game</Action>
+          <Action onClick={onNewGame}>New Game</Action>
         </div>
       </div>
     </section>

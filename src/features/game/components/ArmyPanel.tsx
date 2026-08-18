@@ -1,23 +1,54 @@
+import type { Side } from '@/types/material'
+import type { Position } from '@/types/game'
+import type { CommandZone, ArmyState } from '@/types/panel'
+import { FILES, COMMAND_SQUARE } from '@/constants/board'
+import { WHITE, BLACK } from '@/constants/colour'
+import { POPE, EMPEROR, MARSHAL, LETTER, VALUE } from '@/constants/piece'
+import { ENHANCED, RESTRICTED } from '@/constants/zone'
+import { isEnhanced } from '../engine/generate'
 import { cn } from '@/lib/cn'
-import { FILES } from '@/constants/board'
-import type { ArmyState, AuraState } from '@/types/panel'
 
-const AURA_COPY: Record<AuraState, { label: string; note: string }> = {
-  full: { label: 'Command square', note: 'Whole army enhanced' },
-  partial: { label: 'Command zone', note: 'Chebyshev 4' },
-  none: { label: 'Marshal captured', note: 'Whole army restricted' }
+const ZONE_TEXT: Record<CommandZone, string> = {
+  full: 'Command Square',
+  partial: 'Command Zone',
+  none: 'Marshal Captured'
 }
-
-/**
- * A slot is claimable on the file its piece fell on and one file to either side,
- * so the range is worked out here rather than stored twice.
- */
-function claimableFiles(file: number) {
+const fileRange = (file: number) => {
   const first = Math.max(0, file - 1)
   const last = Math.min(FILES.length - 1, file + 1)
   return `${FILES[first]}-${FILES[last]}`
 }
-
+const material = (position: Position, side: Side): number => {
+  const marshalSq = position.pieces[side][MARSHAL][0] ?? null
+  return Object.entries(position.occupancy).reduce(
+    (total, [square, piece]) =>
+      piece.side !== side || piece.piece === POPE
+        ? total
+        : total + VALUE[piece.piece][isEnhanced(marshalSq, square) ? ENHANCED : RESTRICTED],
+    0
+  )
+}
+const army = (position: Position, side: Side, player: string): ArmyState => {
+  const { pieces, occupancy, state } = position
+  const marshalSquare = pieces[side][MARSHAL][0] ?? null
+  const emperorSq = pieces[side][EMPEROR][0] ?? null
+  const remaining = Object.entries(occupancy).filter(([, piece]) => piece.side === side)
+  return {
+    player,
+    side,
+    emperor: emperorSq === null ? null : occupancy[emperorSq]?.awake === true ? 'awake' : 'dormant',
+    marshalSquare,
+    commandZone:
+      marshalSquare === null ? 'none' : marshalSquare === COMMAND_SQUARE ? 'full' : 'partial',
+    pieceCount: remaining.length,
+    enhancedCount: remaining.filter(([square]) => isEnhanced(marshalSquare, square)).length,
+    lost: state.promotions[side].flatMap(slot =>
+      slot.piece.map((name, i) => ({ id: `${slot.file}-${i}`, letter: LETTER[name] }))
+    ),
+    promotions: state.promotions[side],
+    material: material(position, side)
+  }
+}
 function Field({
   label,
   trailing,
@@ -39,164 +70,177 @@ function Field({
     </div>
   )
 }
-
-function AuraMeter({ army }: { army: ArmyState }) {
-  const copy = AURA_COPY[army.aura]
-  const ratio = army.pieceCount === 0 ? 0 : army.enhancedCount / army.pieceCount
-
+function Player({ armyState, active }: { armyState: ArmyState; active: boolean }) {
+  return (
+    <header className='flex items-center justify-between gap-3 px-3.5 py-3'>
+      <div className='flex items-center gap-2.5'>
+        <span
+          aria-hidden
+          className={cn(
+            'h-2.5 w-2.5 rounded-full border border-line-strong',
+            armyState.side === WHITE ? 'bg-army-white' : 'bg-army-black'
+          )}
+        />
+        <div className='leading-tight'>
+          <p className='text-[11px] font-semibold uppercase tracking-[0.16em] text-ink'>
+            {armyState.side}
+          </p>
+          <p className='text-[11px] text-ink-faint'>{armyState.player}</p>
+        </div>
+      </div>
+      {active && (
+        <span className='rounded-xs border border-brass-deep bg-brass/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-brass'>
+          To move
+        </span>
+      )}
+    </header>
+  )
+}
+function EmperorField({ armyState }: { armyState: ArmyState }) {
+  return (
+    <Field label='Emperor'>
+      {armyState.emperor === null ? (
+        <p className='text-[12px] text-ink-faint'>Captured</p>
+      ) : (
+        <div className='rounded-[3px] border border-line bg-surface-2 px-3 py-2.5'>
+          <span
+            className={cn(
+              'text-[11px] font-semibold uppercase tracking-[0.12em]',
+              armyState.emperor === 'awake' ? 'text-brass' : 'text-ink-faint'
+            )}>
+            {armyState.emperor}
+          </span>
+        </div>
+      )}
+    </Field>
+  )
+}
+function ZoneMeter({ armyState }: { armyState: ArmyState }) {
+  const ratio = armyState.pieceCount === 0 ? 0 : armyState.enhancedCount / armyState.pieceCount
   return (
     <div
       className={cn(
         'rounded-[3px] border px-3 py-2.5',
-        army.aura === 'full' && 'border-brass-deep bg-brass/8',
-        army.aura === 'partial' && 'border-line-strong bg-surface-2',
-        army.aura === 'none' && 'border-alert/40 bg-alert/8'
+        armyState.commandZone === 'full' && 'border-brass-deep bg-brass/8',
+        armyState.commandZone === 'partial' && 'border-line-strong bg-surface-2',
+        armyState.commandZone === 'none' && 'border-alert/40 bg-alert/8'
       )}>
       <div className='flex items-baseline justify-between gap-3'>
         <span
           className={cn(
             'text-[11px] font-semibold uppercase tracking-[0.12em]',
-            army.aura === 'none' ? 'text-alert' : 'text-brass'
+            armyState.commandZone === 'none' ? 'text-alert' : 'text-brass'
           )}>
-          {copy.label}
+          {ZONE_TEXT[armyState.commandZone]}
         </span>
         <span className='font-mono text-[11px] text-ink-dim'>
-          {army.enhancedCount}
-          <span className='text-ink-faint'>/{army.pieceCount}</span>
+          {armyState.enhancedCount}
+          <span className='text-ink-faint'>/{armyState.pieceCount}</span>
         </span>
       </div>
-
       <div className='mt-2 h-1 w-full overflow-hidden rounded-[1px] bg-track'>
         <div
           className={cn(
             'h-full transition-[width] duration-300',
-            army.aura === 'none' ? 'bg-alert/60' : 'bg-brass'
+            armyState.commandZone === 'none' ? 'bg-alert/60' : 'bg-brass'
           )}
           style={{ width: `${Math.round(ratio * 100)}%` }}
         />
       </div>
-
-      <p className='mt-2 text-[11px] text-ink-faint'>{copy.note}</p>
     </div>
   )
 }
+function MarshalField({ armyState }: { armyState: ArmyState }) {
+  return (
+    <Field
+      label='Marshal'
+      trailing={
+        <span className='font-mono text-[12px] text-ink'>{armyState.marshalSquare ?? '--'}</span>
+      }>
+      <ZoneMeter armyState={armyState} />
+    </Field>
+  )
+}
+function LostField({ armyState }: { armyState: ArmyState }) {
+  return (
+    <Field
+      label='Lost'
+      trailing={
+        <span className='font-mono text-[11px] text-ink-faint'>{armyState.lost.length}</span>
+      }>
+      {armyState.lost.length === 0 ? (
+        <p className='text-[12px] text-ink-faint'>Nothing yet</p>
+      ) : (
+        <div className='flex flex-wrap gap-1'>
+          {armyState.lost.map(piece => (
+            <span
+              key={piece.id}
+              className='grid h-6 w-6 place-items-center rounded-xs border border-line-strong bg-surface-2 font-notation font-bold text-[11px] text-ink-dim'>
+              {piece.letter}
+            </span>
+          ))}
+        </div>
+      )}
+    </Field>
+  )
+}
+function PromotionField({ armyState }: { armyState: ArmyState }) {
+  return (
+    <Field label='Promotion Slots'>
+      {armyState.promotions.length === 0 ? (
+        <p className='text-[12px] text-ink-faint'>None open</p>
+      ) : (
+        <ul className='space-y-1.5'>
+          {armyState.promotions.map(slot => (
+            <li key={slot.file} className='flex items-center justify-between gap-3'>
+              <span className='font-mono text-[12px] text-ink capitalize'>
+                {slot.piece.join(', ')}
+              </span>
+              <span className='font-notation text-[11px] text-ink-dim'>
+                files {fileRange(slot.file)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Field>
+  )
+}
+function MaterialField({ armyState, delta }: { armyState: ArmyState; delta: number }) {
+  return (
+    <Field label='Material'>
+      <div className='flex items-baseline gap-2'>
+        <span className='font-mono text-[15px] text-ink'>{armyState.material}</span>
+        {delta > 0 && <span className='font-mono text-[11px] text-good'>+{delta}</span>}
+      </div>
+    </Field>
+  )
+}
 export function ArmyPanel({
-  army,
-  active,
-  delta
+  player,
+  position,
+  side,
+  active
 }: {
-  army: ArmyState
+  player: string
+  position: Position
+  side: Side
   active: boolean
-  /** Material lead over the opponent. Only rendered when positive. */
-  delta: number
 }) {
+  const armyState = army(position, side, player)
+  const delta = armyState.material - material(position, side === WHITE ? BLACK : WHITE)
   return (
     <section
       className={cn(
         'overflow-hidden rounded border bg-surface transition-colors',
         active ? 'border-brass/45' : 'border-line'
       )}>
-      <header className='flex items-center justify-between gap-3 px-3.5 py-3'>
-        <div className='flex items-center gap-2.5'>
-          <span
-            aria-hidden
-            className={cn(
-              // Both dots carry a ring. Without it the white dot vanishes on a
-              // light surface and the black dot vanishes on a dark one.
-              'h-2.5 w-2.5 rounded-full border border-line-strong',
-              army.side === 'white' ? 'bg-army-white' : 'bg-army-black'
-            )}
-          />
-          <div className='leading-tight'>
-            <p className='text-[11px] font-semibold uppercase tracking-[0.16em] text-ink'>
-              {army.side}
-            </p>
-            <p className='text-[11px] text-ink-faint'>{army.player}</p>
-          </div>
-        </div>
-
-        {active && (
-          <span className='rounded-xs border border-brass-deep bg-brass/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-brass'>
-            To move
-          </span>
-        )}
-      </header>
-
-      <Field
-        label='Marshal'
-        trailing={
-          <span className='font-mono text-[12px] text-ink'>{army.marshalSquare ?? '--'}</span>
-        }>
-        <AuraMeter army={army} />
-      </Field>
-
-      <Field
-        label='Emperor'
-        trailing={
-          <span className='font-mono text-[12px] text-ink'>{army.emperor?.square ?? '--'}</span>
-        }>
-        {army.emperor === null ? (
-          <p className='text-[12px] text-ink-faint'>Captured</p>
-        ) : (
-          <div
-            className={cn(
-              'rounded-[3px] border px-3 py-2.5',
-              army.emperor.awake ? 'border-line-strong bg-surface-2' : 'border-line bg-surface-2'
-            )}>
-            <span
-              className={cn(
-                'text-[11px] font-semibold uppercase tracking-[0.12em]',
-                army.emperor.awake ? 'text-brass' : 'text-ink-faint'
-              )}>
-              {army.emperor.awake ? 'Awake' : 'Dormant'}
-            </span>
-          </div>
-        )}
-      </Field>
-
-      <Field
-        label='Lost'
-        trailing={<span className='font-mono text-[11px] text-ink-faint'>{army.lost.length}</span>}>
-        {army.lost.length === 0 ? (
-          <p className='text-[12px] text-ink-faint'>Nothing yet</p>
-        ) : (
-          <div className='flex flex-wrap gap-1'>
-            {army.lost.map((letter, i) => (
-              <span
-                key={`${letter}-${i}`}
-                className='grid h-6 w-6 place-items-center rounded-xs border border-line-strong bg-surface-2 font-notation font-bold text-[11px] text-ink-dim'>
-                {letter}
-              </span>
-            ))}
-          </div>
-        )}
-      </Field>
-
-      <Field label='Promotion slots'>
-        {army.promotionSlots.length === 0 ? (
-          <p className='text-[12px] text-ink-faint'>None open</p>
-        ) : (
-          <ul className='space-y-1.5'>
-            {army.promotionSlots.map((slot) => (
-              <li key={slot.piece} className='flex items-center justify-between gap-3'>
-                <span className='font-mono text-[12px] text-ink capitalize'>{slot.piece}</span>
-                <span className='font-notation text-[11px] text-ink-dim'>
-                  files {claimableFiles(slot.file)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Field>
-
-      <Field label='Material'>
-        <div className='flex items-baseline gap-2'>
-          <span className='font-mono text-[15px] text-ink'>{army.material.toFixed(1)}</span>
-          {delta > 0 && (
-            <span className='font-mono text-[11px] text-good'>+{delta.toFixed(1)}</span>
-          )}
-        </div>
-      </Field>
+      <Player armyState={armyState} active={active} />
+      <EmperorField armyState={armyState} />
+      <MarshalField armyState={armyState} />
+      <LostField armyState={armyState} />
+      <PromotionField armyState={armyState} />
+      <MaterialField armyState={armyState} delta={delta} />
     </section>
   )
 }

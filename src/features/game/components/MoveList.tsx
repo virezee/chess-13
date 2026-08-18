@@ -1,5 +1,5 @@
 import type { Side } from '@/types/material'
-import type { LoggedMove } from '@/types/panel'
+import type { FullMove } from '@/types/panel'
 import { cn } from '@/lib/cn'
 
 function Ply({
@@ -31,13 +31,13 @@ function Ply({
     </span>
   )
 }
-export function MoveList({ moves, toMove }: { moves: LoggedMove[]; toMove: Side }) {
+export function MoveList({ moves, toMove }: { moves: FullMove[]; toMove: Side }) {
   const lastIndex = moves.length - 1
   return (
     <section className='flex min-h-0 flex-col overflow-hidden rounded border border-line bg-surface'>
       <header className='flex items-baseline justify-between border-b border-line px-3.5 py-3'>
         <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-          Move log
+          Move Log
         </p>
         <span className='font-mono text-[11px] text-ink-faint'>{moves.length} turns</span>
       </header>

@@ -11,11 +11,11 @@ export interface ArmyState {
   commandZone: CommandZone
   pieceCount: number
   enhancedCount: number
-  lost: string[]
+  lost: { id: string; letter: string }[]
   promotions: Promotion[]
   material: number
 }
-export interface LoggedTurn {
+export interface FullMove {
   white: string
   black: string | null
   number: number
