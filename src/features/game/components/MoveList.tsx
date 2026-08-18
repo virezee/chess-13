@@ -1,5 +1,5 @@
 import type { Side } from '@/types/material'
-import type { LoggedTurn } from '@/types/panel'
+import type { LoggedMove } from '@/types/panel'
 import { cn } from '@/lib/cn'
 
 function Ply({
@@ -11,7 +11,7 @@ function Ply({
   pending: boolean
   latest: boolean
 }) {
-  if (move === null) {
+  if (move === null)
     return (
       <span
         className={cn(
@@ -21,7 +21,6 @@ function Ply({
         {pending ? '…' : '-'}
       </span>
     )
-  }
   return (
     <span
       className={cn(
@@ -32,30 +31,30 @@ function Ply({
     </span>
   )
 }
-export function MoveLog({ turns, toMove }: { turns: LoggedTurn[]; toMove: Side }) {
-  const lastIndex = turns.length - 1
+export function MoveList({ moves, toMove }: { moves: LoggedMove[]; toMove: Side }) {
+  const lastIndex = moves.length - 1
   return (
     <section className='flex min-h-0 flex-col overflow-hidden rounded border border-line bg-surface'>
       <header className='flex items-baseline justify-between border-b border-line px-3.5 py-3'>
         <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
           Move log
         </p>
-        <span className='font-mono text-[11px] text-ink-faint'>{turns.length} turns</span>
+        <span className='font-mono text-[11px] text-ink-faint'>{moves.length} turns</span>
       </header>
       <div className='scroll-thin max-h-76 min-h-0 flex-1 overflow-y-auto px-2 py-2'>
         <ol>
-          {turns.map((turn, i) => {
+          {moves.map((move, i) => {
             const isLast = i === lastIndex
             return (
               <li
-                key={turn.number}
+                key={move.number}
                 className='grid grid-cols-[2rem_1fr_1fr] items-center gap-1 rounded-xs px-1 py-0.5 hover:bg-surface-2'>
-                <span className='font-mono text-[11px] text-ink-faint'>{turn.number}</span>
-                <Ply move={turn.white} pending={false} latest={isLast && turn.black === null} />
+                <span className='font-mono text-[11px] text-ink-faint'>{move.number}</span>
+                <Ply move={move.white} pending={false} latest={isLast && move.black === null} />
                 <Ply
-                  move={turn.black}
+                  move={move.black}
                   pending={isLast && toMove === 'black'}
-                  latest={isLast && turn.black !== null}
+                  latest={isLast && move.black !== null}
                 />
               </li>
             )

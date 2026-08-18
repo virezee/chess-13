@@ -6,11 +6,6 @@ export function AppHeader() {
     <header className='sticky top-0 z-10 border-b border-line bg-bg/85 backdrop-blur'>
       <div className='mx-auto flex h-14 w-full max-w-[1600px] items-center justify-between px-5'>
         <div className='flex items-center gap-3'>
-          <span
-            aria-hidden
-            className='grid h-7 w-7 place-items-center rounded-[3px] border border-brass-deep bg-surface font-mono text-[13px] font-semibold text-brass'>
-            13
-          </span>
           <div className='flex items-baseline gap-2.5'>
             <span className='font-display text-[21px] leading-none text-ink'>Chess 13</span>
             <span className='hidden text-[10px] uppercase tracking-[0.18em] text-ink-faint sm:inline'>
