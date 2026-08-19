@@ -101,7 +101,7 @@ export default function Home() {
     setMarks({})
   }
   const select = (square: string) => {
-    if (swapAsked || pending !== null) return
+    if (swapAsked || pending !== null || outcome !== null) return
     setMarks({})
     setChoices([])
     if (selected !== null) {
@@ -177,16 +177,11 @@ export default function Home() {
             ))}
           </div>
         )}
-        {outcome !== null && (
-          <p className='rounded border border-line bg-surface px-3 py-2 text-[12px] text-ink'>
-            {outcome.reason}
-            {outcome.winner === null ? '' : `, ${outcome.winner} wins`}
-          </p>
-        )}
         <MoveList moves={log} toMove={position.side} />
         <GameStatus
           position={position}
           history={save.match.history}
+          outcome={outcome}
           canSwap={canSwap(position, save.match)}
           onDecline={() => setSave({ ...save, match: { ...save.match, swap: false } })}
           onAccept={() => setSave(takeSwap(position, save.match, PLAYERS[BLACK]))}

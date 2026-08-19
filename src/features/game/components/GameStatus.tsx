@@ -1,8 +1,16 @@
+import type { Side } from '@/types/material'
 import type { Counter, Position } from '@/types/game'
 import { REPETITION_LIMIT } from '@/constants/outcome'
 import { repetitionKey, repetitionCount } from '../engine/outcome'
 import { cn } from '@/lib/cn'
 
+type Outcome = { winner: Side | null; reason: string }
+type ControlsProps = {
+  pending: 'resign' | 'new' | null
+  setPending: (pending: 'resign' | 'new' | null) => void
+  onResign?: () => void
+  onNewGame?: () => void
+}
 function RepetitionGauge({ count, limit }: Counter) {
   const nearLimit = count >= limit - 1
   return (
@@ -108,17 +116,7 @@ function Prompt({
     </div>
   )
 }
-function Controls({
-  pending,
-  setPending,
-  onResign,
-  onNewGame
-}: {
-  pending: 'resign' | 'new' | null
-  setPending: (pending: 'resign' | 'new' | null) => void
-  onResign?: () => void
-  onNewGame?: () => void
-}) {
+function Controls({ pending, setPending, onResign, onNewGame }: ControlsProps) {
   if (pending !== null)
     return (
       <Prompt
@@ -140,26 +138,45 @@ function Controls({
     </div>
   )
 }
+function Result({ outcome, onNewGame }: { outcome: Outcome; onNewGame?: () => void }) {
+  const isDraw = outcome.winner === null
+  return (
+    <div className='border-t border-line px-3.5 py-3'>
+      <div
+        className={cn(
+          'rounded-[3px] border px-3 py-2.5',
+          isDraw ? 'border-line-strong bg-surface-2' : 'border-good/60 bg-good/10'
+        )}>
+        <p
+          className={cn(
+            'text-[11px] font-semibold uppercase tracking-[0.12em]',
+            isDraw ? 'text-ink-dim' : 'text-good'
+          )}>
+          {isDraw ? 'Draw' : `${outcome.winner} wins`}
+        </p>
+        <p className='mt-1 text-[11px] capitalize text-ink-faint'>{outcome.reason}</p>
+      </div>
+      <div className='mt-2 flex'>
+        <Action onClick={onNewGame}>New Game</Action>
+      </div>
+    </div>
+  )
+}
 export function GameStatus({
   position,
   history,
   canSwap,
+  outcome,
   onDecline,
   onAccept,
-  pending,
-  setPending,
-  onResign,
-  onNewGame
-}: {
+  ...controls
+}: ControlsProps & {
   position: Position
   history: readonly string[]
   canSwap: boolean
+  outcome: Outcome | null
   onDecline: () => void
   onAccept: () => void
-  pending: 'resign' | 'new' | null
-  setPending: (pending: 'resign' | 'new' | null) => void
-  onResign?: () => void
-  onNewGame?: () => void
 }) {
   const { noProgress } = position.state
   const repetition = repetitionCount(
@@ -175,15 +192,14 @@ export function GameStatus({
       </header>
       <RepetitionGauge count={repetition} limit={REPETITION_LIMIT} />
       <NoProgressGauge count={noProgress.count} limit={noProgress.limit} />
-      {canSwap ? (
-        <Prompt label='Swap Sides?' onDecline={onDecline} onAccept={onAccept} />
+      {outcome === null ? (
+        canSwap ? (
+          <Prompt label='Swap Sides?' onDecline={onDecline} onAccept={onAccept} />
+        ) : (
+          <Controls {...controls} />
+        )
       ) : (
-        <Controls
-          pending={pending}
-          setPending={setPending}
-          onResign={onResign}
-          onNewGame={onNewGame}
-        />
+        <Result outcome={outcome} onNewGame={controls.onNewGame} />
       )}
     </section>
   )
