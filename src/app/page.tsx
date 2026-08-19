@@ -157,7 +157,7 @@ export default function Home() {
         {choices.length > 0 && (
           <div className='flex flex-wrap items-center gap-2 rounded border border-line bg-surface px-3 py-2'>
             <span className='text-[11px] uppercase tracking-[0.16em] text-ink-faint'>
-              Promote to
+              Promote To?
             </span>
             {choices.map(move => (
               <button

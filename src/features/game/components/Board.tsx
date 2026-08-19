@@ -127,6 +127,7 @@ function PieceImage({ piece, square }: { piece: Piece; square: string }) {
       className='absolute left-0 top-0 cursor-pointer transition-transform duration-300 ease-out'
       style={{ ...translate(square), willChange: 'transform', zIndex: 1 }}>
       <Image
+        key={`${piece.side}/${piece.piece}`}
         src={`/${piece.side}/${piece.piece}.png`}
         alt={`${piece.side} ${piece.piece}`}
         fill
