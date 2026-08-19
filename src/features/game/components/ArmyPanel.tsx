@@ -13,10 +13,10 @@ const ZONE_TEXT: Record<CommandZone, string> = {
   partial: 'Command Zone',
   none: 'Marshal Captured'
 }
-const STARTING: Partial<Record<PieceName, number>> = { [LEGIONARY]: SIZE }
-for (const piece of BACK_RANK) STARTING[piece] = (STARTING[piece] ?? 0) + 1
+const STARTING_COUNT: Partial<Record<PieceName, number>> = { [LEGIONARY]: SIZE }
+for (const piece of BACK_RANK) STARTING_COUNT[piece] = (STARTING_COUNT[piece] ?? 0) + 1
 const captured = (pieces: PieceSquares): ArmyState['captured'] =>
-  Object.entries(STARTING).flatMap(([name, start]) =>
+  Object.entries(STARTING_COUNT).flatMap(([name, start]) =>
     Array.from({ length: (start ?? 0) - pieces[name as PieceName].length }, (_, i) => ({
       id: `${name}${i}`,
       letter: LETTER[name as PieceName]

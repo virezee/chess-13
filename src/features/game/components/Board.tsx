@@ -1,7 +1,7 @@
 import type { MouseEvent, CSSProperties } from 'react'
 import type { Piece, SquareOccupant } from '@/types/material'
 import type { Move } from '@/types/game'
-import { useRef } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import { parseSquare, makeSquare } from '../lib/coordinate'
@@ -32,23 +32,30 @@ const squareFromEvent = (event: MouseEvent<HTMLDivElement>): string => {
 }
 const remapIds = (
   ids: Map<string, number>,
-  position: SquareOccupant,
+  occupancy: SquareOccupant,
   move: Move | null,
-  nextId: () => number
-): void => {
+  lastId: number
+): { ids: Map<string, number>; lastId: number } => {
+  const next = new Map(ids)
+  let id = lastId
   if (move !== null) {
-    move.captures?.forEach(square => ids.delete(square))
+    move.captures?.forEach(square => next.delete(square))
     if (move.sentinel !== undefined) {
-      const sentinelId = ids.get(move.sentinel.from)
-      ids.delete(move.sentinel.from)
-      if (sentinelId !== undefined) ids.set(move.sentinel.to, sentinelId)
+      const sentinelId = next.get(move.sentinel.from)
+      next.delete(move.sentinel.from)
+      if (sentinelId !== undefined) next.set(move.sentinel.to, sentinelId)
     }
-    const moverId = ids.get(move.from)
-    ids.delete(move.from)
-    if (moverId !== undefined && !move.captures?.includes(move.from)) ids.set(move.to, moverId)
+    const moverId = next.get(move.from)
+    next.delete(move.from)
+    if (moverId !== undefined && !move.captures?.includes(move.from)) next.set(move.to, moverId)
   }
-  for (const square of Object.keys(position)) if (!ids.has(square)) ids.set(square, nextId())
-  for (const square of ids.keys()) if (position[square] === undefined) ids.delete(square)
+  for (const square of Object.keys(occupancy))
+    if (!next.has(square)) {
+      id += 1
+      next.set(square, id)
+    }
+  for (const square of next.keys()) if (occupancy[square] === undefined) next.delete(square)
+  return { ids: next, lastId: id }
 }
 const translate = (square: string): CSSProperties => {
   const { file, rank } = parseSquare(square)
@@ -226,14 +233,12 @@ export function BoardFrame({
   onSelect: (square: string) => void
   onMark: (square: string, colour: string) => void
 }) {
-  const ids = useRef(new Map<string, number>())
-  const idCounter = useRef(0)
-  const prevMove = useRef<Move | null>(null)
-  const nextId = () => (idCounter.current += 1)
-  if (prevMove.current === lastMove) remapIds(ids.current, occupancy, null, nextId)
-  else {
-    prevMove.current = lastMove
-    remapIds(ids.current, occupancy, lastMove, nextId)
+  const [prev, setPrev] = useState({ move: lastMove, occupancy })
+  const [keys, setKeys] = useState(() => remapIds(new Map<string, number>(), occupancy, null, 0))
+  if (prev.move !== lastMove || prev.occupancy !== occupancy) {
+    const played = prev.move === lastMove ? null : lastMove
+    setPrev({ move: lastMove, occupancy })
+    setKeys(current => remapIds(current.ids, occupancy, played, current.lastId))
   }
   return (
     <div className='@container w-full overflow-x-auto'>
@@ -246,7 +251,7 @@ export function BoardFrame({
           selected={selected}
           targets={targets}
           marks={marks}
-          ids={ids.current}
+          ids={keys.ids}
           onSelect={onSelect}
           onMark={onMark}
         />
