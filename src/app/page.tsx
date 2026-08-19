@@ -8,7 +8,7 @@ import { SIZE, FILES } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { EMPEROR, LEGIONARY, BACK_RANK } from '@/constants/piece'
 import { PLIES_PER_MOVE, NO_PROGRESS_BASE } from '@/constants/outcome'
-import { Board } from '@/features/game/components/Board'
+import { BoardFrame } from '@/features/game/components/Board'
 import { ArmyPanel } from '@/features/game/components/ArmyPanel'
 import { MoveList } from '@/features/game/components/MoveList'
 import { GameStatus } from '@/features/game/components/GameStatus'
@@ -143,8 +143,8 @@ export default function Home() {
         />
       </aside>
       <div className='order-1 flex justify-center lg:col-span-2 xl:order-2 xl:col-span-1'>
-        <Board
-          position={position.occupancy}
+        <BoardFrame
+          occupancy={position.occupancy}
           selected={selected}
           targets={targets}
           lastMove={last}

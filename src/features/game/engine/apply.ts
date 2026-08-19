@@ -113,7 +113,7 @@ const promotion = (
   }
   move.captures?.forEach(square => {
     const captured = occupancy[square]
-    if (!captured || captured.piece === POPE) return
+    if (!captured || captured.piece === POPE || captured.piece === LEGIONARY) return
     const captfile = parseSquare(square).file
     const slot = next[captured.side].find(({ file }) => file === captfile)
     if (slot) slot.piece.push(captured.piece)

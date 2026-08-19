@@ -11,7 +11,7 @@ export interface ArmyState {
   commandZone: CommandZone
   pieceCount: number
   enhancedCount: number
-  lost: { id: string; letter: string }[]
+  captured: { id: string; letter: string }[]
   promotions: Promotion[]
   material: number
 }

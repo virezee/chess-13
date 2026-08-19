@@ -1,9 +1,9 @@
-import type { Side } from '@/types/material'
+import type { Side, PieceName, PieceSquares } from '@/types/material'
 import type { Position } from '@/types/game'
 import type { CommandZone, ArmyState } from '@/types/panel'
-import { FILES, COMMAND_SQUARE } from '@/constants/board'
+import { SIZE, FILES, COMMAND_SQUARE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
-import { POPE, EMPEROR, MARSHAL, LETTER, VALUE } from '@/constants/piece'
+import { POPE, EMPEROR, MARSHAL, LEGIONARY, BACK_RANK, LETTER, VALUE } from '@/constants/piece'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
 import { isEnhanced } from '../engine/generate'
 import { cn } from '@/lib/cn'
@@ -13,6 +13,15 @@ const ZONE_TEXT: Record<CommandZone, string> = {
   partial: 'Command Zone',
   none: 'Marshal Captured'
 }
+const STARTING: Partial<Record<PieceName, number>> = { [LEGIONARY]: SIZE }
+for (const piece of BACK_RANK) STARTING[piece] = (STARTING[piece] ?? 0) + 1
+const captured = (pieces: PieceSquares): ArmyState['captured'] =>
+  Object.entries(STARTING).flatMap(([name, start]) =>
+    Array.from({ length: (start ?? 0) - pieces[name as PieceName].length }, (_, i) => ({
+      id: `${name}${i}`,
+      letter: LETTER[name as PieceName]
+    }))
+  )
 const fileRange = (file: number) => {
   const first = Math.max(0, file - 1)
   const last = Math.min(FILES.length - 1, file + 1)
@@ -48,9 +57,7 @@ const army = (position: Position, side: Side, player: string): ArmyState => {
       marshalSquare === null ? 'none' : marshalSquare === COMMAND_SQUARE ? 'full' : 'partial',
     pieceCount: remaining.length,
     enhancedCount: remaining.filter(([square]) => isEnhanced(marshalSquare, square)).length,
-    lost: state.promotions[side].flatMap(slot =>
-      slot.piece.map((name, i) => ({ id: `${slot.file}-${i}`, letter: LETTER[name] }))
-    ),
+    captured: captured(pieces[side]),
     promotions: state.promotions[side],
     material: material(position, side)
   }
@@ -172,13 +179,13 @@ function LostField({ armyState }: { armyState: ArmyState }) {
     <Field
       label='Lost'
       trailing={
-        <span className='font-mono text-[11px] text-ink-faint'>{armyState.lost.length}</span>
+        <span className='font-mono text-[11px] text-ink-faint'>{armyState.captured.length}</span>
       }>
-      {armyState.lost.length === 0 ? (
-        <p className='text-[12px] text-ink-faint'>Nothing yet</p>
+      {armyState.captured.length === 0 ? (
+        <p className='text-[12px] text-ink-faint'>Nothing yet.</p>
       ) : (
         <div className='flex flex-wrap gap-1'>
-          {armyState.lost.map(piece => (
+          {armyState.captured.map(piece => (
             <span
               key={piece.id}
               className='grid h-6 w-6 place-items-center rounded-xs border border-line-strong bg-surface-2 font-notation font-bold text-[11px] text-ink-dim'>
@@ -194,7 +201,7 @@ function PromotionField({ armyState }: { armyState: ArmyState }) {
   return (
     <Field label='Promotion Slots'>
       {armyState.promotions.length === 0 ? (
-        <p className='text-[12px] text-ink-faint'>None open</p>
+        <p className='text-[12px] text-ink-faint'>None open.</p>
       ) : (
         <ul className='space-y-1.5'>
           {armyState.promotions.map(slot => (
