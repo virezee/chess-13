@@ -1,88 +1,40 @@
-import { useRef } from 'react'
 import type { CSSProperties, MouseEvent } from 'react'
-import { cn } from '@/lib/cn'
-import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import type { Piece, SquareOccupant } from '@/types/material'
 import type { Move } from '@/types/game'
+import { useRef } from 'react'
+import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import { parseSquare, makeSquare } from '../lib/coordinate'
+import { cn } from '@/lib/cn'
 
-/** Width of the gutter that carries the rank and file labels. */
-const GUTTER = '1.4rem'
-
-/**
- * The click language lichess and chess.com both use, so a player reads it without
- * being taught: the square picked up from stays tinted, a quiet destination carries
- * a small centred dot, and a destination holding a piece is ringed at its edge so
- * the piece underneath is never covered.
- */
-const SELECTED = 'rgba(20, 85, 30, 0.5)'
-const QUIET = 'radial-gradient(rgba(20, 85, 30, 0.5) 19%, rgba(0, 0, 0, 0) calc(19% + 1px))'
-const CAPTURE = 'radial-gradient(transparent 79%, rgba(200, 30, 30, 0.5) calc(79% + 1px))'
-
-/**
- * Right-click marks, the way both sites let a player think out loud on the board.
- * Plain is red, and the three modifiers give the other three colours.
- */
+const COORDS = 'var(--coords-width)'
+const SQUARE = 'var(--square-size)'
+const BOARD = 'var(--board-size)'
+const PATTERN = 'var(--board-pattern)'
+const SELECTED = 'var(--square-selected)'
+const DEST = 'var(--move-dest)'
+const DEST_CAPTURE = 'var(--move-dest-capture)'
 const MARKS = {
-  red: 'rgba(202, 52, 43, 0.55)',
-  yellow: 'rgba(216, 166, 40, 0.55)',
-  green: 'rgba(20, 133, 45, 0.55)',
-  blue: 'rgba(48, 110, 200, 0.55)'
+  red: 'var(--mark-red)',
+  yellow: 'var(--mark-yellow)',
+  green: 'var(--mark-green)',
+  blue: 'var(--mark-blue)'
 } as const
-const markOf = (event: { ctrlKey: boolean; shiftKey: boolean; altKey: boolean }): string =>
-  event.ctrlKey ? MARKS.yellow : event.shiftKey ? MARKS.green : event.altKey ? MARKS.blue : MARKS.red
-
-/**
- * The single source of truth for tile size. Both grid axes are given this exact
- * value, so a square is square by construction and cannot be knocked out of
- * shape by a parent that stretches its children.
- *
- * The outer `min` is the hard limit: the board never grows wider than the space
- * it is given, so it can never scroll sideways. `cqw` measures the board's own
- * container rather than the viewport, so the side panels are already subtracted.
- *
- * Inside that limit the board aims for 64px, which is the smallest tile the piece
- * artwork stays readable at. The 64px floor applies to the height term only, so a
- * short window is allowed to push the board past the bottom of the screen and
- * scroll down, which is the normal way to scroll a page. A narrow window still
- * shrinks the tiles to fit, because there is no room to trade.
- */
-const TILE = `min(calc((100cqw - ${GUTTER}) / 13), max(64px, calc((100vh - 9.5rem) / 13)))`
-const EDGE = `calc(13 * ${TILE})`
-
-/**
- * The board carries no square elements at all, the way chessground draws its own:
- * the light and dark tiles are one repeating background, and everything standing
- * on a square is placed by coordinate rather than by parentage. Nothing on the
- * board can be covered by a tile, since there is no tile element to cover it.
- *
- * A conic gradient repeated over two tiles paints the pattern. Its second colour
- * lands on the top left cell, which is a13 and dark, matching a1 dark at the
- * bottom.
- */
-const TILES = 'repeating-conic-gradient(var(--square-light) 0% 25%, var(--square-dark) 0% 50%)'
-
-/** Where a square sits on the board, counted from its top left corner. */
+const markColour = (event: { ctrlKey: boolean; shiftKey: boolean; altKey: boolean }): string =>
+  event.ctrlKey
+    ? MARKS.yellow
+    : event.shiftKey
+      ? MARKS.green
+      : event.altKey
+        ? MARKS.blue
+        : MARKS.red
 const at = (square: string): CSSProperties => {
   const { file, rank } = parseSquare(square)
   return {
-    width: TILE,
-    height: TILE,
-    transform: `translate(calc(${file} * ${TILE}), calc(${SIZE - rank} * ${TILE}))`
+    width: SQUARE,
+    height: SQUARE,
+    transform: `translate(calc(${file} * ${SQUARE}), calc(${SIZE - rank} * ${SQUARE}))`
   }
 }
-
-/**
- * Every piece keeps one element for as long as it stands on the board, and moving
- * only changes the coordinate that element is placed at, so the transition on
- * transform is the whole animation. The map from square to identity is carried
- * here rather than in the game state, since nothing but this render needs it.
- *
- * The move just played says which identity goes where: the mover walks from its
- * square to the one it reached, a castling Sentinel walks with it, and everything
- * captured is dropped. Whatever is left without an identity is new to the board,
- * a promoted piece or the opening position, and is given a fresh one.
- */
 const reconcile = (
   ids: Map<string, number>,
   position: SquareOccupant,
@@ -116,7 +68,9 @@ const BASELINE = 50 + (FONT_SIZE * CAP_HEIGHT) / 2
 
 function CommandSquare({ dimmed }: { dimmed: boolean }) {
   return (
-    <div className='absolute left-0 top-0 bg-square-command' style={at(COMMAND_SQUARE)}>
+    <div
+      className='pointer-events-none absolute left-0 top-0 select-none bg-square-command'
+      style={at(COMMAND_SQUARE)}>
       <svg
         viewBox='0 0 100 100'
         preserveAspectRatio='xMidYMid meet'
@@ -171,7 +125,7 @@ function Ranks() {
   return (
     <div
       className='grid font-mono text-[10px] text-ink-faint'
-      style={{ gridTemplateRows: `repeat(13, ${TILE})` }}>
+      style={{ gridTemplateRows: `repeat(13, ${SQUARE})` }}>
       {RANKS.toReversed().map(rank => (
         <span key={rank} className='flex items-center justify-end pr-2'>
           {rank}
@@ -184,7 +138,7 @@ function Files() {
   return (
     <div
       className='grid font-mono text-[10px] text-ink-faint'
-      style={{ gridTemplateColumns: `repeat(13, ${TILE})` }}>
+      style={{ gridTemplateColumns: `repeat(13, ${SQUARE})` }}>
       {FILES.map(file => (
         <span key={file} className='flex justify-center pt-2'>
           {file}
@@ -198,7 +152,8 @@ function Files() {
 const squareAt = (event: MouseEvent<HTMLDivElement>): string => {
   const box = event.currentTarget.getBoundingClientRect()
   const file = Math.min(SIZE - 1, Math.floor(((event.clientX - box.left) / box.width) * SIZE))
-  const rank = SIZE - Math.min(SIZE - 1, Math.floor(((event.clientY - box.top) / box.height) * SIZE))
+  const rank =
+    SIZE - Math.min(SIZE - 1, Math.floor(((event.clientY - box.top) / box.height) * SIZE))
   return makeSquare({ file, rank })
 }
 
@@ -223,15 +178,15 @@ function Face({
     <div
       className='relative overflow-hidden rounded-[3px] outline outline-square-edge'
       style={{
-        width: EDGE,
-        height: EDGE,
-        backgroundImage: TILES,
-        backgroundSize: `calc(2 * ${TILE}) calc(2 * ${TILE})`
+        width: BOARD,
+        height: BOARD,
+        backgroundImage: PATTERN,
+        backgroundSize: `calc(2 * ${SQUARE}) calc(2 * ${SQUARE})`
       }}
       onClick={event => onSelect(squareAt(event))}
       onContextMenu={event => {
         event.preventDefault()
-        onMark(squareAt(event), markOf(event))
+        onMark(squareAt(event), markColour(event))
       }}>
       <CommandSquare dimmed={position[COMMAND_SQUARE] !== undefined} />
       {Object.entries(marks).map(([square, colour]) => (
@@ -247,7 +202,7 @@ function Face({
           <Occupant key={ids.get(square)} square={square} piece={piece} />
         ))}
       {targets.map(square => (
-        <Wash key={square} square={square} colour={position[square] ? CAPTURE : QUIET} lift />
+        <Wash key={square} square={square} colour={position[square] ? DEST_CAPTURE : DEST} lift />
       ))}
     </div>
   )
@@ -282,7 +237,7 @@ export function Board({
     <div className='@container w-full overflow-x-auto'>
       <div
         className='grid w-fit'
-        style={{ gridTemplateColumns: `${GUTTER} auto`, gridTemplateRows: `auto ${GUTTER}` }}>
+        style={{ gridTemplateColumns: `${COORDS} auto`, gridTemplateRows: `auto ${COORDS}` }}>
         <Ranks />
         <Face
           position={position}

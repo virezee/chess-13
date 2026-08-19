@@ -21,8 +21,8 @@
   --square-light: #a3967f;
   --square-dark: #5e5649;
   --square-edge: #2b303a;
-  --square-command: #6f5c35;
-  --square-command-ink: #e8cf9a;
+  --square-command: #4c3a70;
+  --square-command-ink: #ded1ff;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -45,8 +45,21 @@
   --square-light: #ded3b6;
   --square-dark: #9e8b6a;
   --square-edge: #857a63;
-  --square-command: #cdad63;
-  --square-command-ink: #4a3512;
+  --square-command: #9b86cf;
+  --square-command-ink: #2e2050;
+}
+:root {
+  --coords-width: 1.4rem;
+  --square-size: min(calc((100cqw - var(--coords-width)) / 13), max(64px, calc((100vh - 9.5rem) / 13)));
+  --board-size: calc(13 * var(--square-size));
+  --board-pattern: repeating-conic-gradient(var(--square-light) 0% 25%, var(--square-dark) 0% 50%);
+  --square-selected: rgba(20, 85, 30, 0.5);
+  --move-dest: radial-gradient(rgba(20, 85, 30, 0.5) 19%, rgba(0, 0, 0, 0) calc(19% + 1px));
+  --move-dest-capture: radial-gradient(transparent 79%, rgba(200, 30, 30, 0.5) calc(79% + 1px));
+  --mark-red: rgba(202, 52, 43, 0.55);
+  --mark-yellow: rgba(216, 166, 40, 0.55);
+  --mark-green: rgba(20, 133, 45, 0.55);
+  --mark-blue: rgba(48, 110, 200, 0.55);
 }
 @custom-variant light (&:where([data-theme="light"] *));
 @theme inline {
@@ -89,17 +102,6 @@
   ::selection {
     background-color: color-mix(in oklab, var(--brass) 30%, transparent);
   }
-}
-@keyframes piece-slide {
-  from {
-    transform: translate(var(--dx), var(--dy));
-  }
-  to {
-    transform: translate(0, 0);
-  }
-}
-@utility piece-slide {
-  animation: piece-slide .3s ease-out;
 }
 @utility scroll-thin {
   scrollbar-width: thin;

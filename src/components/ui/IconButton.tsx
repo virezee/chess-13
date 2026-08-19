@@ -16,7 +16,7 @@ export function IconButton({
       aria-label={label}
       title={label}
       className={cn(
-        'grid h-8 w-8 place-items-center rounded border border-transparent text-ink-faint',
+        'grid h-8 w-8 cursor-pointer place-items-center rounded border border-transparent text-ink-faint',
         'transition-colors hover:border-line hover:bg-surface hover:text-ink'
       )}>
       {children}
