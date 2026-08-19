@@ -76,7 +76,7 @@ export const outcome = (
       : { winner: side, reason: STALEMATE }
   if (state.noProgress.count >= state.noProgress.limit) return { winner: null, reason: NO_PROGRESS }
   if (repetitionCount(repetitionKey(side, occupancy, state), history) >= REPETITION_LIMIT)
-    return { winner: side === WHITE ? BLACK : WHITE, reason: REPETITION }
+    return { winner: side, reason: REPETITION }
   if (isInsufficientMaterial(occupancy)) return { winner: null, reason: INSUFFICIENT_MATERIAL }
   return null
 }

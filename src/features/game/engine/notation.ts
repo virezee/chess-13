@@ -24,7 +24,7 @@ export const notation = (position: Position, move: Move): string => {
       ? ''
       : `=${LETTER[move.promotesTo]}${promSlots.length > 1 ? FILES[promSlots[0]!.file] : ''}`
   const zone =
-    mover.piece === POPE || mover.piece === EMPEROR
+    mover.piece === POPE || mover.piece === EMPEROR || mover.piece === MARSHAL
       ? ''
       : isEnhanced(pieces[side][MARSHAL][0] ?? null, move.from)
         ? '^'
