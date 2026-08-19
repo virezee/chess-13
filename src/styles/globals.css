@@ -56,6 +56,10 @@
   --square-selected: rgba(20, 85, 30, 0.5);
   --move-dest: radial-gradient(rgba(20, 85, 30, 0.5) 19%, rgba(0, 0, 0, 0) calc(19% + 1px));
   --move-dest-capture: radial-gradient(transparent 79%, rgba(200, 30, 30, 0.5) calc(79% + 1px));
+  --square-check: radial-gradient(ellipse at center,
+      rgba(255, 62, 48, 0.95) 0%,
+      rgba(255, 62, 48, 0.7) 25%,
+      rgba(255, 62, 48, 0) 80%);
   --mark-red: rgba(202, 52, 43, 0.55);
   --mark-yellow: rgba(216, 166, 40, 0.55);
   --mark-green: rgba(20, 133, 45, 0.55);
@@ -102,6 +106,14 @@
   ::selection {
     background-color: color-mix(in oklab, var(--brass) 30%, transparent);
   }
+}
+@keyframes check-pulse {
+  50% {
+    scale: 1.18;
+  }
+}
+@utility check-pulse {
+  animation: check-pulse 500ms ease-out;
 }
 @utility scroll-thin {
   scrollbar-width: thin;

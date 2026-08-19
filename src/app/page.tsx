@@ -6,8 +6,8 @@ import type { Move, State, Save } from '@/types/game'
 import type { FullMove } from '@/types/panel'
 import { SIZE, FILES } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
-import { EMPEROR, LEGIONARY, BACK_RANK } from '@/constants/piece'
-import { PLIES_PER_MOVE, NO_PROGRESS_BASE } from '@/constants/outcome'
+import { POPE, EMPEROR, LEGIONARY, BACK_RANK } from '@/constants/piece'
+import { PLIES_PER_MOVE, NO_PROGRESS_BASE, CHECKMATE } from '@/constants/outcome'
 import { BoardFrame } from '@/features/game/components/Board'
 import { ArmyPanel } from '@/features/game/components/ArmyPanel'
 import { MoveList } from '@/features/game/components/MoveList'
@@ -126,6 +126,11 @@ export default function Home() {
     selected === null
       ? []
       : [...new Set(moves.filter(move => move.from === selected).map(move => move.to))]
+  // The board glows under the Pope of the side to move while it stands attacked.
+  const check =
+    position.checkInfo.checkers.length === 0
+      ? null
+      : (position.pieces[position.side][POPE][0] ?? null)
   return (
     <main className='mx-auto grid w-full max-w-[1600px] flex-1 grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-2 xl:grid-cols-[18.5rem_minmax(0,1fr)_20rem] xl:gap-5 xl:px-5 xl:py-5'>
       <aside className='order-2 flex flex-col gap-4 lg:order-2 xl:order-1'>
@@ -145,6 +150,8 @@ export default function Home() {
       <div className='order-1 flex justify-center lg:col-span-2 xl:order-2 xl:col-span-1'>
         <BoardFrame
           occupancy={position.occupancy}
+          check={check}
+          isCheckmate={outcome?.reason === CHECKMATE}
           selected={selected}
           targets={targets}
           lastMove={last}

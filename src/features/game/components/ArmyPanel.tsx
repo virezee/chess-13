@@ -177,7 +177,7 @@ function MarshalField({ armyState }: { armyState: ArmyState }) {
 function LostField({ armyState }: { armyState: ArmyState }) {
   return (
     <Field
-      label='Lost'
+      label='Captured'
       trailing={
         <span className='font-mono text-[11px] text-ink-faint'>{armyState.captured.length}</span>
       }>

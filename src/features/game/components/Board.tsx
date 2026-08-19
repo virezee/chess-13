@@ -7,6 +7,16 @@ import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import { parseSquare, makeSquare } from '../lib/coordinate'
 import { cn } from '@/lib/cn'
 
+type BoardProps = {
+  occupancy: SquareOccupant
+  check: string | null
+  isCheckmate: boolean
+  selected: string | null
+  targets: string[]
+  marks: Record<string, string>
+  onSelect: (square: string) => void
+  onMark: (square: string, colour: string) => void
+}
 const COORDS = 'var(--coords-width)'
 const SQUARE = 'var(--square-size)'
 const BOARD = 'var(--board-size)'
@@ -17,6 +27,7 @@ const BASELINE = 50 + (FONT_SIZE * CAP_HEIGHT) / 2
 const SELECTED = 'var(--square-selected)'
 const DEST = 'var(--move-dest)'
 const DEST_CAPTURE = 'var(--move-dest-capture)'
+const CHECK = 'var(--square-check)'
 const MARKS = {
   red: 'var(--mark-red)',
   yellow: 'var(--mark-yellow)',
@@ -142,17 +153,20 @@ function PieceImage({ piece, square }: { piece: Piece; square: string }) {
 function Highlight({
   square,
   backgroundColour,
-  isInteractive
+  isInteractive,
+  isPulsing
 }: {
   square: string
   backgroundColour: string
   isInteractive?: boolean
+  isPulsing?: boolean
 }) {
   return (
     <div
       className={cn(
         'absolute left-0 top-0',
-        isInteractive ? 'cursor-pointer' : 'pointer-events-none'
+        isInteractive ? 'cursor-pointer' : 'pointer-events-none',
+        isPulsing && 'check-pulse'
       )}
       style={{
         ...translate(square),
@@ -174,21 +188,15 @@ function Destinations({ occupancy, targets }: { occupancy: SquareOccupant; targe
 }
 function Board({
   occupancy,
+  check,
+  isCheckmate,
   selected,
   targets,
   marks,
   ids,
   onSelect,
   onMark
-}: {
-  occupancy: SquareOccupant
-  selected: string | null
-  targets: string[]
-  marks: Record<string, string>
-  ids: Map<string, number>
-  onSelect: (square: string) => void
-  onMark: (square: string, colour: string) => void
-}) {
+}: BoardProps & { ids: Map<string, number> }) {
   return (
     <div
       className='relative overflow-hidden rounded-[3px] outline outline-square-edge'
@@ -204,6 +212,9 @@ function Board({
         onMark(squareFromEvent(event), markColour(event))
       }}>
       <CommandSquare isOccupied={occupancy[COMMAND_SQUARE] !== undefined} />
+      {check !== null && (
+        <Highlight square={check} backgroundColour={CHECK} isPulsing={isCheckmate} />
+      )}
       {Object.entries(marks).map(([square, colour]) => (
         <Highlight key={square} square={square} backgroundColour={colour} />
       ))}
@@ -217,23 +228,8 @@ function Board({
     </div>
   )
 }
-export function BoardFrame({
-  occupancy,
-  lastMove,
-  selected,
-  targets,
-  marks,
-  onSelect,
-  onMark
-}: {
-  occupancy: SquareOccupant
-  lastMove: Move | null
-  selected: string | null
-  targets: string[]
-  marks: Record<string, string>
-  onSelect: (square: string) => void
-  onMark: (square: string, colour: string) => void
-}) {
+export function BoardFrame({ lastMove, ...board }: BoardProps & { lastMove: Move | null }) {
+  const { occupancy } = board
   const [prev, setPrev] = useState({ move: lastMove, occupancy })
   const [keys, setKeys] = useState(() => remapIds(new Map<string, number>(), occupancy, null, 0))
   if (prev.move !== lastMove || prev.occupancy !== occupancy) {
@@ -247,15 +243,7 @@ export function BoardFrame({
         className='grid w-fit'
         style={{ gridTemplateColumns: `${COORDS} auto`, gridTemplateRows: `auto ${COORDS}` }}>
         <Ranks />
-        <Board
-          occupancy={occupancy}
-          selected={selected}
-          targets={targets}
-          marks={marks}
-          ids={keys.ids}
-          onSelect={onSelect}
-          onMark={onMark}
-        />
+        <Board {...board} ids={keys.ids} />
         <div />
         <Files />
       </div>
