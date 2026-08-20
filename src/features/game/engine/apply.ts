@@ -11,7 +11,7 @@ import {
 } from '@/constants/outcome'
 import { parseSquare, makeSquare } from '../lib/coordinate'
 import { riposteSquares } from './moves'
-import { repetitionKey } from './outcome'
+import { repetitionKey } from './result'
 
 const board = (occupancy: SquareOccupant, move: Move): SquareOccupant => {
   const next = { ...occupancy }

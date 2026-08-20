@@ -1,10 +1,8 @@
-import type { Side } from '@/types/material'
-import type { Counter, Position } from '@/types/game'
+import type { Counter, Position, Result } from '@/types/game'
 import { REPETITION_LIMIT } from '@/constants/outcome'
-import { repetitionKey, repetitionCount } from '../engine/outcome'
+import { repetitionKey, repetitionCount } from '../engine/result'
 import { cn } from '@/lib/cn'
 
-type Outcome = { winner: Side | null; reason: string }
 type ControlsProps = {
   pending: 'resign' | 'new' | null
   setPending: (pending: 'resign' | 'new' | null) => void
@@ -138,8 +136,8 @@ function Controls({ pending, setPending, onResign, onNewGame }: ControlsProps) {
     </div>
   )
 }
-function Result({ outcome, onNewGame }: { outcome: Outcome; onNewGame?: () => void }) {
-  const isDraw = outcome.winner === null
+function Outcome({ result, onNewGame }: { result: Result; onNewGame?: () => void }) {
+  const isDraw = result.winner === null
   return (
     <div className='border-t border-line px-3.5 py-3'>
       <div
@@ -152,9 +150,9 @@ function Result({ outcome, onNewGame }: { outcome: Outcome; onNewGame?: () => vo
             'text-[11px] font-semibold uppercase tracking-[0.12em]',
             isDraw ? 'text-ink-dim' : 'text-good'
           )}>
-          {isDraw ? 'Draw' : `${outcome.winner} wins`}
+          {isDraw ? 'Draw' : `${result.winner} wins`}
         </p>
-        <p className='mt-1 text-[11px] capitalize text-ink-faint'>{outcome.reason}</p>
+        <p className='mt-1 text-[11px] capitalize text-ink-faint'>{result.reason}</p>
       </div>
       <div className='mt-2 flex'>
         <Action onClick={onNewGame}>New Game</Action>
@@ -166,7 +164,7 @@ export function GameStatus({
   position,
   history,
   canSwap,
-  outcome,
+  result,
   onDecline,
   onAccept,
   ...controls
@@ -174,7 +172,7 @@ export function GameStatus({
   position: Position
   history: readonly string[]
   canSwap: boolean
-  outcome: Outcome | null
+  result: Result | null
   onDecline: () => void
   onAccept: () => void
 }) {
@@ -192,14 +190,14 @@ export function GameStatus({
       </header>
       <RepetitionGauge count={repetition} limit={REPETITION_LIMIT} />
       <NoProgressGauge count={noProgress.count} limit={noProgress.limit} />
-      {outcome === null ? (
+      {result === null ? (
         canSwap ? (
           <Prompt label='Swap Sides?' onDecline={onDecline} onAccept={onAccept} />
         ) : (
           <Controls {...controls} />
         )
       ) : (
-        <Result outcome={outcome} onNewGame={controls.onNewGame} />
+        <Outcome result={result} onNewGame={controls.onNewGame} />
       )}
     </section>
   )

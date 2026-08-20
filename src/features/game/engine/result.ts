@@ -56,7 +56,7 @@ export const repetitionKey = (side: Side, occupancy: SquareOccupant, state: Stat
   ].join(' ')
 export const repetitionCount = (key: string, history: readonly string[]): number =>
   history.filter(entry => entry === key).length
-export const outcome = (
+export const result = (
   position: Position,
   moves: Move[],
   history: readonly string[]

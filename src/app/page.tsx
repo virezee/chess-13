@@ -14,7 +14,7 @@ import { MoveList } from '@/features/game/components/MoveList'
 import { GameStatus } from '@/features/game/components/GameStatus'
 import { turn } from '@/features/game/engine/turn'
 import { canSwap, takeSwap } from '@/features/game/engine/apply'
-import { repetitionKey } from '@/features/game/engine/outcome'
+import { repetitionKey } from '@/features/game/engine/result'
 import { notation } from '@/features/game/engine/notation'
 
 const PLAYERS = { [WHITE]: 'Player 1', [BLACK]: 'Player 2' }
@@ -64,7 +64,7 @@ export default function Home() {
   const [log, setLog] = useState<FullMove[]>([])
   const [pending, setPending] = useState<'resign' | 'new' | null>(null)
 
-  const { position, moves, outcome } = useMemo(() => turn(save, null), [save])
+  const { position, moves, result } = useMemo(() => turn(save, null), [save])
   // Black is offered white before its first move, and the offer holds the board:
   // moving a piece would answer the question by accident.
   const swapAsked = canSwap(position, save.match)
@@ -101,7 +101,7 @@ export default function Home() {
     setMarks({})
   }
   const select = (square: string) => {
-    if (swapAsked || pending !== null || outcome !== null) return
+    if (swapAsked || pending !== null || result !== null) return
     setMarks({})
     setChoices([])
     if (selected !== null) {
@@ -151,7 +151,7 @@ export default function Home() {
         <BoardFrame
           occupancy={position.occupancy}
           check={check}
-          isCheckmate={outcome?.reason === CHECKMATE}
+          isCheckmate={result?.reason === CHECKMATE}
           selected={selected}
           targets={targets}
           lastMove={last}
@@ -181,7 +181,7 @@ export default function Home() {
         <GameStatus
           position={position}
           history={save.match.history}
-          outcome={outcome}
+          result={result}
           canSwap={canSwap(position, save.match)}
           onDecline={() => setSave({ ...save, match: { ...save.match, swap: false } })}
           onAccept={() => setSave(takeSwap(position, save.match, PLAYERS[BLACK]))}
