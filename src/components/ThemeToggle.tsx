@@ -6,26 +6,9 @@ import { IconButton } from './ui/IconButton'
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   return (
-    <IconButton label='Switch theme' onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-      <svg viewBox='0 0 16 16' className='h-4 w-4 light:hidden' aria-hidden>
-        <circle cx='8' cy='8' r='3' fill='none' stroke='currentColor' strokeWidth='1.1' />
-        <path
-          d='M8 1.4v1.6M8 13v1.6M14.6 8H13M3 8H1.4M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1M12.7 12.7l-1.1-1.1M4.4 4.4 3.3 3.3'
-          stroke='currentColor'
-          strokeWidth='1.1'
-          strokeLinecap='round'
-        />
-      </svg>
-      <svg viewBox='0 0 16 16' className='hidden h-4 w-4 light:block' aria-hidden>
-        <path
-          d='M13.2 9.7A5.6 5.6 0 0 1 6.3 2.8a5.6 5.6 0 1 0 6.9 6.9'
-          fill='none'
-          stroke='currentColor'
-          strokeWidth='1.1'
-          strokeLinecap='round'
-          strokeLinejoin='round'
-        />
-      </svg>
+    <IconButton label='Switch Theme' onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+      <span className='h-4 w-4 bg-current [mask:url(/light.svg)_center/contain_no-repeat] light:hidden' />
+      <span className='hidden h-4 w-4 bg-current [mask:url(/dark.svg)_center/contain_no-repeat] light:block' />
     </IconButton>
   )
 }

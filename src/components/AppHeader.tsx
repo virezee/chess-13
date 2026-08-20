@@ -15,28 +15,8 @@ export function AppHeader() {
         </div>
         <div className='flex items-center gap-1'>
           <IconButton label='Rules'>
-            <svg viewBox='0 0 16 16' className='h-4 w-4' aria-hidden>
-              <path
-                d='M2.5 3.2A1.2 1.2 0 0 1 3.7 2H7a1.5 1.5 0 0 1 1.5 1.5v9.3A1.3 1.3 0 0 0 7.2 11.5H2.5zM13.5 3.2A1.2 1.2 0 0 0 12.3 2H9a1.5 1.5 0 0 0-1.5 1.5v9.3a1.3 1.3 0 0 1 1.3-1.3h4.7z'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='1.1'
-                strokeLinejoin='round'
-              />
-            </svg>
+            <span className='h-4 w-4 bg-current [mask:url(/guide.svg)_center/contain_no-repeat]' />
           </IconButton>
-          {/* <IconButton label='Sound'>
-            <svg viewBox='0 0 16 16' className='h-4 w-4' aria-hidden>
-              <path
-                d='M8.5 3 5 5.8H2.8v4.4H5L8.5 13zM11 6.2a2.6 2.6 0 0 1 0 3.6M12.9 4.4a5.2 5.2 0 0 1 0 7.2'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='1.1'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              />
-            </svg>
-          </IconButton> */}
           <ThemeToggle />
         </div>
       </div>

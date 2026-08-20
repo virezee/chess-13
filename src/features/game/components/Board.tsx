@@ -1,6 +1,6 @@
 import type { MouseEvent, CSSProperties } from 'react'
-import type { Piece, SquareOccupant } from '@/types/material'
-import type { Move } from '@/types/game'
+import type { SquareOccupant } from '@/types/material'
+import type { Move, View } from '@/types/game'
 import { useState } from 'react'
 import Image from 'next/image'
 import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
@@ -132,7 +132,7 @@ function CommandSquare({ isOccupied }: { isOccupied: boolean }) {
     </div>
   )
 }
-function PieceImage({ piece, square }: { piece: Piece; square: string }) {
+function PieceImage({ piece, square }: Required<View>['moved']) {
   return (
     <div
       className='absolute left-0 top-0 cursor-pointer transition-transform duration-300 ease-out'

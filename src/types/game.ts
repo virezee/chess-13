@@ -1,4 +1,11 @@
 import type { Side, PieceName, Piece, PieceSquares, SquareOccupant } from './material'
+import type {
+  CHECKMATE,
+  STALEMATE,
+  REPETITION,
+  NO_PROGRESS,
+  INSUFFICIENT_MATERIAL
+} from '@/constants/outcome'
 
 export interface Board {
   pieces: Record<Side, PieceSquares>
@@ -71,4 +78,13 @@ export interface Save {
   occupancy: SquareOccupant
   state: State
   match: Match
+}
+export interface Result {
+  winner: Side | null
+  reason:
+    | typeof CHECKMATE
+    | typeof STALEMATE
+    | typeof REPETITION
+    | typeof NO_PROGRESS
+    | typeof INSUFFICIENT_MATERIAL
 }

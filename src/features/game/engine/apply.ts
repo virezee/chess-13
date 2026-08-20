@@ -51,7 +51,7 @@ const isLineClear = (occupancy: SquareOccupant, { from, to }: Step): boolean => 
   }
   return true
 }
-const riposte = (position: Position, move: Move, next: SquareOccupant): boolean => {
+const isRiposte = (position: Position, move: Move, next: SquareOccupant): boolean => {
   const { pieces, occupancy } = position
   const mover = occupancy[move.from]
   if (!mover) return false
@@ -171,7 +171,7 @@ export const apply = (position: Position, move: Move, match: Match): Save => {
   const nextSide = side === WHITE ? BLACK : WHITE
   const nextState: State = {
     awake: state.awake,
-    riposte: riposte(position, move, next),
+    riposte: isRiposte(position, move, next),
     castlingSide: castling(occupancy, state.castlingSide, move),
     promotions: promotion(occupancy, state.promotions, move),
     enPassant: enPassant(occupancy, move),
