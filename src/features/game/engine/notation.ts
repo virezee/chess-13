@@ -1,9 +1,19 @@
 import type { Move, Position } from '@/types/game'
+import type { FullMove } from '@/types/panel'
 import { FILES } from '@/constants/board'
 import { POPE, EMPEROR, MARSHAL, LEGIONARY, LETTER } from '@/constants/piece'
+import { PLIES_PER_MOVE } from '@/constants/outcome'
 import { parseSquare } from '../lib/coordinate'
 import { isEnhanced } from './generate'
 
+export const fullMoves = (pgn: string): FullMove[] => {
+  const plies = pgn.split(' ').filter(token => token !== '' && !token.endsWith('.'))
+  return Array.from({ length: Math.ceil(plies.length / PLIES_PER_MOVE) }, (_, index) => ({
+    white: plies[index * PLIES_PER_MOVE]!,
+    black: plies[index * PLIES_PER_MOVE + 1] ?? null,
+    number: index + 1
+  }))
+}
 export const notation = (position: Position, move: Move): string => {
   const { pieces, occupancy, side, state } = position
   const mover = occupancy[move.from]

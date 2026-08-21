@@ -11,6 +11,7 @@ import {
 } from '@/constants/outcome'
 import { parseSquare, makeSquare } from '../lib/coordinate'
 import { riposteSquares } from './moves'
+import { fullMoves, notation } from './notation'
 import { repetitionKey } from './result'
 
 const board = (occupancy: SquareOccupant, move: Move): SquareOccupant => {
@@ -151,10 +152,14 @@ const progress = (
     limit: (NO_PROGRESS_BASE + NO_PROGRESS_PER_PIECE * (STARTING_PIECES - pieces)) * PLIES_PER_MOVE
   }
 }
-const game = (side: Side, match: Match, key: string, noProgress: Counter): Match => ({
+const game = (side: Side, match: Match, key: string, noProgress: Counter, ply: string): Match => ({
   ...match,
   swap: match.swap && side !== BLACK,
-  history: noProgress.count === 0 ? [key] : [...match.history, key]
+  history: noProgress.count === 0 ? [key] : [...match.history, key],
+  pgn:
+    side === WHITE
+      ? `${match.pgn} ${fullMoves(match.pgn).length + 1}. ${ply}`.trimStart()
+      : `${match.pgn} ${ply}`
 })
 export const canSwap = (position: Position, match: Match): boolean =>
   position.side === BLACK && match.swap
@@ -181,6 +186,12 @@ export const apply = (position: Position, move: Move, match: Match): Save => {
     side: nextSide,
     occupancy: next,
     state: nextState,
-    match: game(side, match, repetitionKey(nextSide, next, nextState), noProgress)
+    match: game(
+      side,
+      match,
+      repetitionKey(nextSide, next, nextState),
+      noProgress,
+      notation(position, move)
+    )
   }
 }

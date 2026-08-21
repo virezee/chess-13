@@ -259,6 +259,9 @@ Then record what the next turn needs:
   by the file it died on, and spent when a Legionary claims one
 - the no-progress count with the limit read at its last reset, and the repetition count, built
   from what stands above, both carried on by the rules step 6 gives them
+- the move just applied, written as one ply and appended to the movetext step 8 keeps. This is
+  the only step still holding the board the move was made from, so it is the only step that can
+  read the piece's letter and the enhanced mark its own Marshal gave it
 
 The repetition count is how often the board now standing has stood before. Five things make two
 boards the same one: where every piece stands, which side is to move, the castling rights, the
@@ -277,8 +280,9 @@ over, since there is no turn left to continue into.
 Otherwise persist the state so a reload can continue the game, then repeat from step 1 for
 Black.
 
-A reload reads the state back in one read and replays nothing. The notation is written beside
-it and never read back, since it is there for the player to follow the game.
+A reload reads the state back in one read and replays nothing. The movetext is read back with it
+and split into rows, since that list is what the player follows the game by, but no move is ever
+played again from it.
 
 Written out:
 

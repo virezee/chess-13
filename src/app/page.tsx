@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Side, SquareOccupant } from '@/types/material'
 import type { Move, State, Save } from '@/types/game'
-import type { FullMove } from '@/types/panel'
 import { SIZE, FILES } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, EMPEROR, LEGIONARY, BACK_RANK } from '@/constants/piece'
@@ -15,7 +14,7 @@ import { GameStatus } from '@/features/game/components/GameStatus'
 import { turn } from '@/features/game/engine/turn'
 import { canSwap, takeSwap } from '@/features/game/engine/apply'
 import { repetitionKey } from '@/features/game/engine/result'
-import { notation } from '@/features/game/engine/notation'
+import { fullMoves } from '@/features/game/engine/notation'
 import { readSave, writeSave, clearSave } from '@/features/game/lib/save'
 
 const PLAYERS = { [WHITE]: 'Player 1', [BLACK]: 'Player 2' }
@@ -62,7 +61,6 @@ export default function Home() {
   const [selected, setSelected] = useState<string | null>(null)
   const [choices, setChoices] = useState<Move[]>([])
   const [marks, setMarks] = useState<Record<string, string>>({})
-  const [log, setLog] = useState<FullMove[]>([])
   const [pending, setPending] = useState<'resign' | 'new' | null>(null)
   const [loaded, setLoaded] = useState(false)
 
@@ -99,17 +97,6 @@ export default function Home() {
       return next
     })
   const play = (move: Move) => {
-    // Written from the board the move is played on, before it is applied, since the piece
-    // that moves and the Marshal that reads it are both still where the notation names them.
-    const written = notation(position, move)
-    setLog(current => {
-      const open = current[current.length - 1]
-      if (position.side === BLACK && open && open.black === null)
-        return current.map((entry, index) =>
-          index === current.length - 1 ? { ...entry, black: written } : entry
-        )
-      return [...current, { number: current.length + 1, white: written, black: null }]
-    })
     setSave(turn(save, move).save)
     setLast(move)
     setSelected(null)
@@ -193,7 +180,7 @@ export default function Home() {
             ))}
           </div>
         )}
-        <MoveList moves={log} toMove={position.side} />
+        <MoveList moves={fullMoves(save.match.pgn)} toMove={position.side} />
         <GameStatus
           position={position}
           history={save.match.history}
@@ -205,7 +192,6 @@ export default function Home() {
           setPending={setPending}
           onNewGame={() => {
             setSave(opening())
-            setLog([])
             setLast(null)
             setSelected(null)
             setChoices([])
