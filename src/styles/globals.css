@@ -107,13 +107,22 @@
     background-color: color-mix(in oklab, var(--brass) 30%, transparent);
   }
 }
-@keyframes check-pulse {
-  50% {
-    scale: 1.18;
+@keyframes checkmate-fall {
+  0% {
+    rotate: 0deg;
+  }
+  70% {
+    rotate: 190deg;
+  }
+  85% {
+    rotate: 174deg;
+  }
+  100% {
+    rotate: 180deg;
   }
 }
-@utility check-pulse {
-  animation: check-pulse 500ms ease-out;
+@utility checkmate-fall {
+  animation: checkmate-fall 700ms cubic-bezier(0.34, 1.1, 0.64, 1) both;
 }
 @utility scroll-thin {
   scrollbar-width: thin;

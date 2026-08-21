@@ -1,8 +1,8 @@
-export const CHECKMATE = 'checkmate'
-export const STALEMATE = 'stalemate'
-export const REPETITION = 'repetition'
-export const NO_PROGRESS = 'no-progress'
-export const INSUFFICIENT_MATERIAL = 'insufficient-material'
+export const CHECKMATE = 'Checkmate'
+export const STALEMATE = 'Stalemate'
+export const REPETITION = 'Repetition'
+export const NO_PROGRESS = 'No Progress'
+export const INSUFFICIENT_MATERIAL = 'Insufficient Material'
 export const PLIES_PER_MOVE = 2
 export const REPETITION_LIMIT = 3
 export const NO_PROGRESS_BASE = 60

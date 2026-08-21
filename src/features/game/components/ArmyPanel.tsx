@@ -1,6 +1,6 @@
 import type { Side, PieceName, PieceSquares } from '@/types/material'
 import type { Position } from '@/types/game'
-import type { CommandZone, ArmyState } from '@/types/panel'
+import type { ArmyState } from '@/types/panel'
 import { SIZE, FILES, COMMAND_SQUARE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, EMPEROR, MARSHAL, LEGIONARY, BACK_RANK, LETTER, VALUE } from '@/constants/piece'
@@ -8,15 +8,14 @@ import { ENHANCED, RESTRICTED } from '@/constants/zone'
 import { isEnhanced } from '../engine/generate'
 import { cn } from '@/lib/cn'
 
-const ZONE_TEXT: Record<CommandZone, string> = {
-  full: 'Command Square',
-  partial: 'Command Zone',
-  none: 'Marshal Captured'
-}
-const STARTING_COUNT: Partial<Record<PieceName, number>> = { [LEGIONARY]: SIZE }
-for (const piece of BACK_RANK) STARTING_COUNT[piece] = (STARTING_COUNT[piece] ?? 0) + 1
 const captured = (pieces: PieceSquares): ArmyState['captured'] =>
-  Object.entries(STARTING_COUNT).flatMap(([name, start]) =>
+  Object.entries(
+    (() => {
+      const count: Partial<Record<PieceName, number>> = { [LEGIONARY]: SIZE }
+      for (const piece of BACK_RANK) count[piece] = (count[piece] ?? 0) + 1
+      return count
+    })()
+  ).flatMap(([name, start]) =>
     Array.from({ length: (start ?? 0) - pieces[name as PieceName].length }, (_, i) => ({
       id: `${name}${i}`,
       letter: LETTER[name as PieceName]
@@ -144,7 +143,11 @@ function ZoneMeter({ armyState }: { armyState: ArmyState }) {
             'text-[11px] font-semibold uppercase tracking-[0.12em]',
             armyState.commandZone === 'none' ? 'text-alert' : 'text-brass'
           )}>
-          {ZONE_TEXT[armyState.commandZone]}
+          {armyState.commandZone === 'full'
+            ? 'Command Square'
+            : armyState.commandZone === 'partial'
+              ? 'Command Zone'
+              : 'Marshal Captured'}
         </span>
         <span className='font-mono text-[11px] text-ink-dim'>
           {armyState.enhancedCount}

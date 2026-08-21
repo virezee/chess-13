@@ -4,6 +4,19 @@ import type { Move, View } from '@/types/game'
 import { useState } from 'react'
 import Image from 'next/image'
 import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
+import {
+  COORDS,
+  SQUARE,
+  BOARD,
+  PATTERN,
+  FONT_SIZE,
+  BASELINE,
+  SELECTED,
+  DEST,
+  DEST_CAPTURE,
+  CHECK,
+  MARKS
+} from '@/constants/style'
 import { parseSquare, makeSquare } from '../lib/coordinate'
 import { cn } from '@/lib/cn'
 
@@ -17,23 +30,6 @@ type BoardProps = {
   onSelect: (square: string) => void
   onMark: (square: string, colour: string) => void
 }
-const COORDS = 'var(--coords-width)'
-const SQUARE = 'var(--square-size)'
-const BOARD = 'var(--board-size)'
-const PATTERN = 'var(--board-pattern)'
-const CAP_HEIGHT = 0.7
-const FONT_SIZE = 80
-const BASELINE = 50 + (FONT_SIZE * CAP_HEIGHT) / 2
-const SELECTED = 'var(--square-selected)'
-const DEST = 'var(--move-dest)'
-const DEST_CAPTURE = 'var(--move-dest-capture)'
-const CHECK = 'var(--square-check)'
-const MARKS = {
-  red: 'var(--mark-red)',
-  yellow: 'var(--mark-yellow)',
-  green: 'var(--mark-green)',
-  blue: 'var(--mark-blue)'
-} as const
 const squareFromEvent = (event: MouseEvent<HTMLDivElement>): string => {
   const box = event.currentTarget.getBoundingClientRect()
   const file = Math.min(SIZE - 1, Math.floor(((event.clientX - box.left) / box.width) * SIZE))
@@ -132,7 +128,7 @@ function CommandSquare({ isOccupied }: { isOccupied: boolean }) {
     </div>
   )
 }
-function PieceImage({ piece, square }: Required<View>['moved']) {
+function PieceImage({ piece, square, isFallen }: Required<View>['moved'] & { isFallen: boolean }) {
   return (
     <div
       className='absolute left-0 top-0 cursor-pointer transition-transform duration-300 ease-out'
@@ -145,7 +141,7 @@ function PieceImage({ piece, square }: Required<View>['moved']) {
         sizes={SQUARE}
         loading='eager'
         draggable={false}
-        className='select-none object-contain'
+        className={cn('select-none object-contain', isFallen && 'checkmate-fall')}
       />
     </div>
   )
@@ -153,20 +149,17 @@ function PieceImage({ piece, square }: Required<View>['moved']) {
 function Highlight({
   square,
   backgroundColour,
-  isInteractive,
-  isPulsing
+  isInteractive
 }: {
   square: string
   backgroundColour: string
   isInteractive?: boolean
-  isPulsing?: boolean
 }) {
   return (
     <div
       className={cn(
         'absolute left-0 top-0',
-        isInteractive ? 'cursor-pointer' : 'pointer-events-none',
-        isPulsing && 'check-pulse'
+        isInteractive ? 'cursor-pointer' : 'pointer-events-none'
       )}
       style={{
         ...translate(square),
@@ -212,9 +205,7 @@ function Board({
         onMark(squareFromEvent(event), markColour(event))
       }}>
       <CommandSquare isOccupied={occupancy[COMMAND_SQUARE] !== undefined} />
-      {check !== null && (
-        <Highlight square={check} backgroundColour={CHECK} isPulsing={isCheckmate} />
-      )}
+      {check !== null && <Highlight square={check} backgroundColour={CHECK} />}
       {Object.entries(marks).map(([square, colour]) => (
         <Highlight key={square} square={square} backgroundColour={colour} />
       ))}
@@ -222,7 +213,12 @@ function Board({
       {Object.entries(occupancy)
         .toSorted(([a], [b]) => (ids.get(a) ?? 0) - (ids.get(b) ?? 0))
         .map(([square, piece]) => (
-          <PieceImage key={ids.get(square)} square={square} piece={piece} />
+          <PieceImage
+            key={ids.get(square)}
+            square={square}
+            piece={piece}
+            isFallen={isCheckmate && square === check}
+          />
         ))}
       <Destinations occupancy={occupancy} targets={targets} />
     </div>
