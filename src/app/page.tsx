@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Side, SquareOccupant } from '@/types/material'
 import type { Move, State, Save } from '@/types/game'
 import type { FullMove } from '@/types/panel'
@@ -16,6 +16,7 @@ import { turn } from '@/features/game/engine/turn'
 import { canSwap, takeSwap } from '@/features/game/engine/apply'
 import { repetitionKey } from '@/features/game/engine/result'
 import { notation } from '@/features/game/engine/notation'
+import { readSave, writeSave, clearSave } from '@/features/game/lib/save'
 
 const PLAYERS = { [WHITE]: 'Player 1', [BLACK]: 'Player 2' }
 
@@ -63,8 +64,23 @@ export default function Home() {
   const [marks, setMarks] = useState<Record<string, string>>({})
   const [log, setLog] = useState<FullMove[]>([])
   const [pending, setPending] = useState<'resign' | 'new' | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
   const { position, moves, result } = useMemo(() => turn(save, null), [save])
+  // The page is served prerendered, with no storage to read while it is built, so the saved
+  // game arrives after mount and the opening stands until it does.
+  useEffect(() => {
+    const stored = readSave()
+    if (stored !== null) setSave(stored)
+    setLoaded(true)
+  }, [])
+  // Every state the game reaches is written back, and the one that ends it takes the save with
+  // it, since there is no turn left to continue into.
+  useEffect(() => {
+    if (!loaded) return
+    if (result === null) writeSave(save)
+    else clearSave()
+  }, [loaded, save, result])
   // Black is offered white before its first move, and the offer holds the board:
   // moving a piece would answer the question by accident.
   const swapAsked = canSwap(position, save.match)
