@@ -53,17 +53,19 @@
   --square-size: min(calc((100cqw - var(--coords-width)) / 13), max(64px, calc((100vh - 9.5rem) / 13)));
   --board-size: calc(13 * var(--square-size));
   --board-pattern: repeating-conic-gradient(var(--square-light) 0% 25%, var(--square-dark) 0% 50%);
-  --square-selected: rgba(20, 85, 30, 0.5);
-  --move-dest: radial-gradient(rgba(20, 85, 30, 0.5) 19%, rgba(0, 0, 0, 0) calc(19% + 1px));
-  --move-dest-capture: radial-gradient(transparent 79%, rgba(200, 30, 30, 0.5) calc(79% + 1px));
+  --square-selected: rgb(20 85 30 / .5);
+  --move-dest: radial-gradient(rgb(20 85 30 / .5) 19%, rgb(0 0 0 / 0) calc(19% + 1px));
+  --move-dest-capture: radial-gradient(transparent 79%, rgb(200 30 30 / .5) calc(79% + 1px));
   --square-check: radial-gradient(ellipse at center,
-      rgba(255, 62, 48, 0.95) 0%,
-      rgba(255, 62, 48, 0.7) 25%,
-      rgba(255, 62, 48, 0) 80%);
-  --mark-red: rgba(202, 52, 43, 0.55);
-  --mark-yellow: rgba(216, 166, 40, 0.55);
-  --mark-green: rgba(20, 133, 45, 0.55);
-  --mark-blue: rgba(48, 110, 200, 0.55);
+      rgb(255 62 48 / .95) 0%,
+      rgb(255 62 48 / .7) 25%,
+      rgb(255 62 48 / 0) 80%);
+  --zone-white: rgb(56 189 182 / .8);
+  --zone-black: rgb(205 98 190 / .8);
+  --mark-red: rgb(202 52 43 / .55);
+  --mark-yellow: rgb(216 166 40 / .55);
+  --mark-green: rgb(20 133 45 / .55);
+  --mark-blue: rgb(48 110 200 / .55);
 }
 @custom-variant light (&:where([data-theme="light"] *));
 @theme inline {
@@ -122,7 +124,7 @@
   }
 }
 @utility checkmate-fall {
-  animation: checkmate-fall 700ms cubic-bezier(0.34, 1.1, 0.64, 1) both;
+  animation: checkmate-fall 700ms cubic-bezier(.34, 1.1, .64, 1) both;
 }
 @utility scroll-thin {
   scrollbar-width: thin;

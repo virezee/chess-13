@@ -6,8 +6,8 @@ import { cn } from '@/lib/cn'
 type ControlsProps = {
   pending: 'resign' | 'new' | null
   setPending: (pending: 'resign' | 'new' | null) => void
-  onResign?: () => void
-  onNewGame?: () => void
+  onResign: () => void
+  onNewGame: () => void
 }
 function RepetitionGauge({ count, limit }: Counter) {
   const nearLimit = count >= limit - 1
@@ -71,7 +71,7 @@ function Action({
   children
 }: {
   tone?: 'quiet' | 'accept' | 'decline'
-  onClick?: () => void
+  onClick: () => void
   children: React.ReactNode
 }) {
   return (
@@ -136,7 +136,7 @@ function Controls({ pending, setPending, onResign, onNewGame }: ControlsProps) {
     </div>
   )
 }
-function Outcome({ result, onNewGame }: { result: Result; onNewGame?: () => void }) {
+function Outcome({ result, onNewGame }: { result: Result; onNewGame: () => void }) {
   const isDraw = result.winner === null
   return (
     <div className='border-t border-line px-3.5 py-3'>

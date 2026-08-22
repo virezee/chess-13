@@ -1,20 +1,53 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "esnext",
-    "verbatimModuleSyntax": true,
+    /* Type Checking */
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "alwaysStrict": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noUncheckedIndexedAccess": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
+    "strictBindCallApply": true,
+    "strictBuiltinIteratorReturn": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
+    /* Modules */
+    "allowArbitraryExtensions": false,
+    "allowImportingTsExtensions": false,
+    "allowUmdGlobalAccess": false,
     "module": "esnext",
     "moduleResolution": "bundler",
+    "noResolve": false,
+    "noUncheckedSideEffectImports": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "resolveJsonModule": true,
+    "resolvePackageJsonExports": true,
+    "resolvePackageJsonImports": true,
+    "rewriteRelativeImportExtensions": false,
+    /* JavaScript Support */
+    "allowJs": false,
+    "checkJs": false,
+    "maxNodeModuleJsDepth": 0,
+
+    "target": "esnext",
+    "verbatimModuleSyntax": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
@@ -22,10 +55,7 @@
       {
         "name": "next"
       }
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    ]
   },
   "include": [
     "next-env.d.ts",
