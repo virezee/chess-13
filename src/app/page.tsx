@@ -190,7 +190,7 @@ export default function Home() {
         position={position}
         promotions={promotions}
         result={result}
-        onMove={play}
+        onMove={makeMove}
         onNewGame={restart}
       />
     </main>
