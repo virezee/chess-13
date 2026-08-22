@@ -1,204 +1,198 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import type { Side, SquareOccupant } from '@/types/material'
-import type { Move, State, Save } from '@/types/game'
-import { SIZE, FILES } from '@/constants/board'
+import type { Move, Save, Match, Position, Result } from '@/types/game'
+import { useState, useMemo, useEffect } from 'react'
 import { WHITE, BLACK } from '@/constants/colour'
-import { POPE, EMPEROR, LEGIONARY, BACK_RANK } from '@/constants/piece'
-import { PLIES_PER_MOVE, NO_PROGRESS_BASE, CHECKMATE } from '@/constants/outcome'
+import { opening, turn } from '@/features/game/engine/turn'
+import { canSwap, takeSwap } from '@/features/game/engine/apply'
 import { BoardFrame } from '@/features/game/components/Board'
 import { ArmyPanel } from '@/features/game/components/ArmyPanel'
 import { MoveList } from '@/features/game/components/MoveList'
 import { GameStatus } from '@/features/game/components/GameStatus'
-import { turn } from '@/features/game/engine/turn'
-import { canSwap, takeSwap } from '@/features/game/engine/apply'
-import { repetitionKey } from '@/features/game/engine/result'
-import { fullMoves } from '@/features/game/engine/notation'
 import { readSave, writeSave, clearSave } from '@/features/game/lib/save'
 
-const PLAYERS = { [WHITE]: 'Player 1', [BLACK]: 'Player 2' }
-
-/** One side as it stands before the first move: a back rank and a rank of Legionaries. */
-const setup = (side: Side, back: number, legionaries: number): SquareOccupant => {
-  const squares: SquareOccupant = {}
-  BACK_RANK.forEach((piece, file) => {
-    squares[`${FILES[file]}${back}`] =
-      piece === EMPEROR ? { side, piece, awake: false } : { side, piece }
-    squares[`${FILES[file]}${legionaries}`] = { side, piece: LEGIONARY }
-  })
-  return squares
+const players = { [WHITE]: 'Player 1', [BLACK]: 'Player 2' }
+const targets = (moves: Move[], selected: string | null): string[] => [
+  ...new Set(moves.filter(move => move.from === selected).map(move => move.to))
+]
+const mark = (marks: Record<string, string>, square: string, colour: string) => {
+  const next = { ...marks }
+  if (next[square] === colour) delete next[square]
+  else next[square] = colour
+  return next
 }
-const opening = (): Save => {
-  const occupancy = { ...setup(WHITE, 1, 3), ...setup(BLACK, SIZE, SIZE - 2) }
-  const state: State = {
-    awake: { [WHITE]: false, [BLACK]: false },
-    riposte: false,
-    castlingSide: {
-      [WHITE]: { left: true, right: true },
-      [BLACK]: { left: true, right: true }
-    },
-    promotions: { [WHITE]: [], [BLACK]: [] },
-    enPassant: null,
-    noProgress: { count: 0, limit: NO_PROGRESS_BASE * PLIES_PER_MOVE }
+function Board({
+  position,
+  last,
+  locked,
+  moves,
+  result,
+  onMove,
+  onPromotions
+}: {
+  position: Position
+  last: Move | null
+  locked: boolean
+  moves: Move[]
+  result: Result | null
+  onMove: (move: Move) => void
+  onPromotions: (moves: Move[]) => void
+}) {
+  const [selected, setSelected] = useState<string | null>(null)
+  const [marks, setMarks] = useState<Record<string, string>>({})
+  const select = (square: string) => {
+    if (locked) return
+    setMarks({})
+    const reached = moves.filter(move => move.from === selected && move.to === square)
+    onPromotions(reached.length > 1 ? reached : [])
+    if (reached.length === 1) {
+      setSelected(null)
+      onMove(reached[0]!)
+    } else if (reached.length === 0)
+      setSelected(position.occupancy[square]?.side === position.side ? square : null)
   }
-  return {
-    side: WHITE,
-    occupancy,
-    state,
-    match: {
-      swap: true,
-      whitePlayer: null,
-      history: [repetitionKey(WHITE, occupancy, state)],
-      pgn: ''
-    }
-  }
+  return (
+    <div className='order-1 flex justify-center lg:col-span-2 xl:order-2 xl:col-span-1'>
+      <BoardFrame
+        position={position}
+        lastMove={last}
+        selected={selected}
+        targets={targets(moves, selected)}
+        marks={marks}
+        result={result}
+        onSelect={select}
+        onMark={(square, colour) => setMarks(current => mark(current, square, colour))}
+      />
+    </div>
+  )
 }
-
+function Armies({ position, match }: { position: Position; match: Match }) {
+  const seat = {
+    [WHITE]: match.whitePlayer ?? players[WHITE],
+    [BLACK]: match.whitePlayer === null ? players[BLACK] : players[WHITE]
+  }
+  return (
+    <aside className='order-2 flex flex-col gap-4 lg:order-2 xl:order-1'>
+      <ArmyPanel
+        player={seat[WHITE]}
+        position={position}
+        side={WHITE}
+        active={position.side === WHITE}
+      />
+      <ArmyPanel
+        player={seat[BLACK]}
+        position={position}
+        side={BLACK}
+        active={position.side === BLACK}
+      />
+    </aside>
+  )
+}
+function Control({
+  save,
+  setSave,
+  position,
+  promotions,
+  result,
+  onMove,
+  onNewGame
+}: {
+  save: Save
+  setSave: (save: Save) => void
+  position: Position
+  promotions: Move[]
+  result: Result | null
+  onMove: (move: Move) => void
+  onNewGame: () => void
+}) {
+  const [pending, setPending] = useState<'resign' | 'new' | null>(null)
+  return (
+    <aside className='order-3 flex flex-col gap-4'>
+      <Promotions promotions={promotions} onPick={onMove} />
+      <MoveList pgn={save.match.pgn} toMove={position.side} />
+      <GameStatus
+        position={position}
+        history={save.match.history}
+        result={result}
+        canSwap={canSwap(position, save.match)}
+        onDecline={() => {
+          const next = { ...save, match: { ...save.match, swap: false } }
+          setSave(next)
+          writeSave(next)
+        }}
+        onAccept={() => {
+          const next = takeSwap(position, save.match, players[BLACK])
+          setSave(next)
+          writeSave(next)
+        }}
+        pending={pending}
+        setPending={setPending}
+        onNewGame={onNewGame}
+      />
+    </aside>
+  )
+}
+function Promotions({ promotions, onPick }: { promotions: Move[]; onPick: (move: Move) => void }) {
+  if (promotions.length === 0) return null
+  return (
+    <div className='flex flex-wrap items-center gap-2 rounded border border-line bg-surface px-3 py-2'>
+      <span className='text-[11px] uppercase tracking-[0.16em] text-ink-faint'>Promote To?</span>
+      {promotions.map(move => (
+        <button
+          key={move.promotesTo}
+          type='button'
+          onClick={() => onPick(move)}
+          className='rounded-xs border border-line-strong bg-surface-2 px-2 py-1 text-[11px] capitalize text-ink-dim hover:text-ink'>
+          {move.promotesTo}
+        </button>
+      ))}
+    </div>
+  )
+}
 export default function Home() {
   const [save, setSave] = useState<Save>(opening)
   const [last, setLast] = useState<Move | null>(null)
-  const [selected, setSelected] = useState<string | null>(null)
-  const [choices, setChoices] = useState<Move[]>([])
-  const [marks, setMarks] = useState<Record<string, string>>({})
-  const [pending, setPending] = useState<'resign' | 'new' | null>(null)
-  const [loaded, setLoaded] = useState(false)
-
+  const [promotions, setPromotions] = useState<Move[]>([])
   const { position, moves, result } = useMemo(() => turn(save, null), [save])
-  // The page is served prerendered, with no storage to read while it is built, so the saved
-  // game arrives after mount and the opening stands until it does.
   useEffect(() => {
     const stored = readSave()
     if (stored !== null) setSave(stored)
-    setLoaded(true)
   }, [])
-  // Every state the game reaches is written back, and the one that ends it takes the save with
-  // it, since there is no turn left to continue into.
-  useEffect(() => {
-    if (!loaded) return
-    if (result === null) writeSave(save)
-    else clearSave()
-  }, [loaded, save, result])
-  // Black is offered white before its first move, and the offer holds the board:
-  // moving a piece would answer the question by accident.
-  const swapAsked = canSwap(position, save.match)
-  // Taking the offer moves both players, not one: whoever was black now sits behind
-  // white, and the name that was white is the one left behind black.
-  const seat = {
-    [WHITE]: save.match.whitePlayer ?? PLAYERS[WHITE],
-    [BLACK]: save.match.whitePlayer === null ? PLAYERS[BLACK] : PLAYERS[WHITE]
-  }
-
-  const mark = (square: string, colour: string) =>
-    setMarks(current => {
-      const next = { ...current }
-      if (next[square] === colour) delete next[square]
-      else next[square] = colour
-      return next
-    })
-  const play = (move: Move) => {
-    setSave(turn(save, move).save)
+  const makeMove = (move: Move) => {
+    const next = turn(save, move)
+    setSave(next.save)
     setLast(move)
-    setSelected(null)
-    setChoices([])
-    setMarks({})
+    setPromotions([])
+    if (next.result === null) writeSave(next.save)
+    else clearSave()
   }
-  const select = (square: string) => {
-    if (swapAsked || pending !== null || result !== null) return
-    setMarks({})
-    setChoices([])
-    if (selected !== null) {
-      // A Legionary reaching the last rank can hold several slots within reach, so one pair
-      // of squares may carry more than one move and the player picks between them.
-      const reached = moves.filter(move => move.from === selected && move.to === square)
-      if (reached.length > 1) {
-        setChoices(reached)
-        return
-      }
-      if (reached.length === 1) {
-        play(reached[0]!)
-        return
-      }
-    }
-    setSelected(position.occupancy[square]?.side === position.side ? square : null)
+  const restart = () => {
+    setSave(opening())
+    setLast(null)
+    setPromotions([])
+    clearSave()
   }
-
-  // Several moves can end on one square, a promotion offering more than one piece
-  // being the usual case, and the board draws one dot per square.
-  const targets =
-    selected === null
-      ? []
-      : [...new Set(moves.filter(move => move.from === selected).map(move => move.to))]
-  // The board glows under the Pope of the side to move while it stands attacked.
-  const check =
-    position.checkInfo.checkers.length === 0
-      ? null
-      : (position.pieces[position.side][POPE][0] ?? null)
   return (
     <main className='mx-auto grid w-full max-w-[1600px] flex-1 grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-2 xl:grid-cols-[18.5rem_minmax(0,1fr)_20rem] xl:gap-5 xl:px-5 xl:py-5'>
-      <aside className='order-2 flex flex-col gap-4 lg:order-2 xl:order-1'>
-        <ArmyPanel
-          player={seat[WHITE]}
-          position={position}
-          side={WHITE}
-          active={position.side === WHITE}
-        />
-        <ArmyPanel
-          player={seat[BLACK]}
-          position={position}
-          side={BLACK}
-          active={position.side === BLACK}
-        />
-      </aside>
-      <div className='order-1 flex justify-center lg:col-span-2 xl:order-2 xl:col-span-1'>
-        <BoardFrame
-          occupancy={position.occupancy}
-          check={check}
-          isCheckmate={result?.reason === CHECKMATE}
-          selected={selected}
-          targets={targets}
-          lastMove={last}
-          marks={marks}
-          onSelect={select}
-          onMark={mark}
-        />
-      </div>
-      <aside className='order-3 flex flex-col gap-4'>
-        {choices.length > 0 && (
-          <div className='flex flex-wrap items-center gap-2 rounded border border-line bg-surface px-3 py-2'>
-            <span className='text-[11px] uppercase tracking-[0.16em] text-ink-faint'>
-              Promote To?
-            </span>
-            {choices.map(move => (
-              <button
-                key={move.promotesTo}
-                type='button'
-                onClick={() => play(move)}
-                className='rounded-xs border border-line-strong bg-surface-2 px-2 py-1 text-[11px] capitalize text-ink-dim hover:text-ink'>
-                {move.promotesTo}
-              </button>
-            ))}
-          </div>
-        )}
-        <MoveList moves={fullMoves(save.match.pgn)} toMove={position.side} />
-        <GameStatus
-          position={position}
-          history={save.match.history}
-          result={result}
-          canSwap={canSwap(position, save.match)}
-          onDecline={() => setSave({ ...save, match: { ...save.match, swap: false } })}
-          onAccept={() => setSave(takeSwap(position, save.match, PLAYERS[BLACK]))}
-          pending={pending}
-          setPending={setPending}
-          onNewGame={() => {
-            setSave(opening())
-            setLast(null)
-            setSelected(null)
-            setChoices([])
-            setMarks({})
-          }}
-        />
-      </aside>
+      <Armies position={position} match={save.match} />
+      <Board
+        position={position}
+        last={last}
+        locked={canSwap(position, save.match) || result !== null}
+        moves={moves}
+        result={result}
+        onMove={makeMove}
+        onPromotions={setPromotions}
+      />
+      <Control
+        save={save}
+        setSave={setSave}
+        position={position}
+        promotions={promotions}
+        result={result}
+        onMove={play}
+        onNewGame={restart}
+      />
     </main>
   )
 }

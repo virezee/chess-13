@@ -1,5 +1,5 @@
 import type { Side } from '@/types/material'
-import type { FullMove } from '@/types/panel'
+import { fullMoves } from '../engine/notation'
 import { cn } from '@/lib/cn'
 
 function Ply({
@@ -31,7 +31,8 @@ function Ply({
     </span>
   )
 }
-export function MoveList({ moves, toMove }: { moves: FullMove[]; toMove: Side }) {
+export function MoveList({ pgn, toMove }: { pgn: string; toMove: Side }) {
+  const moves = fullMoves(pgn)
   const lastIndex = moves.length - 1
   return (
     <section className='flex min-h-0 flex-col overflow-hidden rounded border border-line bg-surface'>

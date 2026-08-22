@@ -1,9 +1,11 @@
 import type { MouseEvent, CSSProperties } from 'react'
 import type { SquareOccupant } from '@/types/material'
-import type { Move, View } from '@/types/game'
+import type { Move, View, Position, Result } from '@/types/game'
 import { useState } from 'react'
 import Image from 'next/image'
 import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
+import { POPE } from '@/constants/piece'
+import { CHECKMATE } from '@/constants/outcome'
 import {
   COORDS,
   SQUARE,
@@ -21,12 +23,11 @@ import { parseSquare, makeSquare } from '../lib/coordinate'
 import { cn } from '@/lib/cn'
 
 type BoardProps = {
-  occupancy: SquareOccupant
-  check: string | null
-  isCheckmate: boolean
+  position: Position
   selected: string | null
   targets: string[]
   marks: Record<string, string>
+  result: Result | null
   onSelect: (square: string) => void
   onMark: (square: string, colour: string) => void
 }
@@ -180,16 +181,18 @@ function Destinations({ occupancy, targets }: { occupancy: SquareOccupant; targe
   ))
 }
 function Board({
-  occupancy,
-  check,
-  isCheckmate,
+  position,
   selected,
   targets,
   marks,
   ids,
+  result,
   onSelect,
   onMark
 }: BoardProps & { ids: Map<string, number> }) {
+  const { pieces, occupancy, side, checkInfo } = position
+  const check = checkInfo.checkers.length === 0 ? null : pieces[side][POPE][0]!
+  const isCheckmate = result?.reason === CHECKMATE
   return (
     <div
       className='relative overflow-hidden rounded-[3px] outline outline-square-edge'
@@ -225,7 +228,7 @@ function Board({
   )
 }
 export function BoardFrame({ lastMove, ...board }: BoardProps & { lastMove: Move | null }) {
-  const { occupancy } = board
+  const { occupancy } = board.position
   const [prev, setPrev] = useState({ move: lastMove, occupancy })
   const [keys, setKeys] = useState(() => remapIds(new Map<string, number>(), occupancy, null, 0))
   if (prev.move !== lastMove || prev.occupancy !== occupancy) {

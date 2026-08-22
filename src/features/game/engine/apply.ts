@@ -2,7 +2,7 @@ import type { Side, SquareOccupant } from '@/types/material'
 import type { Step, Move, EnPassant, Counter, State, Position, Match, Save } from '@/types/game'
 import { CENTRE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
-import { POPE, MARSHAL, LEGIONARY, CASTLING } from '@/constants/piece'
+import { POPE, EMPEROR, MARSHAL, LEGIONARY, CASTLING } from '@/constants/piece'
 import {
   PLIES_PER_MOVE,
   NO_PROGRESS_BASE,
@@ -14,7 +14,7 @@ import { riposteSquares } from './moves'
 import { fullMoves, notation } from './notation'
 import { repetitionKey } from './result'
 
-const board = (occupancy: SquareOccupant, move: Move): SquareOccupant => {
+const board = (occupancy: SquareOccupant, awake: State['awake'], move: Move): SquareOccupant => {
   const next = { ...occupancy }
   const mover = next[move.from]
   delete next[move.from]
@@ -25,7 +25,11 @@ const board = (occupancy: SquareOccupant, move: Move): SquareOccupant => {
     if (sentinel) next[move.sentinel.to] = sentinel
   }
   if (mover && !move.captures?.includes(move.from))
-    next[move.to] = move.promotesTo ? { side: mover.side, piece: move.promotesTo } : mover
+    next[move.to] = move.promotesTo
+      ? move.promotesTo === EMPEROR
+        ? { side: mover.side, piece: EMPEROR, awake: awake[mover.side] }
+        : { side: mover.side, piece: move.promotesTo }
+      : mover
   return next
 }
 const isLineClear = (occupancy: SquareOccupant, { from, to }: Step): boolean => {
@@ -171,7 +175,7 @@ export const takeSwap = (position: Position, match: Match, player: string): Save
 })
 export const apply = (position: Position, move: Move, match: Match): Save => {
   const { side, occupancy, state } = position
-  const next = board(occupancy, move)
+  const next = board(occupancy, state.awake, move)
   const noProgress = progress(occupancy, next, move, state.noProgress)
   const nextSide = side === WHITE ? BLACK : WHITE
   const nextState: State = {

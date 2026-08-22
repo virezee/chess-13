@@ -3,6 +3,7 @@ export const STALEMATE = 'Stalemate'
 export const REPETITION = 'Repetition'
 export const NO_PROGRESS = 'No Progress'
 export const INSUFFICIENT_MATERIAL = 'Insufficient Material'
+export const RESIGNATION = 'Resignation'
 export const PLIES_PER_MOVE = 2
 export const REPETITION_LIMIT = 3
 export const NO_PROGRESS_BASE = 60
