@@ -4,7 +4,8 @@ import type {
   STALEMATE,
   REPETITION,
   NO_PROGRESS,
-  INSUFFICIENT_MATERIAL
+  INSUFFICIENT_MATERIAL,
+  RESIGNATION
 } from '@/constants/outcome'
 
 export interface Board {
@@ -87,4 +88,5 @@ export interface Result {
     | typeof REPETITION
     | typeof NO_PROGRESS
     | typeof INSUFFICIENT_MATERIAL
+    | typeof RESIGNATION
 }

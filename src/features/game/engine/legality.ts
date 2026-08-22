@@ -1,5 +1,5 @@
 import type { Side, Piece, SquareOccupant } from '@/types/material'
-import type { Board, CheckInfo, Step, Move, View, Position } from '@/types/game'
+import type { Board, CheckInfo, Step, Move, View, State, Position } from '@/types/game'
 import { SIZE, CORNERS } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
@@ -10,12 +10,17 @@ import { isReachable, isAssassinReachable, threats } from './threats'
 import { candidate } from './candidate'
 
 const opponent = (side: Side): Side => (side === WHITE ? BLACK : WHITE)
-const makeMove = (occupancy: SquareOccupant, move: Move): View => {
+const makeMove = (occupancy: SquareOccupant, awake: State['awake'], move: Move): View => {
   const mover = occupancy[move.from]
   const vacated = [move.from, ...(move.captures ?? [])]
   const dies = move.captures?.includes(move.from) ?? false
   if (!mover || dies) return { vacated }
-  return { moved: { piece: mover, square: move.to }, vacated }
+  const piece: Piece = move.promotesTo
+    ? move.promotesTo === EMPEROR
+      ? { side: mover.side, piece: EMPEROR, awake: awake[mover.side] }
+      : { side: mover.side, piece: move.promotesTo }
+    : mover
+  return { moved: { piece, square: move.to }, vacated }
 }
 const castlingPath = ({ from, to }: Step): string[] => {
   const origin = parseSquare(from)
@@ -158,7 +163,7 @@ export const legality = (position: Position): Move[] => {
   return candidate(position).filter(move => {
     const mover = occupancy[move.from]
     if (!mover) return false
-    const view = makeMove(occupancy, move)
+    const view = makeMove(occupancy, state.awake, move)
     const popeAfter = mover.piece === POPE ? move.to : pope
     if (
       dormantSq !== null &&

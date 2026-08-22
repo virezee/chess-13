@@ -24,6 +24,12 @@ const occupantAt = (occupancy: SquareOccupant, view: View, square: string): Piec
   if (view.vacated?.includes(square)) return
   return occupancy[square]
 }
+const marshalAt = (side: Side, view: View, marshalSquare: string | null): string | null => {
+  const moved = view.moved
+  if (moved?.piece.piece === MARSHAL && moved.piece.side === side) return moved.square
+  if (marshalSquare === null || view.vacated?.includes(marshalSquare)) return null
+  return marshalSquare
+}
 const leapers = (
   board: Board,
   side: Side,
@@ -104,7 +110,7 @@ export const threats = (
 ): string[] => {
   const { pieces, occupancy } = board
   const popeSq = parseSquare(pieces[side][POPE][0]!)
-  const marshalSq = pieces[side][MARSHAL][0] ?? null
+  const marshalSq = marshalAt(side, view, pieces[side][MARSHAL][0] ?? null)
   const target = parseSquare(square)
   const targetPiece = occupantAt(occupancy, view, square)
   const isEnemyPope = targetPiece?.piece === POPE && targetPiece.side !== side

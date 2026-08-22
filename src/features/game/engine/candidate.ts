@@ -1,4 +1,4 @@
-import type { Board, Step, Move, Position } from '@/types/game'
+import type { Board, Step, Move, State, Position } from '@/types/game'
 import type { Side, PieceName, Piece } from '@/types/material'
 import { CORNERS } from '@/constants/board'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
@@ -30,12 +30,18 @@ const isEvasion = (
   board: Board,
   side: Side,
   pope: string,
+  awake: State['awake'],
   checkers: readonly string[],
   piece: Piece,
   move: Move
 ): boolean => {
   if (piece.piece === POPE) return true
   const origin = parseSquare(pope)
+  const promoted: Piece = move.promotesTo
+    ? move.promotesTo === EMPEROR
+      ? { side, piece: EMPEROR, awake: awake[side] }
+      : { side, piece: move.promotesTo }
+    : piece
   return checkers.every(checker => {
     if (move.captures?.includes(checker) || isBlocking(pope, checker, move.to)) return true
     if (board.occupancy[checker]?.piece !== ASSASSIN) return false
@@ -48,7 +54,7 @@ const isEvasion = (
         })
     if (move.to === dest) return true
     const view = {
-      moved: { piece, square: move.to },
+      moved: { piece: promoted, square: move.to },
       vacated: [move.from, ...(move.captures ?? [])]
     }
     return threats(board, side, view, false, dest).some(defender => defender !== pope)
@@ -97,7 +103,11 @@ export const candidate = (position: Position): Move[] => {
         state.enPassant
       )) {
         if (pinDirection && !isAligned({ from: pope, to: move.to }, pinDirection)) continue
-        if (checkers.length > 0 && !isEvasion(position, side, pope, checkers, piece, move)) continue
+        if (
+          checkers.length > 0 &&
+          !isEvasion(position, side, pope, state.awake, checkers, piece, move)
+        )
+          continue
         moves.push(move)
       }
     }
