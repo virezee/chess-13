@@ -21,7 +21,7 @@ const captured = (pieces: PieceSquares): ArmyState['captured'] =>
       letter: LETTER[name as PieceName]
     }))
   )
-const fileRange = (file: number) => {
+const fileRange = (file: number): string => {
   const first = Math.max(0, file - 1)
   const last = Math.min(FILES.length - 1, file + 1)
   return `${FILES[first]}-${FILES[last]}`

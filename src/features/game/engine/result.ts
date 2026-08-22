@@ -9,6 +9,7 @@ import {
   REPETITION,
   NO_PROGRESS,
   INSUFFICIENT_MATERIAL,
+  RESIGNATION,
   REPETITION_LIMIT
 } from '@/constants/outcome'
 import { makeSquare } from '../lib/coordinate'
@@ -59,7 +60,8 @@ export const repetitionCount = (key: string, history: readonly string[]): number
 export const result = (
   position: Position,
   moves: Move[],
-  history: readonly string[]
+  history: readonly string[],
+  resigned: Side | null
 ): Result | null => {
   const { occupancy, side, checkInfo, state } = position
   if (moves.length === 0)
@@ -70,5 +72,6 @@ export const result = (
   if (repetitionCount(repetitionKey(side, occupancy, state), history) >= REPETITION_LIMIT)
     return { winner: side, reason: REPETITION }
   if (isInsufficientMaterial(occupancy)) return { winner: null, reason: INSUFFICIENT_MATERIAL }
+  if (resigned !== null) return { winner: resigned === WHITE ? BLACK : WHITE, reason: RESIGNATION }
   return null
 }

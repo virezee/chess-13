@@ -15,11 +15,29 @@ const players = { [WHITE]: 'Player 1', [BLACK]: 'Player 2' }
 const targets = (moves: Move[], selected: string | null): string[] => [
   ...new Set(moves.filter(move => move.from === selected).map(move => move.to))
 ]
-const mark = (marks: Record<string, string>, square: string, colour: string) => {
+const mark = (
+  marks: Record<string, string>,
+  square: string,
+  colour: string
+): Record<string, string> => {
   const next = { ...marks }
   if (next[square] === colour) delete next[square]
   else next[square] = colour
   return next
+}
+const takeResign = (save: Save, setSave: (save: Save) => void, position: Position): void => {
+  setSave({ ...save, match: { ...save.match, resigned: position.side } })
+  clearSave()
+}
+const takeNewGame = (
+  setSave: (save: Save) => void,
+  setLast: (move: Move | null) => void,
+  setPromotions: (moves: Move[]) => void
+): void => {
+  setSave(opening())
+  setLast(null)
+  setPromotions([])
+  clearSave()
 }
 function Board({
   position,
@@ -93,19 +111,24 @@ function Control({
   setSave,
   position,
   promotions,
+  pending,
+  setPending,
   result,
   onMove,
+  onResign,
   onNewGame
 }: {
   save: Save
   setSave: (save: Save) => void
   position: Position
   promotions: Move[]
+  pending: 'resign' | 'new' | null
+  setPending: (pending: 'resign' | 'new' | null) => void
   result: Result | null
   onMove: (move: Move) => void
+  onResign: () => void
   onNewGame: () => void
 }) {
-  const [pending, setPending] = useState<'resign' | 'new' | null>(null)
   return (
     <aside className='order-3 flex flex-col gap-4'>
       <Promotions promotions={promotions} onPick={onMove} />
@@ -127,6 +150,7 @@ function Control({
         }}
         pending={pending}
         setPending={setPending}
+        onResign={onResign}
         onNewGame={onNewGame}
       />
     </aside>
@@ -154,9 +178,11 @@ export default function Home() {
   const [save, setSave] = useState<Save>(opening)
   const [last, setLast] = useState<Move | null>(null)
   const [promotions, setPromotions] = useState<Move[]>([])
+  const [pending, setPending] = useState<'resign' | 'new' | null>(null)
   const { position, moves, result } = useMemo(() => turn(save, null), [save])
   useEffect(() => {
     const stored = readSave()
+    // oxlint-disable-next-line react-hooks/set-state-in-effect
     if (stored !== null) setSave(stored)
     setLoad(true)
   }, [])
@@ -168,19 +194,13 @@ export default function Home() {
     if (next.result === null) writeSave(next.save)
     else clearSave()
   }
-  const restart = () => {
-    setSave(opening())
-    setLast(null)
-    setPromotions([])
-    clearSave()
-  }
   return (
     <main className='mx-auto grid w-full max-w-[1600px] flex-1 grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-2 xl:grid-cols-[18.5rem_minmax(0,1fr)_20rem] xl:gap-5 xl:px-5 xl:py-5'>
       <Armies position={position} match={save.match} />
       <Board
         position={load ? position : { ...position, occupancy: {} }}
         last={last}
-        locked={canSwap(position, save.match) || result !== null}
+        locked={canSwap(position, save.match) || result !== null || pending !== null}
         moves={moves}
         result={result}
         onMove={playMove}
@@ -191,9 +211,12 @@ export default function Home() {
         setSave={setSave}
         position={position}
         promotions={promotions}
+        pending={pending}
+        setPending={setPending}
         result={result}
         onMove={playMove}
-        onNewGame={restart}
+        onResign={() => takeResign(save, setSave, position)}
+        onNewGame={() => takeNewGame(setSave, setLast, setPromotions)}
       />
     </main>
   )

@@ -39,7 +39,8 @@ export const opening = (): Save => {
       swap: true,
       whitePlayer: null,
       history: [repetitionKey(WHITE, occupancy, state)],
-      pgn: ''
+      pgn: '',
+      resigned: null
     }
   }
 }
@@ -55,6 +56,6 @@ export const turn = (
     save: played,
     position: next,
     moves,
-    result: result(next, moves, played.match.history)
+    result: result(next, moves, played.match.history, played.match.resigned)
   }
 }

@@ -73,6 +73,7 @@ export interface Match {
   whitePlayer: string | null
   history: string[]
   pgn: string
+  resigned: Side | null
 }
 export interface Save {
   side: Side
