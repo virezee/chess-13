@@ -218,15 +218,20 @@ step 7 left at the end of Black's move and reads them as the move being judged l
 - the repetition count standing at three loses the game for White, and the move stays legal,
   so a player left with nothing else has to play it. The count is how often the key of the
   position this move leaves stands in the history step 7 keeps, its own occurrence counted in,
-  since step 7 pushes that key only after this reading
-- material too thin to mate is a draw. Not to be written in code yet: the list of what counts
-  as too thin does not exist, so no test for it and no result from it
+  since step 7 pushed that key onto the history before this reading
+- material too thin to mate is a draw. This line is a placeholder: the list of what counts as
+  too thin does not exist yet, so nothing is read against it either way, whether the code
+  carries a test for it or not
 - the no-progress count standing at its limit is a draw. It adds 1 for the move just played,
   unless that move was a capture, a Mage blast, a Legionary move or a promotion, which returns
   it to zero instead. Its limit is read at each of those resets, as 60 + 2 × (52 − pieces on
   board) doubled, because the count runs one to a move where the formula counts one to a pair.
 
 One move can bring the first and the last of those at once. The draw is the result.
+
+One ending rides on no move at all. A player may resign while it is that player's turn, and the
+other side wins by it. It is read after every ending above, so a game already mated, stalemated or
+drawn keeps the result it earned, and the side that resigned is the one step 7 kept.
 
 ## 7. Play the move
 
@@ -257,26 +262,29 @@ Then record what the next turn needs:
 - each Emperor that step 2 has woken, since a woken Emperor stays woken after its attacker
   withdraws and nothing on the board says so afterwards
 - the promotion slots each side holds, one for every piece that side has lost, kept by kind and
-  by the file it died on, and spent when a Legionary claims one
+  by the file it died on, and spent when a Legionary claims one. A Legionary never promotes to a
+  Pope or to a Legionary, so neither kind ever opens a slot
 - the no-progress count with the limit read at its last reset, and the repetition count, built
   from what stands above, both carried on by the rules step 6 gives them
 - the move just applied, written as one ply and appended to the movetext step 8 keeps. This is
   the only step still holding the board the move was made from, so it is the only step that can
   read the piece's letter and the enhanced mark its own Marshal gave it
+- the side that resigned, once one has, since a resignation leaves no mark on the board for step 6
+  to read it from
 
 The repetition count is how often the board now standing has stood before. Five things make two
 boards the same one: where every piece stands, which side is to move, the castling rights, the
-en passant right, and the riposte flag. Those five are combined into one key. It is the key step
-6 already built to read the repetition of this move, built once there and pushed onto a history
-here, and the count is how often that same key already stands in that history. The
+en passant right, and the riposte flag. Those five are combined into one key. The key is built
+here and pushed onto a history, and step 6 reads the repetition of this move off it, as how often
+that same key stands in that history. The
 opening position is the first entry of all, since it stands on the board before any move is
 made. History behind the last reset of the no-progress count is never read again, since none of
 the moves step 6 names as resetting it can be undone.
 
 ## 8. Save and hand over
 
-If step 6 ended the game, mated, stalemated or drawn, delete the saved state and hand nothing
-over, since there is no turn left to continue into.
+If step 6 ended the game, mated, stalemated, drawn or resigned, delete the saved state and hand
+nothing over, since there is no turn left to continue into.
 
 Otherwise persist the state so a reload can continue the game, then repeat from step 1 for
 Black.

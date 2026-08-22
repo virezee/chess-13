@@ -69,7 +69,7 @@ export const result = (
       ? { winner: side === WHITE ? BLACK : WHITE, reason: CHECKMATE }
       : { winner: side, reason: STALEMATE }
   if (state.noProgress.count >= state.noProgress.limit) return { winner: null, reason: NO_PROGRESS }
-  if (repetitionCount(repetitionKey(side, occupancy, state), history) >= REPETITION_LIMIT)
+  if (repetitionCount(history.at(-1)!, history) >= REPETITION_LIMIT)
     return { winner: side, reason: REPETITION }
   if (isInsufficientMaterial(occupancy)) return { winner: null, reason: INSUFFICIENT_MATERIAL }
   if (resigned !== null) return { winner: resigned === WHITE ? BLACK : WHITE, reason: RESIGNATION }

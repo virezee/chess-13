@@ -1,6 +1,6 @@
 import type { Counter, Position, Result } from '@/types/game'
 import { REPETITION_LIMIT } from '@/constants/outcome'
-import { repetitionKey, repetitionCount } from '../engine/result'
+import { repetitionCount } from '../engine/result'
 import { cn } from '@/lib/cn'
 
 type ControlsProps = {
@@ -177,10 +177,7 @@ export function GameStatus({
   onAccept: () => void
 }) {
   const { noProgress } = position.state
-  const repetition = repetitionCount(
-    repetitionKey(position.side, position.occupancy, position.state),
-    history
-  )
+  const repetition = repetitionCount(history.at(-1)!, history)
   return (
     <section className='overflow-hidden rounded border border-line bg-surface'>
       <header className='px-3.5 py-3'>
