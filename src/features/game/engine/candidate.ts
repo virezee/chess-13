@@ -1,9 +1,10 @@
-import type { Step, Move, Position } from '@/types/game'
-import type { PieceName, Piece, SquareOccupant } from '@/types/material'
+import type { Board, Step, Move, Position } from '@/types/game'
+import type { Side, PieceName, Piece } from '@/types/material'
 import { CORNERS } from '@/constants/board'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
 import { parseSquare, makeSquare } from '../lib/coordinate'
 import { generate } from './generate'
+import { threats } from './threats'
 
 const isBlocking = (pope: string, checker: string, square: string): boolean => {
   const origin = parseSquare(pope)
@@ -26,26 +27,32 @@ const isBlocking = (pope: string, checker: string, square: string): boolean => {
   return false
 }
 const isEvasion = (
+  board: Board,
+  side: Side,
   pope: string,
   checkers: readonly string[],
-  occupancy: SquareOccupant,
   piece: Piece,
   move: Move
 ): boolean => {
   if (piece.piece === POPE) return true
   const origin = parseSquare(pope)
-  return checkers.every(
-    checker =>
-      move.captures?.includes(checker) ||
-      isBlocking(pope, checker, move.to) ||
-      (occupancy[checker]?.piece === ASSASSIN &&
-        !CORNERS.includes(pope) &&
-        move.to ===
-          makeSquare({
-            file: origin.file + Math.sign(origin.file - parseSquare(checker).file),
-            rank: origin.rank + Math.sign(origin.rank - parseSquare(checker).rank)
-          }))
-  )
+  return checkers.every(checker => {
+    if (move.captures?.includes(checker) || isBlocking(pope, checker, move.to)) return true
+    if (board.occupancy[checker]?.piece !== ASSASSIN) return false
+    const target = parseSquare(checker)
+    const dest = CORNERS.includes(pope)
+      ? pope
+      : makeSquare({
+          file: origin.file + Math.sign(origin.file - target.file),
+          rank: origin.rank + Math.sign(origin.rank - target.rank)
+        })
+    if (move.to === dest) return true
+    const view = {
+      moved: { piece, square: move.to },
+      vacated: [move.from, ...(move.captures ?? [])]
+    }
+    return threats(board, side, view, false, dest).some(defender => defender !== pope)
+  })
 }
 const isAligned = (
   { from, to }: Step,
@@ -90,7 +97,7 @@ export const candidate = (position: Position): Move[] => {
         state.enPassant
       )) {
         if (pinDirection && !isAligned({ from: pope, to: move.to }, pinDirection)) continue
-        if (checkers.length > 0 && !isEvasion(pope, checkers, occupancy, piece, move)) continue
+        if (checkers.length > 0 && !isEvasion(position, side, pope, checkers, piece, move)) continue
         moves.push(move)
       }
     }

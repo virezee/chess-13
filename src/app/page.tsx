@@ -67,20 +67,20 @@ function Board({
   )
 }
 function Armies({ position, match }: { position: Position; match: Match }) {
-  const seat = {
+  const player = {
     [WHITE]: match.whitePlayer ?? players[WHITE],
     [BLACK]: match.whitePlayer === null ? players[BLACK] : players[WHITE]
   }
   return (
     <aside className='order-2 flex flex-col gap-4 lg:order-2 xl:order-1'>
       <ArmyPanel
-        player={seat[WHITE]}
+        player={player[WHITE]}
         position={position}
         side={WHITE}
         active={position.side === WHITE}
       />
       <ArmyPanel
-        player={seat[BLACK]}
+        player={player[BLACK]}
         position={position}
         side={BLACK}
         active={position.side === BLACK}
@@ -158,7 +158,7 @@ export default function Home() {
     const stored = readSave()
     if (stored !== null) setSave(stored)
   }, [])
-  const makeMove = (move: Move) => {
+  const playMove = (move: Move) => {
     const next = turn(save, move)
     setSave(next.save)
     setLast(move)
@@ -181,7 +181,7 @@ export default function Home() {
         locked={canSwap(position, save.match) || result !== null}
         moves={moves}
         result={result}
-        onMove={makeMove}
+        onMove={playMove}
         onPromotions={setPromotions}
       />
       <Control
@@ -190,7 +190,7 @@ export default function Home() {
         position={position}
         promotions={promotions}
         result={result}
-        onMove={makeMove}
+        onMove={playMove}
         onNewGame={restart}
       />
     </main>

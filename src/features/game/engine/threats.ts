@@ -61,13 +61,12 @@ export const isReachable = (
   distance: number
 ): boolean => {
   switch (piece.piece) {
+    case POPE:
+      return distance === 1
     case EMPEROR:
       return piece.awake === true || dormant
     case SENTINEL:
       return !isDiagonal && distance <= REACH.sentinel[enhanced ? ENHANCED : RESTRICTED].capture
-    case MAGE:
-    case POPE:
-      return distance === 1
     case HERALD:
       return isDiagonal
         ? distance <= REACH.herald[enhanced ? ENHANCED : RESTRICTED].diagonal
@@ -104,6 +103,7 @@ export const threats = (
   square: string
 ): string[] => {
   const { pieces, occupancy } = board
+  const popeSq = parseSquare(pieces[side][POPE][0]!)
   const marshalSq = pieces[side][MARSHAL][0] ?? null
   const target = parseSquare(square)
   const targetPiece = occupantAt(occupancy, view, square)
@@ -133,6 +133,9 @@ export const threats = (
           )
         )
           attackers.push(attacker)
+      } else if (occupant.piece === MAGE) {
+        const isInRing = Math.max(Math.abs(popeSq.file - file), Math.abs(popeSq.rank - rank)) === 1
+        if (distance === 1 && !(isEnemyPope && isInRing)) attackers.push(attacker)
       } else if (isReachable(occupant, dormant, isDiagonal, rankStep, enhanced, distance))
         attackers.push(attacker)
       break

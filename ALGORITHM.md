@@ -177,7 +177,8 @@ moves are worth keeping.
 Every test here reads the board as it would be after the move, through a view that marks
 which squares are emptied and which piece stands where. Nothing is copied.
 
-- **The Pope moves.** Its destination must not be attacked. Castling covers the tiles it
+- **The Pope moves.** Its destination must not be attacked, read as step 1 reads it, so a Mage
+  standing with both Popes in its ring does not attack that square. Castling covers the tiles it
   crosses as well, so f1, e1 and d1 on the left and h1, i1 and j1 on the right.
 - **Any other piece while in check.** After the move, the Pope must not be attacked.
 - **The Assassin captures.** Its landing square must not be attacked. The enemy Marshal and a
@@ -218,8 +219,8 @@ step 7 left at the end of Black's move and reads them as the move being judged l
   so a player left with nothing else has to play it. The count is how often the key of the
   position this move leaves stands in the history step 7 keeps, its own occurrence counted in,
   since step 7 pushes that key only after this reading
-- material too thin to mate is a draw. Which material counts as too thin is still open, so this
-  one is a named hook that is never entered until that list exists
+- material too thin to mate is a draw. Not to be written in code yet: the list of what counts
+  as too thin does not exist, so no test for it and no result from it
 - the no-progress count standing at its limit is a draw. It adds 1 for the move just played,
   unless that move was a capture, a Mage blast, a Legionary move or a promotion, which returns
   it to zero instead. Its limit is read at each of those resets, as 60 + 2 × (52 − pieces on
