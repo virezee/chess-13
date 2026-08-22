@@ -3,8 +3,8 @@
 import type { Move, Save, Match, Position, Result } from '@/types/game'
 import { useState, useMemo, useEffect } from 'react'
 import { WHITE, BLACK } from '@/constants/colour'
-import { opening, turn } from '@/features/game/engine/turn'
 import { canSwap, takeSwap } from '@/features/game/engine/apply'
+import { opening, clickSquares, turn } from '@/features/game/engine/turn'
 import { BoardFrame } from '@/features/game/components/Board'
 import { ArmyPanel } from '@/features/game/components/ArmyPanel'
 import { MoveList } from '@/features/game/components/MoveList'
@@ -12,8 +12,14 @@ import { GameStatus } from '@/features/game/components/GameStatus'
 import { readSave, writeSave, clearSave } from '@/features/game/lib/save'
 
 const players = { [WHITE]: 'Player 1', [BLACK]: 'Player 2' }
-const targets = (moves: Move[], selected: string | null): string[] => [
-  ...new Set(moves.filter(move => move.from === selected).map(move => move.to))
+const targets = (
+  occupancy: Position['occupancy'],
+  moves: Move[],
+  selected: string | null
+): string[] => [
+  ...new Set(
+    moves.filter(move => move.from === selected).flatMap(move => clickSquares(occupancy, move))
+  )
 ]
 const mark = (
   marks: Record<string, string>,
@@ -59,7 +65,9 @@ function Board({
   const select = (square: string) => {
     if (locked) return
     setMarks({})
-    const reached = moves.filter(move => move.from === selected && move.to === square)
+    const reached = moves.filter(
+      move => move.from === selected && clickSquares(position.occupancy, move).includes(square)
+    )
     onPromotions(reached.length > 1 ? reached : [])
     if (reached.length === 1) {
       setSelected(null)
@@ -73,7 +81,7 @@ function Board({
         position={position}
         lastMove={lastMove}
         selected={selected}
-        targets={targets(moves, selected)}
+        targets={targets(position.occupancy, moves, selected)}
         marks={marks}
         result={result}
         onSelect={select}
