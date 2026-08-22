@@ -13,6 +13,7 @@ import {
   PATTERN,
   FONT_SIZE,
   BASELINE,
+  BUFF,
   SELECTED,
   DEST,
   DEST_CAPTURE,
@@ -129,11 +130,25 @@ function CommandSquare({ isOccupied }: { isOccupied: boolean }) {
     </div>
   )
 }
-function PieceImage({ piece, square, isFallen }: Required<View>['moved'] & { isFallen: boolean }) {
+function PieceImage({
+  piece,
+  square,
+  isBuffed,
+  isFallen
+}: Required<View>['moved'] & { isBuffed: boolean; isFallen: boolean }) {
   return (
     <div
       className='absolute left-0 top-0 cursor-pointer transition-transform duration-300 ease-out'
       style={{ ...translate(square), willChange: 'transform', zIndex: 1 }}>
+      {isBuffed && (
+        <span
+          className='pointer-events-none absolute inset-0'
+          style={{
+            background: BUFF[piece.side],
+            clipPath: 'polygon(50% 0, 100% 50%, 50% 100%, 0 50%)'
+          }}
+        />
+      )}
       <Image
         key={`${piece.side}/${piece.piece}`}
         src={`/${piece.side}/${piece.piece}.png`}
@@ -190,7 +205,7 @@ function Board({
   onSelect,
   onMark
 }: BoardProps & { ids: Map<string, number> }) {
-  const { pieces, occupancy, side, checkInfo } = position
+  const { pieces, occupancy, side, checkInfo, buff } = position
   const check = checkInfo.checkers.length === 0 ? null : pieces[side][POPE][0]!
   const isCheckmate = result?.reason === CHECKMATE
   return (
@@ -220,6 +235,7 @@ function Board({
             key={ids.get(square)}
             square={square}
             piece={piece}
+            isBuffed={buff.has(square)}
             isFallen={isCheckmate && square === check}
           />
         ))}

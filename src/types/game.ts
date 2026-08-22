@@ -67,6 +67,7 @@ export interface Position extends Board {
   side: Side
   checkInfo: CheckInfo
   state: State
+  buff: Set<string>
 }
 export interface Match {
   swap: boolean

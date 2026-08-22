@@ -12,6 +12,7 @@ import {
   TEMPLAR,
   LEGIONARY
 } from '@/constants/piece'
+import { isEnhanced } from './generate'
 import { threats } from './threats'
 import { checkInfo, dormantSquare } from './legality'
 
@@ -31,6 +32,18 @@ const lists = (occupancy: SquareOccupant): Board['pieces'] => {
   for (const [square, piece] of Object.entries(occupancy))
     pieces[piece.side][piece.piece].push(square)
   return pieces
+}
+const buffed = (occupancy: SquareOccupant, pieces: Board['pieces']): Set<string> => {
+  const marshal = {
+    [WHITE]: pieces[WHITE][MARSHAL][0] ?? null,
+    [BLACK]: pieces[BLACK][MARSHAL][0] ?? null
+  }
+  const squares = new Set<string>()
+  for (const [square, piece] of Object.entries(occupancy)) {
+    if (piece.piece === POPE || piece.piece === EMPEROR || piece.piece === MARSHAL) continue
+    if (isEnhanced(marshal[piece.side], square)) squares.add(square)
+  }
+  return squares
 }
 const awaken = (board: Board, side: Side, awake: boolean): SquareOccupant => {
   const { pieces, occupancy } = board
@@ -54,6 +67,7 @@ export const position = (side: Side, occupancy: SquareOccupant, state: State): P
     ...board,
     side,
     checkInfo: checkInfo({ pieces, occupancy }, side),
-    state: { ...state, awake: awakened }
+    state: { ...state, awake: awakened },
+    buff: buffed(occupancy, pieces)
   }
 }
