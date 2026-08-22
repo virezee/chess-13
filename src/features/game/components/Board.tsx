@@ -237,7 +237,7 @@ export function BoardFrame({ lastMove, ...board }: BoardProps & { lastMove: Move
     setKeys(current => remapIds(current.ids, occupancy, played, current.lastId))
   }
   return (
-    <div className='@container w-full overflow-x-auto'>
+    <div className='@container w-full select-none overflow-x-auto'>
       <div
         className='grid w-fit'
         style={{ gridTemplateColumns: `${COORDS} auto`, gridTemplateRows: `auto ${COORDS}` }}>

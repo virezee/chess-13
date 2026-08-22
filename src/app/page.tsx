@@ -150,6 +150,7 @@ function Promotions({ promotions, onPick }: { promotions: Move[]; onPick: (move:
   )
 }
 export default function Home() {
+  const [load, setLoad] = useState(false)
   const [save, setSave] = useState<Save>(opening)
   const [last, setLast] = useState<Move | null>(null)
   const [promotions, setPromotions] = useState<Move[]>([])
@@ -157,6 +158,7 @@ export default function Home() {
   useEffect(() => {
     const stored = readSave()
     if (stored !== null) setSave(stored)
+    setLoad(true)
   }, [])
   const playMove = (move: Move) => {
     const next = turn(save, move)
@@ -176,7 +178,7 @@ export default function Home() {
     <main className='mx-auto grid w-full max-w-[1600px] flex-1 grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-2 xl:grid-cols-[18.5rem_minmax(0,1fr)_20rem] xl:gap-5 xl:px-5 xl:py-5'>
       <Armies position={position} match={save.match} />
       <Board
-        position={position}
+        position={load ? position : { ...position, occupancy: {} }}
         last={last}
         locked={canSwap(position, save.match) || result !== null}
         moves={moves}
