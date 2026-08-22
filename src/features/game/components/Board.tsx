@@ -17,6 +17,7 @@ import {
   SELECTED,
   DEST,
   DEST_CAPTURE,
+  LAST,
   CHECK,
   MARKS
 } from '@/constants/style'
@@ -25,6 +26,7 @@ import { cn } from '@/lib/cn'
 
 type BoardProps = {
   position: Position
+  lastMove: Move | null
   selected: string | null
   targets: string[]
   marks: Record<string, string>
@@ -138,7 +140,7 @@ function PieceImage({
 }: Required<View>['moved'] & { isBuffed: boolean; isFallen: boolean }) {
   return (
     <div
-      className='absolute left-0 top-0 cursor-pointer transition-transform duration-300 ease-out'
+      className='absolute left-0 top-0 cursor-pointer transition-transform duration-200 ease-out'
       style={{ ...translate(square), willChange: 'transform', zIndex: 1 }}>
       {isBuffed && (
         <span
@@ -195,8 +197,14 @@ function Destinations({ occupancy, targets }: { occupancy: SquareOccupant; targe
     />
   ))
 }
+function LastMove({ move }: { move: Move }) {
+  return [...new Set([move.from, move.to])].map(square => (
+    <Highlight key={square} square={square} backgroundColour={LAST} />
+  ))
+}
 function Board({
   position,
+  lastMove,
   selected,
   targets,
   marks,
@@ -205,7 +213,7 @@ function Board({
   onSelect,
   onMark
 }: BoardProps & { ids: Map<string, number> }) {
-  const { pieces, occupancy, side, checkInfo, buff } = position
+  const { pieces, occupancy, side, checkInfo, enhanced } = position
   const check = checkInfo.checkers.length === 0 ? null : pieces[side][POPE][0]!
   const isCheckmate = result?.reason === CHECKMATE
   return (
@@ -223,6 +231,7 @@ function Board({
         onMark(squareFromEvent(event), markColour(event))
       }}>
       <CommandSquare isOccupied={occupancy[COMMAND_SQUARE] !== undefined} />
+      {lastMove !== null && <LastMove move={lastMove} />}
       {check !== null && <Highlight square={check} backgroundColour={CHECK} />}
       {Object.entries(marks).map(([square, colour]) => (
         <Highlight key={square} square={square} backgroundColour={colour} />
@@ -235,7 +244,7 @@ function Board({
             key={ids.get(square)}
             square={square}
             piece={piece}
-            isBuffed={buff.has(square)}
+            isBuffed={enhanced.has(square)}
             isFallen={isCheckmate && square === check}
           />
         ))}
@@ -243,7 +252,7 @@ function Board({
     </div>
   )
 }
-export function BoardFrame({ lastMove, ...board }: BoardProps & { lastMove: Move | null }) {
+export function BoardFrame({ lastMove, ...board }: BoardProps) {
   const { occupancy } = board.position
   const [prev, setPrev] = useState({ move: lastMove, occupancy })
   const [keys, setKeys] = useState(() => remapIds(new Map<string, number>(), occupancy, null, 0))
@@ -258,7 +267,7 @@ export function BoardFrame({ lastMove, ...board }: BoardProps & { lastMove: Move
         className='grid w-fit'
         style={{ gridTemplateColumns: `${COORDS} auto`, gridTemplateRows: `auto ${COORDS}` }}>
         <Ranks />
-        <Board {...board} ids={keys.ids} />
+        <Board {...board} ids={keys.ids} lastMove={lastMove} />
         <div />
         <Files />
       </div>

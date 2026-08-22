@@ -33,7 +33,17 @@ const lists = (occupancy: SquareOccupant): Board['pieces'] => {
     pieces[piece.side][piece.piece].push(square)
   return pieces
 }
-const buffed = (occupancy: SquareOccupant, pieces: Board['pieces']): Set<string> => {
+const awaken = (board: Board, side: Side, awake: boolean): SquareOccupant => {
+  const { pieces, occupancy } = board
+  const square = dormantSquare(board, side)
+  if (square === null) return occupancy
+  const enemy = side === WHITE ? BLACK : WHITE
+  const marshalSq = pieces[side][MARSHAL][0] ?? null
+  if (!awake && marshalSq !== null && threats(board, enemy, {}, false, square).length === 0)
+    return occupancy
+  return { ...occupancy, [square]: { ...occupancy[square]!, awake: true } }
+}
+const enhanced = (occupancy: SquareOccupant, pieces: Board['pieces']): Set<string> => {
   const marshal = {
     [WHITE]: pieces[WHITE][MARSHAL][0] ?? null,
     [BLACK]: pieces[BLACK][MARSHAL][0] ?? null
@@ -44,16 +54,6 @@ const buffed = (occupancy: SquareOccupant, pieces: Board['pieces']): Set<string>
     if (isEnhanced(marshal[piece.side], square)) squares.add(square)
   }
   return squares
-}
-const awaken = (board: Board, side: Side, awake: boolean): SquareOccupant => {
-  const { pieces, occupancy } = board
-  const square = dormantSquare(board, side)
-  if (square === null) return occupancy
-  const enemy = side === WHITE ? BLACK : WHITE
-  const marshalSq = pieces[side][MARSHAL][0] ?? null
-  if (!awake && marshalSq !== null && threats(board, enemy, {}, false, square).length === 0)
-    return occupancy
-  return { ...occupancy, [square]: { ...occupancy[square]!, awake: true } }
 }
 export const position = (side: Side, occupancy: SquareOccupant, state: State): Position => {
   const pieces = lists(occupancy)
@@ -68,6 +68,6 @@ export const position = (side: Side, occupancy: SquareOccupant, state: State): P
     side,
     checkInfo: checkInfo({ pieces, occupancy }, side),
     state: { ...state, awake: awakened },
-    buff: buffed(occupancy, pieces)
+    enhanced: enhanced(occupancy, pieces)
   }
 }

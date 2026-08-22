@@ -53,15 +53,16 @@
   --square-size: min(calc((100cqw - var(--coords-width)) / 13), max(64px, calc((100vh - 9.5rem) / 13)));
   --board-size: calc(13 * var(--square-size));
   --board-pattern: repeating-conic-gradient(var(--square-light) 0% 25%, var(--square-dark) 0% 50%);
+  --zone-white: #e8e2d4;
+  --zone-black: #4f5765;
   --square-selected: rgb(20 85 30 / .5);
   --move-dest: radial-gradient(rgb(20 85 30 / .5) 19%, rgb(0 0 0 / 0) calc(19% + 1px));
   --move-dest-capture: radial-gradient(transparent 79%, rgb(200 30 30 / .5) calc(79% + 1px));
+  --square-last: rgb(240 190 55 / .32);
   --square-check: radial-gradient(ellipse at center,
       rgb(255 62 48 / .95) 0%,
       rgb(255 62 48 / .7) 25%,
       rgb(255 62 48 / 0) 80%);
-  --zone-white: #e8e2d4;
-  --zone-black: #4f5765;
   --mark-red: rgb(202 52 43 / .55);
   --mark-yellow: rgb(216 166 40 / .55);
   --mark-green: rgb(20 133 45 / .55);

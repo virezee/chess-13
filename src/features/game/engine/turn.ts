@@ -38,6 +38,7 @@ export const opening = (): Save => {
     match: {
       swap: true,
       whitePlayer: null,
+      lastMove: null,
       history: [repetitionKey(WHITE, occupancy, state)],
       pgn: '',
       resigned: null

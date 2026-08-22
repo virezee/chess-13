@@ -8,6 +8,7 @@ export const BUFF = { white: 'var(--zone-white)', black: 'var(--zone-black)' } a
 export const SELECTED = 'var(--square-selected)'
 export const DEST = 'var(--move-dest)'
 export const DEST_CAPTURE = 'var(--move-dest-capture)'
+export const LAST = 'var(--square-last)'
 export const CHECK = 'var(--square-check)'
 export const MARKS = {
   red: 'var(--mark-red)',

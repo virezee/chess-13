@@ -31,17 +31,15 @@ const takeResign = (save: Save, setSave: (save: Save) => void, position: Positio
 }
 const takeNewGame = (
   setSave: (save: Save) => void,
-  setLast: (move: Move | null) => void,
   setPromotions: (moves: Move[]) => void
 ): void => {
   setSave(opening())
-  setLast(null)
   setPromotions([])
   clearSave()
 }
 function Board({
   position,
-  last,
+  lastMove,
   locked,
   moves,
   result,
@@ -49,7 +47,7 @@ function Board({
   onPromotions
 }: {
   position: Position
-  last: Move | null
+  lastMove: Move | null
   locked: boolean
   moves: Move[]
   result: Result | null
@@ -73,7 +71,7 @@ function Board({
     <div className='order-1 flex justify-center lg:col-span-2 xl:order-2 xl:col-span-1'>
       <BoardFrame
         position={position}
-        lastMove={last}
+        lastMove={lastMove}
         selected={selected}
         targets={targets(moves, selected)}
         marks={marks}
@@ -176,7 +174,6 @@ function Promotions({ promotions, onPick }: { promotions: Move[]; onPick: (move:
 export default function Home() {
   const [load, setLoad] = useState(false)
   const [save, setSave] = useState<Save>(opening)
-  const [last, setLast] = useState<Move | null>(null)
   const [promotions, setPromotions] = useState<Move[]>([])
   const [pending, setPending] = useState<'resign' | 'new' | null>(null)
   const { position, moves, result } = useMemo(() => turn(save, null), [save])
@@ -189,7 +186,6 @@ export default function Home() {
   const playMove = (move: Move) => {
     const next = turn(save, move)
     setSave(next.save)
-    setLast(move)
     setPromotions([])
     if (next.result === null) writeSave(next.save)
     else clearSave()
@@ -199,7 +195,7 @@ export default function Home() {
       <Armies position={position} match={save.match} />
       <Board
         position={load ? position : { ...position, occupancy: {} }}
-        last={last}
+        lastMove={save.match.lastMove}
         locked={canSwap(position, save.match) || result !== null || pending !== null}
         moves={moves}
         result={result}
@@ -216,7 +212,7 @@ export default function Home() {
         result={result}
         onMove={playMove}
         onResign={() => takeResign(save, setSave, position)}
-        onNewGame={() => takeNewGame(setSave, setLast, setPromotions)}
+        onNewGame={() => takeNewGame(setSave, setPromotions)}
       />
     </main>
   )

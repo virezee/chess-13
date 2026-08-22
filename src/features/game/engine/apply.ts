@@ -156,9 +156,17 @@ const progress = (
     limit: (NO_PROGRESS_BASE + NO_PROGRESS_PER_PIECE * (STARTING_PIECES - pieces)) * PLIES_PER_MOVE
   }
 }
-const game = (side: Side, match: Match, key: string, noProgress: Counter, ply: string): Match => ({
+const game = (
+  side: Side,
+  match: Match,
+  move: Move,
+  key: string,
+  noProgress: Counter,
+  ply: string
+): Match => ({
   ...match,
   swap: match.swap && side !== BLACK,
+  lastMove: move,
   history: noProgress.count === 0 ? [key] : [...match.history, key],
   pgn:
     side === WHITE
@@ -193,6 +201,7 @@ export const apply = (position: Position, move: Move, match: Match): Save => {
     match: game(
       side,
       match,
+      move,
       repetitionKey(nextSide, next, nextState),
       noProgress,
       notation(position, move)

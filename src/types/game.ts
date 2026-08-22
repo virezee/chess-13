@@ -67,11 +67,12 @@ export interface Position extends Board {
   side: Side
   checkInfo: CheckInfo
   state: State
-  buff: Set<string>
+  enhanced: Set<string>
 }
 export interface Match {
   swap: boolean
   whitePlayer: string | null
+  lastMove: Move | null
   history: string[]
   pgn: string
   resigned: Side | null

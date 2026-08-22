@@ -305,6 +305,9 @@ Written out:
   reads a piece count the board no longer shows once material has changed since that reset
 - the repetition history, as the list of keys step 7 pushes onto it, cut back to the key that
   stood at the last reset of the no-progress count, since step 7 never reads behind that one
+- the move just played, kept as the squares it was applied with, so a reload can mark where it
+  came from and where it went, and nothing at all before the first move. The movetext cannot
+  answer this on its own, since castling writes no square
 - the notation of the moves played, kept as a PGN whose movetext is long algebraic: the piece's
   letter, the square it left, `-` for a move or `x` for a capture, and the square it reached,
   `Tg1-h3` and `Tg1xh3`, with the Legionary carrying no letter. Because the square left is
