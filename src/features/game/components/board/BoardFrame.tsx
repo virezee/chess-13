@@ -62,7 +62,7 @@ function Board({
   const check = checkers.length === 0 ? null : pieces[side][POPE][0]!
   return (
     <Surface isFlipped={isFlipped} onSelect={onSelect} onMark={onMark}>
-      <CommandSquare isOccupied={occupancy[COMMAND_SQUARE] !== undefined} isFlipped={isFlipped} />
+      <CommandSquare isOccupied={occupancy[COMMAND_SQUARE] !== undefined} />
       <Overlay
         lastMove={lastMove}
         check={check}

@@ -25,8 +25,8 @@ function Highlight({
 }: {
   square: string
   backgroundColour: string
-  isInteractive?: boolean
   isFlipped: boolean
+  isInteractive?: boolean
 }) {
   return (
     <div
@@ -47,17 +47,11 @@ function LastMove({ move, isFlipped }: { move: Move; isFlipped: boolean }) {
     <Highlight key={square} square={square} backgroundColour={LAST} isFlipped={isFlipped} />
   ))
 }
-export function CommandSquare({
-  isOccupied,
-  isFlipped
-}: {
-  isOccupied: boolean
-  isFlipped: boolean
-}) {
+export function CommandSquare({ isOccupied }: { isOccupied: boolean }) {
   return (
     <div
       className='pointer-events-none absolute left-0 top-0 select-none bg-square-command'
-      style={translate(COMMAND_SQUARE, isFlipped)}>
+      style={translate(COMMAND_SQUARE, false)}>
       <svg
         viewBox='0 0 100 100'
         preserveAspectRatio='xMidYMid meet'
