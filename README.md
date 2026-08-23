@@ -300,7 +300,7 @@ The Herald's enhanced count is 15.3846 + 3.6923 = 19.0769, its straight step bei
 | Piece     | Pattern, enhanced | Average | × rate  | Pattern, restricted | Average | × rate  |
 | --------- | ----------------- | ------- | ------- | ------------------- | ------- | ------- |
 | Emperor   | Queen unlimited   | 39.3846 | 14.7692 | same                | 39.3846 | 14.7692 |
-| Marshal   | Queen unlimited   | 39.3846 | 14.7692 | n/a                 | n/a     | n/a     |
+| Marshal   | Queen unlimited   | 39.3846 | 14.7692 | N/A                 | N/A     | N/A     |
 | Assassin  | Queen unlimited   | 39.3846 | 14.7692 | Queen up to 6       | 30.7692 | 11.5385 |
 | Sentinel  | Straight unlim.   | 24.0000 | 9.0000  | Straight up to 6    | 17.5385 | 6.5769  |
 | Herald    | Diagonal + step   | 19.0769 | 7.1538  | Diagonal to 6       | 13.2308 | 4.9615  |

@@ -63,9 +63,9 @@ export const result = (
   history: readonly string[],
   resigned: Side | null
 ): Result | null => {
-  const { occupancy, side, checkInfo, state } = position
+  const { occupancy, side, checkers, state } = position
   if (moves.length === 0)
-    return checkInfo.checkers.length > 0
+    return checkers.length > 0
       ? { winner: side === WHITE ? BLACK : WHITE, reason: CHECKMATE }
       : { winner: side, reason: STALEMATE }
   if (state.noProgress.count >= state.noProgress.limit) return { winner: null, reason: NO_PROGRESS }

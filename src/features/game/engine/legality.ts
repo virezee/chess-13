@@ -1,5 +1,5 @@
 import type { Side, Piece, SquareOccupant } from '@/types/material'
-import type { Board, CheckInfo, Step, Move, View, State, Position } from '@/types/game'
+import type { Board, Step, Move, View, State, Position } from '@/types/game'
 import { SIZE, CORNERS } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
@@ -66,8 +66,7 @@ const sliderCheckers = (
   pope: string,
   side: Side,
   enemyPope: string,
-  enemyMarshal: string | null,
-  pinned: CheckInfo['pinned']
+  enemyMarshal: string | null
 ): string[] => {
   const { occupancy } = board
   const origin = parseSquare(pope)
@@ -104,9 +103,7 @@ const sliderCheckers = (
           distance
         )
     }
-    if (!isAttacked) continue
-    if (blocker === null) checkers.push(square)
-    else pinned.set(blocker, [fileStep, rankStep])
+    if (isAttacked && blocker === null) checkers.push(square)
   }
   return checkers
 }
@@ -135,18 +132,16 @@ const templarCheckers = (
   }
   return checkers
 }
-export const checkInfo = (board: Board, side: Side): CheckInfo => {
+export const checkInfo = (board: Board, side: Side): string[] => {
   const { pieces } = board
-  const pinned: CheckInfo['pinned'] = new Map()
   const pope = pieces[side][POPE][0]!
   const enemy = opponent(side)
   const enemyPope = pieces[enemy][POPE][0]!
   const enemyMarshal = pieces[enemy][MARSHAL][0] ?? null
-  const checkers = [
-    ...sliderCheckers(board, pope, side, enemyPope, enemyMarshal, pinned),
+  return [
+    ...sliderCheckers(board, pope, side, enemyPope, enemyMarshal),
     ...templarCheckers(pope, enemyMarshal, pieces[enemy][TEMPLAR])
   ]
-  return { checkers, pinned }
 }
 export const dormantSquare = (board: Board, side: Side): string | null => {
   const { pieces, occupancy } = board
@@ -155,7 +150,7 @@ export const dormantSquare = (board: Board, side: Side): string | null => {
   return occupancy[square]?.awake === true ? null : square
 }
 export const legality = (position: Position): Move[] => {
-  const { pieces, occupancy, side, checkInfo: info, state } = position
+  const { pieces, occupancy, side, checkers, state } = position
   const enemy = opponent(side)
   const pope = pieces[side][POPE][0]!
   const enemyMarshal = pieces[enemy][MARSHAL][0] ?? null
@@ -174,17 +169,13 @@ export const legality = (position: Position): Move[] => {
       return false
     if (mover.piece === POPE) {
       if (!move.sentinel) return threats(position, enemy, view, false, move.to).length === 0
-      if (info.checkers.length > 0) return false
+      if (checkers.length > 0) return false
       return castlingPath(move).every(square => {
         const crossing = { vacated: [move.from], moved: { square, piece: mover } }
         return threats(position, enemy, crossing, false, square).length === 0
       })
     }
-    if (
-      (info.checkers.length > 0 || move.captures?.some(square => square !== move.to)) &&
-      threats(position, enemy, view, false, pope).length > 0
-    )
-      return false
+    if (threats(position, enemy, view, false, pope).length > 0) return false
     if (
       mover.piece === MARSHAL &&
       move.captures &&

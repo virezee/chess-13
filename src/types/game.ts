@@ -16,10 +16,6 @@ export interface Square {
   file: number
   rank: number
 }
-export interface CheckInfo {
-  checkers: string[]
-  pinned: Map<string, readonly [number, number]>
-}
 export interface Step {
   from: string
   to: string
@@ -65,7 +61,7 @@ export interface State {
 }
 export interface Position extends Board {
   side: Side
-  checkInfo: CheckInfo
+  checkers: string[]
   state: State
   enhanced: Set<string>
 }

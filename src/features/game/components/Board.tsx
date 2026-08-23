@@ -213,8 +213,8 @@ function Board({
   onSelect,
   onMark
 }: BoardProps & { ids: Map<string, number> }) {
-  const { pieces, occupancy, side, checkInfo, enhanced } = position
-  const check = checkInfo.checkers.length === 0 ? null : pieces[side][POPE][0]!
+  const { pieces, occupancy, side, checkers, enhanced } = position
+  const check = checkers.length === 0 ? null : pieces[side][POPE][0]!
   const isCheckmate = result?.reason === CHECKMATE
   return (
     <div

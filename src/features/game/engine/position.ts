@@ -66,7 +66,7 @@ export const position = (side: Side, occupancy: SquareOccupant, state: State): P
   return {
     ...board,
     side,
-    checkInfo: checkInfo({ pieces, occupancy }, side),
+    checkers: checkInfo({ pieces, occupancy }, side),
     state: { ...state, awake: awakened },
     enhanced: enhanced(occupancy, pieces)
   }

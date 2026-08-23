@@ -3,7 +3,7 @@ import type { Move, State, Position, Save } from '@/types/game'
 import { SIZE, FILES } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
 import { EMPEROR, LEGIONARY, BACK_RANK } from '@/constants/piece'
-import { PLIES_PER_MOVE, NO_PROGRESS_BASE } from '@/constants/outcome'
+import { CHECKMATE, PLIES_PER_MOVE, NO_PROGRESS_BASE } from '@/constants/outcome'
 import { legality } from './legality'
 import { position } from './position'
 import { apply } from './apply'
@@ -57,10 +57,16 @@ export const turn = (
     move === null ? save : apply(position(save.side, save.occupancy, save.state), move, save.match)
   const next = position(played.side, played.occupancy, played.state)
   const moves = legality(next)
+  const outcome = result(next, moves, played.match.history, played.match.resigned)
+  const mark =
+    move === null ? '' : next.checkers.length === 0 ? '' : outcome?.reason === CHECKMATE ? '#' : '+'
   return {
-    save: played,
+    save:
+      mark === ''
+        ? played
+        : { ...played, match: { ...played.match, pgn: played.match.pgn + mark } },
     position: next,
     moves,
-    result: result(next, moves, played.match.history, played.match.resigned)
+    result: outcome
   }
 }

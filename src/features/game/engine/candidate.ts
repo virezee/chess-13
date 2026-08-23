@@ -1,7 +1,7 @@
-import type { Board, Step, Move, State, Position } from '@/types/game'
+import type { Board, Move, State, Position } from '@/types/game'
 import type { Side, PieceName, Piece } from '@/types/material'
 import { CORNERS } from '@/constants/board'
-import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
+import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE } from '@/constants/piece'
 import { parseSquare, makeSquare } from '../lib/coordinate'
 import { generate } from './generate'
 import { threats } from './threats'
@@ -60,25 +60,8 @@ const isEvasion = (
     return threats(board, side, view, false, dest).some(defender => defender !== pope)
   })
 }
-const isAligned = (
-  { from, to }: Step,
-  [fileStep, rankStep]: readonly [number, number]
-): boolean => {
-  const origin = parseSquare(from)
-  const target = parseSquare(to)
-  const fileDelta = target.file - origin.file
-  const rankDelta = target.rank - origin.rank
-  if (fileStep === 0) return fileDelta === 0 && Math.sign(rankDelta) === rankStep
-  if (rankStep === 0) return rankDelta === 0 && Math.sign(fileDelta) === fileStep
-  return (
-    Math.abs(fileDelta) === Math.abs(rankDelta) &&
-    Math.sign(fileDelta) === fileStep &&
-    Math.sign(rankDelta) === rankStep
-  )
-}
 export const candidate = (position: Position): Move[] => {
-  const { pieces, occupancy, side, checkInfo, state } = position
-  const { checkers, pinned } = checkInfo
+  const { pieces, occupancy, side, checkers, state } = position
   const pope = pieces[side][POPE][0]!
   const marshalSq = pieces[side][MARSHAL][0] ?? null
   const isAssCheck = checkers.some(square => occupancy[square]?.piece === ASSASSIN)
@@ -90,8 +73,6 @@ export const candidate = (position: Position): Move[] => {
       const piece = occupancy[square]
       if (!piece) continue
       if (name === EMPEROR && piece.awake !== true) continue
-      const pinDirection = pinned.get(square)
-      if (pinDirection && name === TEMPLAR) continue
       for (const move of generate(
         side,
         name,
@@ -102,7 +83,6 @@ export const candidate = (position: Position): Move[] => {
         state.promotions[side],
         state.enPassant
       )) {
-        if (pinDirection && !isAligned({ from: pope, to: move.to }, pinDirection)) continue
         if (
           checkers.length > 0 &&
           !isEvasion(position, side, pope, state.awake, checkers, piece, move)

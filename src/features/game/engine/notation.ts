@@ -5,9 +5,12 @@ import { POPE, EMPEROR, MARSHAL, LEGIONARY, LETTER } from '@/constants/piece'
 import { PLIES_PER_MOVE } from '@/constants/outcome'
 import { parseSquare } from '../lib/coordinate'
 import { isEnhanced } from './generate'
+import { threats } from './threats'
 
 export const fullMoves = (pgn: string): FullMove[] => {
-  const plies = pgn.split(' ').filter(token => token !== '' && !token.endsWith('.'))
+  const plies = pgn
+    .split(/ (?!e\.p\.|rip\.)/u)
+    .filter(token => token !== '' && !/^\d+\.$/u.test(token))
   return Array.from({ length: Math.ceil(plies.length / PLIES_PER_MOVE) }, (_, index) => ({
     white: plies[index * PLIES_PER_MOVE]!,
     black: plies[index * PLIES_PER_MOVE + 1] ?? null,
@@ -23,6 +26,13 @@ export const notation = (position: Position, move: Move): string => {
   const letter = mover.piece === LEGIONARY ? '' : LETTER[mover.piece]
   const capture = move.captures === undefined ? '-' : 'x'
   const file = parseSquare(move.to).file
+  const riposte =
+    mover.piece === MARSHAL &&
+    move.captures !== undefined &&
+    state.riposte &&
+    threats(position, side, {}, false, move.to).length === 0
+      ? ' rip.'
+      : ''
   const promSlots =
     move.promotesTo === undefined
       ? []
@@ -39,5 +49,9 @@ export const notation = (position: Position, move: Move): string => {
       : isEnhanced(pieces[side][MARSHAL][0] ?? null, move.from)
         ? '^'
         : ''
-  return `${letter}${move.from}${capture}${move.to}${promotion}${zone}`
+  const passing =
+    mover.piece === LEGIONARY && move.captures !== undefined && !move.captures.includes(move.to)
+      ? ' e.p.'
+      : ''
+  return `${letter}${move.from}${capture}${move.to}${promotion}${zone}${riposte}${passing}`
 }
