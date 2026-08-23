@@ -5,7 +5,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { WHITE, BLACK } from '@/constants/colour'
 import { canSwap, takeSwap } from '@/features/game/engine/apply'
 import { opening, clickSquares, turn } from '@/features/game/engine/turn'
-import { BoardFrame } from '@/features/game/components/Board'
+import { BoardFrame } from '@/features/game/components/board/BoardFrame'
 import { ArmyPanel } from '@/features/game/components/ArmyPanel'
 import { MoveList } from '@/features/game/components/MoveList'
 import { GameStatus } from '@/features/game/components/GameStatus'
@@ -83,6 +83,7 @@ function Board({
         selected={selected}
         targets={targets(position.occupancy, moves, selected)}
         marks={marks}
+        isFlipped={position.side === BLACK}
         result={result}
         onSelect={select}
         onMark={(square, colour) => setMarks(current => mark(current, square, colour))}
