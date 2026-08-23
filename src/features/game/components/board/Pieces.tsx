@@ -59,6 +59,7 @@ export function Pieces({
   snap,
   enhanced,
   isFlipped,
+  isAnimated,
   fallen
 }: {
   occupancy: SquareOccupant
@@ -66,6 +67,7 @@ export function Pieces({
   snap: Move | null
   enhanced: Set<string>
   isFlipped: boolean
+  isAnimated: boolean
   fallen: string | null
 }) {
   const isNative = useMode() === NATIVE
@@ -79,7 +81,7 @@ export function Pieces({
         isNative={isNative}
         isBuffed={enhanced.has(square)}
         isFlipped={isFlipped}
-        isAnimated={snap === null}
+        isAnimated={isAnimated}
         isFallen={square === fallen}
       />
     ))

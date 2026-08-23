@@ -3,13 +3,16 @@
 import type { Move, Save, Match, Position, Result } from '@/types/game'
 import { useState, useMemo, useEffect } from 'react'
 import { WHITE, BLACK } from '@/constants/colour'
+import { AUTO } from '@/constants/display'
 import { canSwap, takeSwap } from '@/features/game/engine/apply'
 import { opening, clickSquares, turn } from '@/features/game/engine/turn'
 import { BoardFrame } from '@/features/game/components/board/BoardFrame'
 import { ArmyPanel } from '@/features/game/components/ArmyPanel'
 import { MoveList } from '@/features/game/components/MoveList'
 import { GameStatus } from '@/features/game/components/GameStatus'
+// oxlint-disable-next-line import/max-dependencies
 import { readSave, writeSave, clearSave } from '@/features/game/lib/save'
+import { useFlip } from '@/lib/flip'
 
 const players = { [WHITE]: 'Player 1', [BLACK]: 'Player 2' }
 const targets = (
@@ -62,6 +65,7 @@ function Board({
 }) {
   const [selected, setSelected] = useState<string | null>(null)
   const [marks, setMarks] = useState<Record<string, string>>({})
+  const isFlipped = useFlip() === AUTO && position.side === BLACK
   const select = (square: string) => {
     if (locked) return
     setMarks({})
@@ -83,7 +87,7 @@ function Board({
         selected={selected}
         targets={targets(position.occupancy, moves, selected)}
         marks={marks}
-        isFlipped={position.side === BLACK}
+        isFlipped={isFlipped}
         result={result}
         onSelect={select}
         onMark={(square, colour) => setMarks(current => mark(current, square, colour))}

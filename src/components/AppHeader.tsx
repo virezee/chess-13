@@ -1,5 +1,6 @@
 import { IconButton } from './ui/IconButton'
 import { PieceSetToggle } from './PieceSetToggle'
+import { FlipToggle } from './FlipToggle'
 import { ThemeToggle } from './ThemeToggle'
 
 export function AppHeader() {
@@ -16,6 +17,7 @@ export function AppHeader() {
         </div>
         <div className='flex items-center gap-1'>
           <PieceSetToggle />
+          <FlipToggle />
           <IconButton label='Rules'>
             <span className='h-4 w-4 bg-current [mask:url(/guide.svg)_center/contain_no-repeat]' />
           </IconButton>
