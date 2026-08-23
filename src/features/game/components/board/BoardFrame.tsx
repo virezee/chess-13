@@ -89,26 +89,26 @@ export function BoardFrame({ lastMove, isFlipped, ...board }: BoardProps) {
   const [prev, setPrev] = useState({ move: lastMove, occupancy })
   const [keys, setKeys] = useState(() => remapIds(new Map<string, number>(), occupancy, null, 0))
   const [snap, setSnap] = useState<Move | null>(null)
-  const [frozen, setFrozen] = useState({ flipped: isFlipped, still: false })
+  const [orientation, setOrientation] = useState({ flipped: isFlipped, immediate: false })
   if (prev.move !== lastMove || prev.occupancy !== occupancy) {
     const played = prev.move === lastMove ? null : lastMove
     setPrev({ move: lastMove, occupancy })
     setKeys(current => remapIds(current.ids, occupancy, played, current.lastId))
     setSnap(played)
   }
-  if (frozen.flipped !== isFlipped) setFrozen({ flipped: isFlipped, still: true })
+  if (orientation.flipped !== isFlipped) setOrientation({ flipped: isFlipped, immediate: true })
   useEffect(() => {
-    const settled = snap === null && !frozen.still
+    const settled = snap === null && !orientation.immediate
     const frame = settled
       ? null
       : requestAnimationFrame(() => {
           setSnap(null)
-          setFrozen(current => ({ ...current, still: false }))
+          setOrientation(current => ({ ...current, immediate: false }))
         })
     return () => {
       if (frame !== null) cancelAnimationFrame(frame)
     }
-  }, [snap, frozen.still])
+  }, [snap, orientation.immediate])
   return (
     <div className='@container w-full select-none overflow-x-auto'>
       <div
@@ -121,7 +121,7 @@ export function BoardFrame({ lastMove, isFlipped, ...board }: BoardProps) {
           lastMove={lastMove}
           snap={snap}
           isFlipped={isFlipped}
-          isAnimated={snap === null && !frozen.still}
+          isAnimated={snap === null && !orientation.immediate}
         />
         <div />
         <Files isFlipped={isFlipped} />
