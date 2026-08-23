@@ -17,14 +17,32 @@ const parse = (stored: string): unknown => {
     return null
   }
 }
+const stored = (): string | null => {
+  try {
+    return window.localStorage.getItem(DATA)
+  } catch {
+    return null
+  }
+}
 export const readSave = (): Save | null => {
-  const stored = window.localStorage.getItem(DATA)
-  if (stored === null) return null
-  const parsed = parse(stored)
+  const saved = stored()
+  if (saved === null) return null
+  const parsed = parse(saved)
   if (isSave(parsed)) return parsed
   clearSave()
   return null
 }
-export const writeSave = (save: Save): void =>
-  window.localStorage.setItem(DATA, JSON.stringify(save))
-export const clearSave = (): void => window.localStorage.removeItem(DATA)
+export const writeSave = (save: Save): void => {
+  try {
+    window.localStorage.setItem(DATA, JSON.stringify(save))
+  } catch {
+    window.alert('Storage is blocked by the browser.')
+  }
+}
+export const clearSave = (): void => {
+  try {
+    window.localStorage.removeItem(DATA)
+  } catch {
+    window.alert('Storage is blocked by the browser.')
+  }
+}
