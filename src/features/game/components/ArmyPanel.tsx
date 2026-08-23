@@ -2,7 +2,10 @@ import type { Side } from '@/types/material'
 import type { Position } from '@/types/game'
 import type { ArmyState } from '@/types/panel'
 import { WHITE, BLACK } from '@/constants/colour'
+import { CLASSIC_PLY } from '@/constants/piece'
+import { NATIVE } from '@/constants/display'
 import { fileRange, material, army } from '../lib/stats'
+import { useMode } from '@/lib/mode'
 import { cn } from '@/lib/cn'
 
 function Field({
@@ -130,6 +133,7 @@ function MarshalField({ armyState }: { armyState: ArmyState }) {
   )
 }
 function LostField({ armyState }: { armyState: ArmyState }) {
+  const isNative = useMode() === NATIVE
   return (
     <Field
       label='Captured'
@@ -144,7 +148,7 @@ function LostField({ armyState }: { armyState: ArmyState }) {
             <span
               key={piece.id}
               className='grid h-6 w-6 place-items-center rounded-xs border border-line-strong bg-surface-2 font-notation font-bold text-[11px] text-ink-dim'>
-              {piece.letter}
+              {isNative ? piece.letter : (CLASSIC_PLY[piece.letter] ?? piece.letter)}
             </span>
           ))}
         </div>

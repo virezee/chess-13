@@ -1,5 +1,8 @@
 import type { Side } from '@/types/material'
+import { CLASSIC_PLY } from '@/constants/piece'
+import { NATIVE } from '@/constants/display'
 import { fullMoves } from '../engine/notation'
+import { useMode } from '@/lib/mode'
 import { cn } from '@/lib/cn'
 
 function Ply({
@@ -34,6 +37,11 @@ function Ply({
 export function MoveList({ pgn, toMove }: { pgn: string; toMove: Side }) {
   const moves = fullMoves(pgn)
   const lastIndex = moves.length - 1
+  const isNative = useMode() === NATIVE
+  const letters = (ply: string | null): string | null =>
+    ply === null || isNative
+      ? ply
+      : ply.replaceAll(/[A-Z]/gu, letter => CLASSIC_PLY[letter] ?? letter)
   return (
     <section className='flex min-h-0 flex-col overflow-hidden rounded border border-line bg-surface'>
       <header className='flex items-baseline justify-between border-b border-line px-3.5 py-3'>
@@ -51,9 +59,13 @@ export function MoveList({ pgn, toMove }: { pgn: string; toMove: Side }) {
                 key={move.number}
                 className='grid grid-cols-[2rem_1fr_1fr] items-center gap-1 rounded-xs px-1 py-0.5 hover:bg-surface-2'>
                 <span className='font-mono text-[11px] text-ink-faint'>{move.number}</span>
-                <Ply move={move.white} pending={false} latest={isLast && move.black === null} />
                 <Ply
-                  move={move.black}
+                  move={letters(move.white)}
+                  pending={false}
+                  latest={isLast && move.black === null}
+                />
+                <Ply
+                  move={letters(move.black)}
                   pending={isLast && toMove === 'black'}
                   latest={isLast && move.black !== null}
                 />

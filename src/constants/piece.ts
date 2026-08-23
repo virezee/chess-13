@@ -96,6 +96,9 @@ export const CLASSIC_LETTER: Record<PieceName, string> = {
   [TEMPLAR]: 'N',
   [LEGIONARY]: 'P'
 } as const satisfies Record<PieceName, string>
+export const CLASSIC_PLY: Record<string, string> = Object.fromEntries(
+  Object.entries(LETTER).map(([name, letter]) => [letter, CLASSIC_LETTER[name as PieceName]])
+)
 export const VALUE = {
   pope: { restricted: Infinity, enhanced: Infinity },
   emperor: { restricted: 15, enhanced: 15 },
