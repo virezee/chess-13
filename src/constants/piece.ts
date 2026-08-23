@@ -85,6 +85,17 @@ export const LETTER: Record<PieceName, string> = {
   [TEMPLAR]: 'T',
   [LEGIONARY]: 'L'
 } as const satisfies Record<PieceName, string>
+export const CLASSIC_LETTER: Record<PieceName, string> = {
+  [POPE]: 'K',
+  [EMPEROR]: 'Q',
+  [MARSHAL]: 'M',
+  [ASSASSIN]: 'A',
+  [SENTINEL]: 'R',
+  [MAGE]: 'G',
+  [HERALD]: 'B',
+  [TEMPLAR]: 'N',
+  [LEGIONARY]: 'P'
+} as const satisfies Record<PieceName, string>
 export const VALUE = {
   pope: { restricted: Infinity, enhanced: Infinity },
   emperor: { restricted: 15, enhanced: 15 },

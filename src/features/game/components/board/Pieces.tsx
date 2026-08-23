@@ -1,23 +1,29 @@
 import type { SquareOccupant } from '@/types/material'
 import type { Move, View } from '@/types/game'
 import Image from 'next/image'
+import { NATIVE, CLASSIC_IMAGE } from '@/constants/display'
 import { SQUARE, BUFF } from '@/constants/style'
 import { origin, translate } from '../../lib/view'
+import { useMode } from '@/lib/mode'
 import { cn } from '@/lib/cn'
 
 function PieceImage({
   piece,
   square,
+  isNative,
   isBuffed,
   isFlipped,
   isAnimated,
   isFallen
 }: Required<View>['moved'] & {
+  isNative: boolean
   isBuffed: boolean
   isFlipped: boolean
   isAnimated: boolean
   isFallen: boolean
 }) {
+  const classic = CLASSIC_IMAGE[piece.piece]
+  const file = isNative || classic === undefined ? `${piece.piece}.png` : classic
   return (
     <div
       className={cn(
@@ -35,8 +41,8 @@ function PieceImage({
         />
       )}
       <Image
-        key={`${piece.side}/${piece.piece}`}
-        src={`/${piece.side}/${piece.piece}.png`}
+        key={`${piece.side}/${file}`}
+        src={`/${piece.side}/${file}`}
         alt={`${piece.side} ${piece.piece}`}
         fill
         sizes={SQUARE}
@@ -62,6 +68,7 @@ export function Pieces({
   isFlipped: boolean
   fallen: string | null
 }) {
+  const isNative = useMode() === NATIVE
   return Object.entries(occupancy)
     .toSorted(([a], [b]) => (ids.get(a) ?? 0) - (ids.get(b) ?? 0))
     .map(([square, piece]) => (
@@ -69,6 +76,7 @@ export function Pieces({
         key={ids.get(square)}
         piece={piece}
         square={origin(snap, square)}
+        isNative={isNative}
         isBuffed={enhanced.has(square)}
         isFlipped={isFlipped}
         isAnimated={snap === null}
