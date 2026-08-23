@@ -1,66 +1,10 @@
-import type { Side, PieceName, PieceSquares } from '@/types/material'
+import type { Side } from '@/types/material'
 import type { Position } from '@/types/game'
 import type { ArmyState } from '@/types/panel'
-import { SIZE, FILES, COMMAND_SQUARE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/colour'
-import { POPE, EMPEROR, MARSHAL, LEGIONARY, BACK_RANK, LETTER, VALUE } from '@/constants/piece'
-import { ENHANCED, RESTRICTED } from '@/constants/zone'
-import { isEnhanced } from '../engine/generate'
+import { fileRange, material, army } from '../lib/stats'
 import { cn } from '@/lib/cn'
 
-const captured = (pieces: PieceSquares): ArmyState['captured'] =>
-  Object.entries(
-    (() => {
-      const count: Partial<Record<PieceName, number>> = { [LEGIONARY]: SIZE }
-      for (const piece of BACK_RANK) count[piece] = (count[piece] ?? 0) + 1
-      return count
-    })()
-  ).flatMap(([name, start]) =>
-    Array.from({ length: (start ?? 0) - pieces[name as PieceName].length }, (_, i) => ({
-      id: `${name}${i}`,
-      letter: LETTER[name as PieceName]
-    }))
-  )
-const fileRange = (file: number): string => {
-  const first = Math.max(0, file - 1)
-  const last = Math.min(FILES.length - 1, file + 1)
-  return `${FILES[first]}-${FILES[last]}`
-}
-const material = (position: Position, side: Side): number => {
-  const marshalSq = position.pieces[side][MARSHAL][0] ?? null
-  return Object.entries(position.occupancy).reduce(
-    (total, [square, piece]) =>
-      piece.side !== side || piece.piece === POPE
-        ? total
-        : total + VALUE[piece.piece][isEnhanced(marshalSq, square) ? ENHANCED : RESTRICTED],
-    0
-  )
-}
-const army = (position: Position, side: Side, player: string): ArmyState => {
-  const { pieces, occupancy, state } = position
-  const marshalSquare = pieces[side][MARSHAL][0] ?? null
-  const emperorSq = pieces[side][EMPEROR][0] ?? null
-  const remaining = Object.entries(occupancy).filter(
-    ([, piece]) =>
-      piece.side === side &&
-      piece.piece !== POPE &&
-      piece.piece !== EMPEROR &&
-      piece.piece !== MARSHAL
-  )
-  return {
-    player,
-    side,
-    emperor: emperorSq === null ? null : occupancy[emperorSq]?.awake === true ? 'awake' : 'dormant',
-    marshalSquare,
-    commandZone:
-      marshalSquare === null ? 'none' : marshalSquare === COMMAND_SQUARE ? 'full' : 'partial',
-    pieceCount: remaining.length,
-    enhancedCount: remaining.filter(([square]) => isEnhanced(marshalSquare, square)).length,
-    captured: captured(pieces[side]),
-    promotions: state.promotions[side],
-    material: material(position, side)
-  }
-}
 function Field({
   label,
   trailing,
@@ -114,11 +58,15 @@ function EmperorField({ armyState }: { armyState: ArmyState }) {
       {armyState.emperor === null ? (
         <p className='text-[12px] text-ink-faint'>Captured</p>
       ) : (
-        <div className='rounded-[3px] border border-line bg-surface-2 px-3 py-2.5'>
+        <div
+          className={cn(
+            'rounded-[3px] border px-3 py-2.5',
+            armyState.emperor === 'awake' ? 'border-good/60 bg-good/10' : 'border-line bg-surface-2'
+          )}>
           <span
             className={cn(
               'text-[11px] font-semibold uppercase tracking-[0.12em]',
-              armyState.emperor === 'awake' ? 'text-brass' : 'text-ink-faint'
+              armyState.emperor === 'awake' ? 'text-good' : 'text-ink-faint'
             )}>
             {armyState.emperor}
           </span>
@@ -133,7 +81,7 @@ function ZoneMeter({ armyState }: { armyState: ArmyState }) {
     <div
       className={cn(
         'rounded-[3px] border px-3 py-2.5',
-        armyState.commandZone === 'full' && 'border-brass-deep bg-brass/8',
+        armyState.commandZone === 'full' && 'border-good/60 bg-good/10',
         armyState.commandZone === 'partial' && 'border-line-strong bg-surface-2',
         armyState.commandZone === 'none' && 'border-alert/40 bg-alert/8'
       )}>
@@ -141,7 +89,9 @@ function ZoneMeter({ armyState }: { armyState: ArmyState }) {
         <span
           className={cn(
             'text-[11px] font-semibold uppercase tracking-[0.12em]',
-            armyState.commandZone === 'none' ? 'text-alert' : 'text-brass'
+            armyState.commandZone === 'full' && 'text-good',
+            armyState.commandZone === 'partial' && 'text-brass',
+            armyState.commandZone === 'none' && 'text-alert'
           )}>
           {armyState.commandZone === 'full'
             ? 'Command Square'
@@ -158,7 +108,9 @@ function ZoneMeter({ armyState }: { armyState: ArmyState }) {
         <div
           className={cn(
             'h-full transition-[width] duration-300',
-            armyState.commandZone === 'none' ? 'bg-alert/60' : 'bg-brass'
+            armyState.commandZone === 'full' && 'bg-good',
+            armyState.commandZone === 'partial' && 'bg-brass',
+            armyState.commandZone === 'none' && 'bg-alert/60'
           )}
           style={{ width: `${Math.round(ratio * 100)}%` }}
         />
