@@ -1,4 +1,6 @@
-export function InfoHint({ label, children }: { label: string; children: React.ReactNode }) {
+import type { ReactNode } from 'react'
+
+export function InfoHint({ label, children }: { label: string; children: ReactNode }) {
   return (
     <button
       type='button'

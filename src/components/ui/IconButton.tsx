@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 export function IconButton({
@@ -7,7 +8,7 @@ export function IconButton({
 }: {
   label: string
   onClick?: () => void
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <button

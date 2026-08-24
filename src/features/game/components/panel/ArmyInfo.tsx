@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { Side } from '@/types/material'
 import type { Position } from '@/types/game'
 import type { ArmyState } from '@/types/panel'
@@ -14,8 +15,8 @@ function Field({
   children
 }: {
   label: string
-  trailing?: React.ReactNode
-  children: React.ReactNode
+  trailing?: ReactNode
+  children: ReactNode
 }) {
   return (
     <div className='border-t border-line px-3.5 py-3'>

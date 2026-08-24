@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { Counter, Position, Result } from '@/types/game'
 import { REPETITION_LIMIT } from '@/constants/outcome'
 import { repetitionCount } from '../../engine/result'
@@ -72,7 +73,7 @@ function Action({
 }: {
   tone?: 'quiet' | 'accept' | 'decline'
   onClick: () => void
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <button

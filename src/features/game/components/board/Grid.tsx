@@ -73,7 +73,6 @@ function Squares({
         backgroundSize: `calc(2 * ${SQUARE}) calc(2 * ${SQUARE})`
       }}
       onClick={event => onSelect(squareFromEvent(event, isFlipped))}
-      onContextMenu={event => event.preventDefault()}
       onMouseDown={event => {
         if (event.button === 2) pressed.current = squareFromEvent(event, isFlipped)
       }}

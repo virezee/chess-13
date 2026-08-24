@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
+import { ContextMenuGuard } from '@/components/ContextMenuGuard'
 import { ThemeProvider } from 'next-themes'
 import { THEME } from '@/constants/storage'
 import { AppHeader } from '@/components/AppHeader'
@@ -9,10 +11,11 @@ export const metadata: Metadata = {
   title: 'Chess 13 (Chess II: Epoch)',
   description: 'A 13 × 13 chess variant.'
 }
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang='en' suppressHydrationWarning className={`${typography} h-full antialiased`}>
       <body className='min-h-full flex flex-col'>
+        <ContextMenuGuard />
         <ThemeProvider storageKey={THEME} attribute='data-theme' defaultTheme='system' enableSystem>
           <AppHeader />
           {children}
