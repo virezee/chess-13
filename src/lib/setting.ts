@@ -11,7 +11,7 @@ const write = (key: string, value: string): void => {
   try {
     localStorage.setItem(key, value)
   } catch {
-    window.alert(`Storage is blocked by the browser.`)
+    window.alert('Storage is blocked by the browser.')
   }
 }
 export const setting = <T extends string>(

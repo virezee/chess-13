@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
+import { THEME } from '@/constants/storage'
 import { AppHeader } from '@/components/AppHeader'
 import { typography } from '@/styles/typography'
 import '@/styles/globals.css'
@@ -12,7 +13,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang='en' suppressHydrationWarning className={`${typography} h-full antialiased`}>
       <body className='min-h-full flex flex-col'>
-        <ThemeProvider attribute='data-theme' defaultTheme='system' enableSystem>
+        <ThemeProvider storageKey={THEME} attribute='data-theme' defaultTheme='system' enableSystem>
           <AppHeader />
           {children}
         </ThemeProvider>

@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "lint": "oxlint",
+    "format:check": "oxfmt --check",
     "build": "next build",
     "start": "next start"
   },

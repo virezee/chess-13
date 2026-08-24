@@ -1,4 +1,5 @@
 import type { Side } from '@/types/material'
+import { BLACK } from '@/constants/player'
 import { CLASSIC_PLY } from '@/constants/piece'
 import { NATIVE } from '@/constants/display'
 import { fullMoves } from '../../engine/notation'
@@ -66,7 +67,7 @@ export function MoveList({ pgn, toMove }: { pgn: string; toMove: Side }) {
                 />
                 <Ply
                   move={letters(move.black)}
-                  pending={isLast && toMove === 'black'}
+                  pending={isLast && toMove === BLACK}
                   latest={isLast && move.black !== null}
                 />
               </li>
