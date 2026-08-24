@@ -1,10 +1,10 @@
 import type { Side } from '@/types/material'
 import type { Position } from '@/types/game'
 import type { ArmyState } from '@/types/panel'
-import { WHITE, BLACK } from '@/constants/colour'
+import { WHITE, BLACK } from '@/constants/player'
 import { CLASSIC_PLY } from '@/constants/piece'
 import { NATIVE } from '@/constants/display'
-import { fileRange, material, army } from '../lib/stats'
+import { fileRange, material, army } from '../../lib/stats'
 import { useMode } from '@/lib/mode'
 import { cn } from '@/lib/cn'
 
@@ -188,7 +188,7 @@ function MaterialField({ armyState, delta }: { armyState: ArmyState; delta: numb
     </Field>
   )
 }
-export function ArmyPanel({
+export function ArmyInfo({
   player,
   position,
   side,

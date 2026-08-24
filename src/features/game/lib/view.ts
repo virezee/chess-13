@@ -123,3 +123,13 @@ export const arrowPoints = ({ from, to }: Step, isFlipped: boolean): string => {
     offset(base, sideFirst, -half)
   ])
 }
+export const mark = (
+  marks: Record<string, string>,
+  square: string,
+  colour: string
+): Record<string, string> => {
+  const next = { ...marks }
+  if (next[square] === colour) delete next[square]
+  else next[square] = colour
+  return next
+}

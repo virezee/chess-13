@@ -1,7 +1,7 @@
 import type { Side } from '@/types/material'
 import { CLASSIC_PLY } from '@/constants/piece'
 import { NATIVE } from '@/constants/display'
-import { fullMoves } from '../engine/notation'
+import { fullMoves } from '../../engine/notation'
 import { useMode } from '@/lib/mode'
 import { cn } from '@/lib/cn'
 

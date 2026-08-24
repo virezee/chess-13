@@ -1,7 +1,7 @@
 import type { Side, Piece, SquareOccupant } from '@/types/material'
 import type { Board, View } from '@/types/game'
 import { SIZE, CORNERS } from '@/constants/board'
-import { WHITE, BLACK } from '@/constants/colour'
+import { WHITE, BLACK } from '@/constants/player'
 import {
   POPE,
   EMPEROR,

@@ -1,7 +1,7 @@
 import type { Side, Piece, SquareOccupant } from '@/types/material'
 import type { Board, Step, Move, View, State, Position } from '@/types/game'
 import { SIZE, CORNERS } from '@/constants/board'
-import { WHITE, BLACK } from '@/constants/colour'
+import { WHITE, BLACK } from '@/constants/player'
 import { POPE, EMPEROR, MARSHAL, ASSASSIN, MAGE, TEMPLAR } from '@/constants/piece'
 import { EVERY, LEAP_3_2, LEAP_2_1 } from '@/constants/direction'
 import { parseSquare, makeSquare, isOnBoard } from '../lib/coordinate'

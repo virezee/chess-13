@@ -1,4 +1,4 @@
-import type { WHITE, BLACK } from '@/constants/colour'
+import type { WHITE, BLACK } from '@/constants/player'
 import {
   POPE,
   EMPEROR,

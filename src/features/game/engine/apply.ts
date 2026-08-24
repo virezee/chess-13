@@ -1,7 +1,7 @@
 import type { Side, SquareOccupant } from '@/types/material'
 import type { Step, Move, EnPassant, Counter, State, Position, Match, Save } from '@/types/game'
 import { CENTRE } from '@/constants/board'
-import { WHITE, BLACK } from '@/constants/colour'
+import { WHITE, BLACK } from '@/constants/player'
 import { POPE, EMPEROR, MARSHAL, LEGIONARY, CASTLING } from '@/constants/piece'
 import {
   PLIES_PER_MOVE,

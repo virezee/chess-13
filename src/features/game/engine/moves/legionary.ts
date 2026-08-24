@@ -1,7 +1,7 @@
 import type { Side, PieceName, SquareOccupant } from '@/types/material'
 import type { Move, Promotion, EnPassant } from '@/types/game'
 import { SIZE, CENTRE } from '@/constants/board'
-import { WHITE } from '@/constants/colour'
+import { WHITE } from '@/constants/player'
 import { REACH } from '@/constants/piece'
 import { ENHANCED, RESTRICTED } from '@/constants/zone'
 import { parseSquare, makeSquare, isOnBoard } from '../../lib/coordinate'

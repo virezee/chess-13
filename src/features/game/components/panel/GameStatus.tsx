@@ -1,6 +1,6 @@
 import type { Counter, Position, Result } from '@/types/game'
 import { REPETITION_LIMIT } from '@/constants/outcome'
-import { repetitionCount } from '../engine/result'
+import { repetitionCount } from '../../engine/result'
 import { cn } from '@/lib/cn'
 
 type ControlsProps = {
@@ -160,22 +160,17 @@ function Outcome({ result, onNewGame }: { result: Result; onNewGame: () => void 
     </div>
   )
 }
-export function GameStatus({
-  position,
-  history,
-  canSwap,
-  result,
-  onDecline,
-  onAccept,
-  ...controls
-}: ControlsProps & {
-  position: Position
-  history: readonly string[]
-  canSwap: boolean
-  result: Result | null
-  onDecline: () => void
-  onAccept: () => void
-}) {
+export function GameStatus(
+  props: ControlsProps & {
+    position: Position
+    history: readonly string[]
+    canSwap: boolean
+    result: Result | null
+    onDecline: () => void
+    onAccept: () => void
+  }
+) {
+  const { position, history, canSwap, result, onDecline, onAccept, ...rest } = props
   const { noProgress } = position.state
   const repetition = repetitionCount(history.at(-1)!, history)
   return (
@@ -191,10 +186,10 @@ export function GameStatus({
         canSwap ? (
           <Prompt label='Swap Sides?' onDecline={onDecline} onAccept={onAccept} />
         ) : (
-          <Controls {...controls} />
+          <Controls {...rest} />
         )
       ) : (
-        <Outcome result={result} onNewGame={controls.onNewGame} />
+        <Outcome result={result} onNewGame={rest.onNewGame} />
       )}
     </section>
   )

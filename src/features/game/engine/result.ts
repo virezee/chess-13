@@ -1,7 +1,7 @@
 import type { Side, SquareOccupant } from '@/types/material'
 import type { Move, State, Position, Result } from '@/types/game'
 import { SIZE } from '@/constants/board'
-import { WHITE, BLACK } from '@/constants/colour'
+import { WHITE, BLACK } from '@/constants/player'
 import { POPE, LETTER } from '@/constants/piece'
 import {
   CHECKMATE,

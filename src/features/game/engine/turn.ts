@@ -1,7 +1,7 @@
 import type { Side, SquareOccupant } from '@/types/material'
 import type { Move, State, Position, Save } from '@/types/game'
 import { SIZE, FILES } from '@/constants/board'
-import { WHITE, BLACK } from '@/constants/colour'
+import { WHITE, BLACK } from '@/constants/player'
 import { EMPEROR, LEGIONARY, BACK_RANK } from '@/constants/piece'
 import { CHECKMATE, PLIES_PER_MOVE, NO_PROGRESS_BASE } from '@/constants/outcome'
 import { legality } from './legality'
