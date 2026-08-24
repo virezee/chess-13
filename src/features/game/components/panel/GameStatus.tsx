@@ -122,8 +122,8 @@ function Controls({ pending, setPending, onResign, onNewGame }: ControlsProps) {
         onDecline={() => setPending(null)}
         onAccept={() => {
           setPending(null)
-          if (pending === 'resign') onResign?.()
-          else onNewGame?.()
+          if (pending === 'resign') onResign()
+          else onNewGame()
         }}
       />
     )
