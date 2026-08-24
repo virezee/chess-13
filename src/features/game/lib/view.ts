@@ -106,9 +106,9 @@ export const arrowPoints = ({ from, to }: Step, isFlipped: boolean): string => {
   const sideFirst = across(first)
   const sideLast = across(last)
   const half = ARROW.width / 2
-  const wing = ARROW.spread / 2
+  const wing = ARROW.headWidth / 2
   const base = offset(start, first, ARROW.start)
-  const neck = offset(end, last, -ARROW.head)
+  const neck = offset(end, last, -ARROW.headLength)
   const outer = bend === null ? [] : [offset(offset(bend, sideFirst, half), sideLast, half)]
   const inner = bend === null ? [] : [offset(offset(bend, sideFirst, -half), sideLast, -half)]
   return outline([
