@@ -65,10 +65,12 @@ function Board({
 }) {
   const [selected, setSelected] = useState<string | null>(null)
   const [marks, setMarks] = useState<Record<string, string>>({})
+  const [arrows, setArrows] = useState<Record<string, string>>({})
   const isFlipped = useFlip() === AUTO && position.side === BLACK
   const select = (square: string) => {
     if (locked) return
     setMarks({})
+    setArrows({})
     const reached = moves.filter(
       move => move.from === selected && clickSquares(position.occupancy, move).includes(square)
     )
@@ -87,10 +89,12 @@ function Board({
         selected={selected}
         targets={targets(position.occupancy, moves, selected)}
         marks={marks}
+        arrows={arrows}
         isFlipped={isFlipped}
         result={result}
         onSelect={select}
         onMark={(square, colour) => setMarks(current => mark(current, square, colour))}
+        onArrow={(from, to, colour) => setArrows(current => mark(current, `${from}-${to}`, colour))}
       />
     </div>
   )

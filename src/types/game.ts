@@ -16,6 +16,10 @@ export interface Square {
   file: number
   rank: number
 }
+export interface Point {
+  x: number
+  y: number
+}
 export interface Step {
   from: string
   to: string

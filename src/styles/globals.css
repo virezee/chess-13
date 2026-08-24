@@ -26,17 +26,17 @@
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #e5e2d8;
-  --bg-glow: #f1efe9;
-  --surface: #fbfaf7;
-  --surface-2: #efece4;
+  --bg: #d3cec0;
+  --bg-glow: #e1ddd2;
+  --surface: #eae5d9;
+  --surface-2: #ded8ca;
   --track: #d8d2c4;
   --line: #dbd5c7;
   --line-strong: #bbb3a1;
   --ink: #1d1c19;
   --ink-dim: #545049;
   --ink-faint: #7c766a;
-  --brass: #8a6100;
+  --brass: #b56b00;
   --brass-deep: #b8934f;
   --army-white: #ffffff;
   --army-black: #3d434f;
@@ -58,7 +58,7 @@
   --square-selected: rgb(20 85 30 / .5);
   --move-dest: radial-gradient(rgb(20 85 30 / .5) 19%, rgb(0 0 0 / 0) calc(19% + 1px));
   --move-dest-capture: radial-gradient(transparent 79%, rgb(200 30 30 / .5) calc(79% + 1px));
-  --square-last: rgb(240 190 55 / .32);
+  --square-last: rgb(214 158 26 / .5);
   --square-check: radial-gradient(ellipse at center,
       rgb(255 62 48 / .95) 0%,
       rgb(255 62 48 / .7) 25%,

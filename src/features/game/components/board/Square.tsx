@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useRef } from 'react'
 import type { SquareOccupant } from '@/types/material'
 import type { Move } from '@/types/game'
 import { COMMAND_SQUARE } from '@/constants/board'
@@ -73,13 +74,16 @@ export function Surface({
   isFlipped,
   onSelect,
   onMark,
+  onArrow,
   children
 }: {
   isFlipped: boolean
   onSelect: (square: string) => void
   onMark: (square: string, colour: string) => void
+  onArrow: (from: string, to: string, colour: string) => void
   children: ReactNode
 }) {
+  const pressed = useRef<string | null>(null)
   return (
     <div
       className='relative overflow-hidden rounded-[3px] outline outline-square-edge'
@@ -90,9 +94,17 @@ export function Surface({
         backgroundSize: `calc(2 * ${SQUARE}) calc(2 * ${SQUARE})`
       }}
       onClick={event => onSelect(squareFromEvent(event, isFlipped))}
-      onContextMenu={event => {
-        event.preventDefault()
-        onMark(squareFromEvent(event, isFlipped), markColour(event))
+      onContextMenu={event => event.preventDefault()}
+      onMouseDown={event => {
+        if (event.button === 2) pressed.current = squareFromEvent(event, isFlipped)
+      }}
+      onMouseUp={event => {
+        const from = pressed.current
+        pressed.current = null
+        if (event.button !== 2 || from === null) return
+        const to = squareFromEvent(event, isFlipped)
+        if (from === to) onMark(to, markColour(event))
+        else onArrow(from, to, markColour(event))
       }}>
       {children}
     </div>

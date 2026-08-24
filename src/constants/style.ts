@@ -16,3 +16,4 @@ export const MARKS = {
   green: 'var(--mark-green)',
   blue: 'var(--mark-blue)'
 } as const
+export const ARROW = { start: .36, width: .28, spread: .58, head: .36 } as const

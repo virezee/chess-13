@@ -6,6 +6,7 @@ import { CHECKMATE } from '@/constants/outcome'
 import { COORDS, SQUARE } from '@/constants/style'
 import { CommandSquare, Surface, Overlay, Destinations } from './Square'
 import { Pieces } from './Pieces'
+import { Arrows } from './Arrows'
 import { remapIds } from '../../lib/view'
 
 type BoardProps = {
@@ -14,10 +15,12 @@ type BoardProps = {
   selected: string | null
   targets: string[]
   marks: Record<string, string>
+  arrows: Record<string, string>
   isFlipped: boolean
   result: Result | null
   onSelect: (square: string) => void
   onMark: (square: string, colour: string) => void
+  onArrow: (from: string, to: string, colour: string) => void
 }
 function Files({ isFlipped }: { isFlipped: boolean }) {
   return (
@@ -51,18 +54,20 @@ function Board({
   selected,
   targets,
   marks,
+  arrows,
   ids,
   snap,
   isFlipped,
   isAnimated,
   result,
   onSelect,
-  onMark
+  onMark,
+  onArrow
 }: BoardProps & { ids: Map<string, number>; snap: Move | null; isAnimated: boolean }) {
   const { pieces, occupancy, side, checkers, enhanced } = position
   const check = checkers.length === 0 ? null : pieces[side][POPE][0]!
   return (
-    <Surface isFlipped={isFlipped} onSelect={onSelect} onMark={onMark}>
+    <Surface isFlipped={isFlipped} onSelect={onSelect} onMark={onMark} onArrow={onArrow}>
       <CommandSquare isOccupied={occupancy[COMMAND_SQUARE] !== undefined} />
       <Overlay
         lastMove={lastMove}
@@ -80,6 +85,7 @@ function Board({
         isAnimated={isAnimated}
         fallen={result?.reason === CHECKMATE ? check : null}
       />
+      <Arrows arrows={arrows} isFlipped={isFlipped} />
       <Destinations occupancy={occupancy} targets={targets} isFlipped={isFlipped} />
     </Surface>
   )
