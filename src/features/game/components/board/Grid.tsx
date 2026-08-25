@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, MouseEvent } from 'react'
 import type { Move, Trace, Position, Result } from '@/types/game'
 import { useState, useRef, useEffect } from 'react'
 import { FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
@@ -8,7 +8,6 @@ import { COORDS, SQUARE, BOARD, PATTERN, FONT_SIZE, BASELINE } from '@/constants
 import { Pieces } from './Pieces'
 import { Highlights } from './Highlights'
 import { squareFromEvent, remapIds, translate } from '../../lib/layout'
-import { markColour } from '../../lib/annotation'
 import { cn } from '@/lib/cn'
 
 type GridProps = {
@@ -22,8 +21,8 @@ type GridProps = {
   isFlipped: boolean
   result: Result | null
   onSelect: (square: string) => void
-  onMark: (square: string, colour: string) => void
-  onArrow: (from: string, to: string, colour: string) => void
+  onMark: (square: string, event: MouseEvent<HTMLDivElement>) => void
+  onArrow: (from: string, to: string, event: MouseEvent<HTMLDivElement>) => void
 }
 function Files({ isFlipped }: { isFlipped: boolean }) {
   return (
@@ -60,8 +59,8 @@ function Squares({
 }: {
   isFlipped: boolean
   onSelect: (square: string) => void
-  onMark: (square: string, colour: string) => void
-  onArrow: (from: string, to: string, colour: string) => void
+  onMark: (square: string, event: MouseEvent<HTMLDivElement>) => void
+  onArrow: (from: string, to: string, event: MouseEvent<HTMLDivElement>) => void
   children: ReactNode
 }) {
   const pressed = useRef<string | null>(null)
@@ -83,8 +82,8 @@ function Squares({
         pressed.current = null
         if (event.button !== 2 || from === null) return
         const to = squareFromEvent(event, isFlipped)
-        if (from === to) onMark(to, markColour(event))
-        else onArrow(from, to, markColour(event))
+        if (from === to) onMark(to, event)
+        else onArrow(from, to, event)
       }}>
       {children}
     </div>

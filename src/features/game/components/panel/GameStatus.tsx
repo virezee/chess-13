@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
-import type { Counter, Position, Result } from '@/types/game'
-import { REPETITION_LIMIT } from '@/constants/outcome'
-import { repetitionCount } from '../../engine/result'
+import type { Counter, Result } from '@/types/game'
+import type { GameCounters } from '@/types/panel'
 import { cn } from '@/lib/cn'
 
 type ControlsProps = {
@@ -163,17 +162,14 @@ function Outcome({ result, onNewGame }: { result: Result; onNewGame: () => void 
 }
 export function GameStatus(
   props: ControlsProps & {
-    position: Position
-    history: readonly string[]
+    counters: GameCounters
     canSwap: boolean
     result: Result | null
     onDecline: () => void
     onAccept: () => void
   }
 ) {
-  const { position, history, canSwap, result, onDecline, onAccept, ...rest } = props
-  const { noProgress } = position.state
-  const repetition = repetitionCount(history.at(-1)!, history)
+  const { counters, canSwap, result, onDecline, onAccept, ...rest } = props
   return (
     <section className='overflow-hidden rounded border border-line bg-surface'>
       <header className='px-3.5 py-3'>
@@ -181,8 +177,8 @@ export function GameStatus(
           Clocks Off · Counters
         </p>
       </header>
-      <RepetitionGauge count={repetition} limit={REPETITION_LIMIT} />
-      <NoProgressGauge count={noProgress.count} limit={noProgress.limit} />
+      <RepetitionGauge count={counters.repetition.count} limit={counters.repetition.limit} />
+      <NoProgressGauge count={counters.noProgress.count} limit={counters.noProgress.limit} />
       {result === null ? (
         canSwap ? (
           <Prompt label='Swap Sides?' onDecline={onDecline} onAccept={onAccept} />

@@ -1,6 +1,8 @@
 import type { Move, Position, Match, Save, Result } from '@/types/game'
 import { WHITE, BLACK, NAMES } from '@/constants/player'
+import { REPETITION_LIMIT } from '@/constants/outcome'
 import { canSwap, takeSwap } from '../engine/apply'
+import { repetitionCount } from '../engine/result'
 import { ArmyInfo } from './panel/ArmyInfo'
 import { MoveList } from './panel/MoveList'
 import { GameStatus } from './panel/GameStatus'
@@ -64,8 +66,13 @@ function Control(props: PanelProps) {
       <Promotions promotions={promotions} onPick={onMove} />
       <MoveList pgn={save.match.pgn} toMove={position.side} />
       <GameStatus
-        position={position}
-        history={save.match.history}
+        counters={{
+          repetition: {
+            count: repetitionCount(save.match.history.at(-1)!, save.match.history),
+            limit: REPETITION_LIMIT
+          },
+          noProgress: position.state.noProgress
+        }}
         canSwap={canSwap(position, save.match)}
         pending={props.pending}
         setPending={props.setPending}

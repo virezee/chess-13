@@ -4,7 +4,7 @@ import { BLACK } from '@/constants/player'
 import { AUTO } from '@/constants/display'
 import { clickSquares } from '@/features/game/engine/turn'
 import { Grid } from './board/Grid'
-import { mark } from '../lib/annotation'
+import { mark, markColour } from '../lib/annotation'
 import { emperorFlag, riposteFlag } from '../lib/trace'
 import { useFlip } from '@/lib/flip'
 
@@ -56,8 +56,10 @@ export function Board(props: BoardProps) {
         isFlipped={isFlipped}
         result={result}
         onSelect={select}
-        onMark={(square, colour) => setMarks(current => mark(current, square, colour))}
-        onArrow={(from, to, colour) => setArrows(current => mark(current, `${from}-${to}`, colour))}
+        onMark={(square, event) => setMarks(current => mark(current, square, markColour(event)))}
+        onArrow={(from, to, event) =>
+          setArrows(current => mark(current, `${from}-${to}`, markColour(event)))
+        }
       />
     </div>
   )
