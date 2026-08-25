@@ -48,7 +48,7 @@ function PieceImage({
         sizes={SQUARE}
         loading='eager'
         draggable={false}
-        className={cn('select-none object-contain', isFallen && 'checkmate-fall')}
+        className={cn('object-contain', isFallen && 'checkmate-fall')}
       />
     </div>
   )

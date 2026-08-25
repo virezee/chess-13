@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang='en' suppressHydrationWarning className={`${typography} h-full antialiased`}>
-      <body className='min-h-full flex flex-col'>
+      <body className='min-h-full flex flex-col select-none'>
         <ContextMenuGuard />
         <ThemeProvider storageKey={THEME} attribute='data-theme' defaultTheme='system' enableSystem>
           <AppHeader />

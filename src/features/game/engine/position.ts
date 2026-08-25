@@ -33,15 +33,22 @@ const lists = (occupancy: SquareOccupant): Board['pieces'] => {
     pieces[piece.side][piece.piece].push(square)
   return pieces
 }
-const awaken = (board: Board, side: Side, awake: boolean): SquareOccupant => {
+const awaken = (
+  board: Board,
+  side: Side,
+  awake: boolean
+): { occupancy: SquareOccupant; attackers: string[] } => {
   const { pieces, occupancy } = board
   const square = dormantSquare(board, side)
-  if (square === null) return occupancy
+  if (square === null) return { occupancy, attackers: [] }
   const enemy = side === WHITE ? BLACK : WHITE
   const marshalSq = pieces[side][MARSHAL][0] ?? null
-  if (!awake && marshalSq !== null && threats(board, enemy, {}, false, square).length === 0)
-    return occupancy
-  return { ...occupancy, [square]: { ...occupancy[square]!, awake: true } }
+  const attackers = threats(board, enemy, {}, false, square)
+  if (!awake && marshalSq !== null && attackers.length === 0) return { occupancy, attackers: [] }
+  return {
+    occupancy: { ...occupancy, [square]: { ...occupancy[square]!, awake: true } },
+    attackers: awake ? [] : attackers
+  }
 }
 const enhanced = (occupancy: SquareOccupant, pieces: Board['pieces']): Set<string> => {
   const marshal = {
@@ -58,7 +65,8 @@ const enhanced = (occupancy: SquareOccupant, pieces: Board['pieces']): Set<strin
 export const position = (side: Side, occupancy: SquareOccupant, state: State): Position => {
   const pieces = lists(occupancy)
   const { awake } = state
-  const board: Board = { pieces, occupancy: awaken({ pieces, occupancy }, side, awake[side]) }
+  const awakening = awaken({ pieces, occupancy }, side, awake[side])
+  const board: Board = { pieces, occupancy: awakening.occupancy }
   const awakened: State['awake'] = {
     ...awake,
     [side]: awake[side] || dormantSquare(board, side) === null
@@ -67,6 +75,7 @@ export const position = (side: Side, occupancy: SquareOccupant, state: State): P
     ...board,
     side,
     checkers: checkInfo({ pieces, occupancy }, side),
+    emperorAttackers: awakening.attackers,
     state: { ...state, awake: awakened },
     enhanced: enhanced(occupancy, pieces)
   }

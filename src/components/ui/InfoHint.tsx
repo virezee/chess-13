@@ -5,7 +5,7 @@ export function InfoHint({ label, children }: { label: string; children: ReactNo
     <button
       type='button'
       aria-label={label}
-      className='group relative inline-grid h-3.5 w-3.5 cursor-help select-none place-items-center rounded-full border border-line-strong bg-bg pt-0.75 font-sans text-[8px] leading-none text-ink-faint transition-colors hover:text-ink'>
+      className='group relative inline-grid h-3.5 w-3.5 cursor-help place-items-center rounded-full border border-line-strong bg-bg pt-0.75 font-sans text-[8px] leading-none text-ink-faint transition-colors hover:text-ink'>
       i
       <span
         role='tooltip'

@@ -1,11 +1,9 @@
 import type { SquareOccupant } from '@/types/material'
 import type { Square, Trace, Step, Position } from '@/types/game'
 import { SIZE } from '@/constants/board'
-import { WHITE, BLACK } from '@/constants/player'
 import { EMPEROR, MARSHAL } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
 import { DEST, DEST_CAPTURE, AWAKE, RIPOSTE, STAGGER } from '@/constants/style'
-import { threats } from '../engine/threats'
 import { parseSquare, makeSquare, isOnBoard, isLeapOffset } from './coordinate'
 
 const line = (from: Square, to: Square): Square[] => {
@@ -70,13 +68,10 @@ const ray = (
   }
   return squares
 }
-export const emperorFlag = (position: Position): Trace[] => {
-  const { side, pieces, occupancy } = position
+export const emperorFlag = ({ side, pieces, emperorAttackers }: Position): Trace[] => {
   const emperor = pieces[side][EMPEROR][0] ?? null
-  if (emperor === null || occupancy[emperor]?.awake !== true) return []
-  return threats(position, side === WHITE ? BLACK : WHITE, {}, false, emperor).flatMap(attacker =>
-    roundTrip({ from: attacker, to: emperor })
-  )
+  if (emperor === null) return []
+  return emperorAttackers.flatMap(attacker => roundTrip({ from: attacker, to: emperor }))
 }
 export const riposteFlag = (position: Position): Trace[] => {
   const { side, pieces, occupancy, state } = position

@@ -71,6 +71,7 @@ export interface State {
 export interface Position extends Board {
   side: Side
   checkers: string[]
+  emperorAttackers: string[]
   state: State
   enhanced: Set<string>
 }

@@ -59,9 +59,12 @@ function Arrows({ arrows, isFlipped }: { arrows: Record<string, string>; isFlipp
   )
 }
 function Path({ trace, isFlipped }: { trace: Trace[]; isFlipped: boolean }) {
-  return trace.map(({ square, delay, colour }) => (
+  const unique = new Map(
+    trace.map(entry => [`${entry.square}-${entry.delay}-${entry.colour}`, entry])
+  )
+  return [...unique].map(([key, { square, delay, colour }]) => (
     <div
-      key={`${square}-${delay}`}
+      key={key}
       className='pointer-events-none absolute left-0 top-0'
       style={{
         ...translate(square, isFlipped),

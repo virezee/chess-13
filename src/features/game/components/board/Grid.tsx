@@ -93,7 +93,7 @@ function Squares({
 function CommandSquare({ isOccupied }: { isOccupied: boolean }) {
   return (
     <div
-      className='pointer-events-none absolute left-0 top-0 select-none bg-square-command'
+      className='pointer-events-none absolute left-0 top-0 bg-square-command'
       style={translate(COMMAND_SQUARE, false)}>
       <svg
         viewBox='0 0 100 100'
@@ -183,7 +183,7 @@ export function Grid({ lastMove, isFlipped, ...rest }: GridProps) {
     }
   }, [snap, orientation.immediate])
   return (
-    <div className='@container w-full select-none overflow-x-auto'>
+    <div className='@container w-full overflow-x-auto'>
       <div
         className='grid w-fit'
         style={{ gridTemplateColumns: `${COORDS} auto`, gridTemplateRows: `auto ${COORDS}` }}>
