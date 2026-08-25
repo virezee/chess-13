@@ -43,8 +43,13 @@ const wavefronts = ({ from, to }: Step): string[][] => {
 }
 const roundTrip = ({ from, to }: Step): Trace[] => {
   const approach = wavefronts({ from, to })
-  return [...approach, ...approach.slice(0, -1).toReversed()].flatMap((squares, step) =>
-    squares.map(square => ({ square, delay: step * STAGGER.each, colour: AWAKE }))
+  const offset = STAGGER.duration - STAGGER.each
+  return [...approach, ...approach.toReversed()].flatMap((squares, step) =>
+    squares.map(square => ({
+      square,
+      delay: step * STAGGER.each + (step >= approach.length ? offset : 0),
+      colour: AWAKE
+    }))
   )
 }
 const ray = (

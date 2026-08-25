@@ -19,4 +19,4 @@ export const MARKS = {
   blue: 'var(--mark-blue)'
 } as const
 export const ARROW = { start: .36, width: .28, headLength: .36, headWidth: .58 } as const
-export const STAGGER = { duration: 500, each: 100 } as const
+export const STAGGER = { duration: 300, each: 50 } as const
