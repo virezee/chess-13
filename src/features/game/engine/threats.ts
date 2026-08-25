@@ -30,6 +30,27 @@ const marshalAt = (side: Side, view: View, marshalSquare: string | null): string
   if (marshalSquare === null || view.vacated?.includes(marshalSquare)) return null
   return marshalSquare
 }
+const hopped = (view: View, square: string): View =>
+  view.moved?.square === square
+    ? { vacated: [...(view.vacated ?? []), square] }
+    : { ...view, vacated: [...(view.vacated ?? []), square] }
+const isLandingClear = (
+  board: Board,
+  side: Side,
+  view: View,
+  square: string,
+  dest: string,
+  pending: readonly string[]
+): boolean => {
+  const key = `${side}${square}`
+  if (pending.includes(key)) return true
+  return (
+    threats(board, side === WHITE ? BLACK : WHITE, hopped(view, square), false, dest, [
+      ...pending,
+      key
+    ]).length === 0
+  )
+}
 const leapers = (
   board: Board,
   side: Side,
@@ -106,7 +127,8 @@ export const threats = (
   side: Side,
   view: View = {},
   dormant: boolean,
-  square: string
+  square: string,
+  pending: readonly string[] = []
 ): string[] => {
   const { pieces, occupancy } = board
   const popeSq = parseSquare(pieces[side][POPE][0]!)
@@ -134,9 +156,7 @@ export const threats = (
           : makeSquare({ file: target.file - fileStep, rank: target.rank - rankStep })
         if (
           isAssassinReachable(occupancy, view, square, fileStep, rankStep, enhanced, distance) &&
-          !threats(board, side === WHITE ? BLACK : WHITE, view, false, dest).some(
-            defender => defender !== square
-          )
+          isLandingClear(board, side, view, square, dest, pending)
         )
           attackers.push(attacker)
       } else if (occupant.piece === MAGE) {
