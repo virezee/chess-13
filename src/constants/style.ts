@@ -10,6 +10,8 @@ export const DEST = 'var(--move-dest)'
 export const DEST_CAPTURE = 'var(--move-dest-capture)'
 export const LAST = 'var(--square-last)'
 export const CHECK = 'var(--square-check)'
+export const AWAKE = 'var(--square-awake)'
+export const RIPOSTE = 'var(--square-riposte)'
 export const MARKS = {
   red: 'var(--mark-red)',
   yellow: 'var(--mark-yellow)',
@@ -17,3 +19,4 @@ export const MARKS = {
   blue: 'var(--mark-blue)'
 } as const
 export const ARROW = { start: .36, width: .28, headLength: .36, headWidth: .58 } as const
+export const STAGGER = { duration: 500, each: 100 } as const

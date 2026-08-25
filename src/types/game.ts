@@ -20,6 +20,11 @@ export interface Point {
   x: number
   y: number
 }
+export interface Trace {
+  square: string
+  delay: number
+  colour: string
+}
 export interface Step {
   from: string
   to: string

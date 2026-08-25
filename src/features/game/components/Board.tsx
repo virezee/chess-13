@@ -4,7 +4,8 @@ import { BLACK } from '@/constants/player'
 import { AUTO } from '@/constants/display'
 import { clickSquares } from '@/features/game/engine/turn'
 import { Grid } from './board/Grid'
-import { mark } from '../lib/view'
+import { mark } from '../lib/annotation'
+import { emperorTimeline, marshalTimeline } from '../lib/trace'
 import { useFlip } from '@/lib/flip'
 
 type BoardProps = {
@@ -51,6 +52,7 @@ export function Board(props: BoardProps) {
         ]}
         marks={marks}
         arrows={arrows}
+        trace={[...emperorTimeline(position), ...marshalTimeline(position)]}
         isFlipped={isFlipped}
         result={result}
         onSelect={select}

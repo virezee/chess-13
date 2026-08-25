@@ -11,10 +11,10 @@ export const fullMoves = (pgn: string): FullMove[] => {
   const plies = pgn
     .split(/ (?!e\.p\.|rip\.)/u)
     .filter(token => token !== '' && !/^\d+\.$/u.test(token))
-  return Array.from({ length: Math.ceil(plies.length / PLIES_PER_MOVE) }, (_, index) => ({
-    white: plies[index * PLIES_PER_MOVE]!,
-    black: plies[index * PLIES_PER_MOVE + 1] ?? null,
-    number: index + 1
+  return Array.from({ length: Math.ceil(plies.length / PLIES_PER_MOVE) }, (_, i) => ({
+    white: plies[i * PLIES_PER_MOVE]!,
+    black: plies[i * PLIES_PER_MOVE + 1] ?? null,
+    number: i + 1
   }))
 }
 export const notation = (position: Position, move: Move): string => {

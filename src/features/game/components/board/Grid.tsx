@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Move, Position, Result } from '@/types/game'
+import type { Move, Trace, Position, Result } from '@/types/game'
 import { useState, useRef, useEffect } from 'react'
 import { FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import { POPE } from '@/constants/piece'
@@ -7,7 +7,8 @@ import { CHECKMATE } from '@/constants/outcome'
 import { COORDS, SQUARE, BOARD, PATTERN, FONT_SIZE, BASELINE } from '@/constants/style'
 import { Pieces } from './Pieces'
 import { Highlights } from './Highlights'
-import { squareFromEvent, remapIds, translate, markColour } from '../../lib/view'
+import { squareFromEvent, remapIds, translate } from '../../lib/layout'
+import { markColour } from '../../lib/annotation'
 import { cn } from '@/lib/cn'
 
 type GridProps = {
@@ -17,6 +18,7 @@ type GridProps = {
   targets: string[]
   marks: Record<string, string>
   arrows: Record<string, string>
+  trace: Trace[]
   isFlipped: boolean
   result: Result | null
   onSelect: (square: string) => void
@@ -117,6 +119,7 @@ function Layers({
   targets,
   marks,
   arrows,
+  trace,
   ids,
   snap,
   isFlipped,
@@ -139,6 +142,7 @@ function Layers({
         occupancy={occupancy}
         marks={marks}
         arrows={arrows}
+        trace={trace}
         isFlipped={isFlipped}
       />
       <Pieces

@@ -3,7 +3,7 @@ import type { Move, View } from '@/types/game'
 import Image from 'next/image'
 import { NATIVE, CLASSIC_IMAGE } from '@/constants/display'
 import { SQUARE, BUFF } from '@/constants/style'
-import { origin, translate } from '../../lib/view'
+import { origin, translate } from '../../lib/layout'
 import { useMode } from '@/lib/mode'
 import { cn } from '@/lib/cn'
 

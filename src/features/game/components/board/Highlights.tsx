@@ -1,8 +1,9 @@
 import type { SquareOccupant } from '@/types/material'
-import type { Move } from '@/types/game'
+import type { Move, Trace } from '@/types/game'
 import { SIZE } from '@/constants/board'
-import { SELECTED, DEST, DEST_CAPTURE, LAST, CHECK } from '@/constants/style'
-import { translate, arrowPoints } from '../../lib/view'
+import { SELECTED, DEST, DEST_CAPTURE, LAST, CHECK, STAGGER } from '@/constants/style'
+import { translate } from '../../lib/layout'
+import { arrowPoints } from '../../lib/annotation'
 import { cn } from '@/lib/cn'
 
 function Fill({
@@ -57,6 +58,19 @@ function Arrows({ arrows, isFlipped }: { arrows: Record<string, string>; isFlipp
     </svg>
   )
 }
+function Path({ trace, isFlipped }: { trace: Trace[]; isFlipped: boolean }) {
+  return trace.map(({ square, delay, colour }) => (
+    <div
+      key={`${square}-${delay}`}
+      className='pointer-events-none absolute left-0 top-0'
+      style={{
+        ...translate(square, isFlipped),
+        background: colour,
+        animation: `chase ${STAGGER.duration}ms ease-out ${delay}ms both`
+      }}
+    />
+  ))
+}
 export function Highlights({
   lastMove,
   check,
@@ -65,6 +79,7 @@ export function Highlights({
   occupancy,
   marks,
   arrows,
+  trace,
   isFlipped
 }: {
   lastMove: Move | null
@@ -74,6 +89,7 @@ export function Highlights({
   occupancy: SquareOccupant
   marks: Record<string, string>
   arrows: Record<string, string>
+  trace: Trace[]
   isFlipped: boolean
 }) {
   return (
@@ -96,6 +112,7 @@ export function Highlights({
         />
       ))}
       <Arrows arrows={arrows} isFlipped={isFlipped} />
+      <Path trace={trace} isFlipped={isFlipped} />
     </>
   )
 }

@@ -58,11 +58,13 @@
   --square-selected: rgb(20 85 30 / .5);
   --move-dest: radial-gradient(rgb(20 85 30 / .5) 19%, rgb(0 0 0 / 0) calc(19% + 1px));
   --move-dest-capture: radial-gradient(transparent 79%, rgb(200 30 30 / .5) calc(79% + 1px));
-  --square-last: rgb(214 158 26 / .5);
+  --square-last: rgb(30 150 150 / .42);
   --square-check: radial-gradient(ellipse at center,
       rgb(255 62 48 / .95) 0%,
       rgb(255 62 48 / .7) 25%,
       rgb(255 62 48 / 0) 80%);
+  --square-awake: #000;
+  --square-riposte: #7a8794;
   --mark-red: rgb(202 52 43 / .55);
   --mark-yellow: rgb(216 166 40 / .55);
   --mark-green: rgb(20 133 45 / .55);
@@ -126,6 +128,20 @@
 }
 @utility checkmate-fall {
   animation: checkmate-fall 700ms cubic-bezier(.34, 1.1, .64, 1) both;
+}
+@keyframes chase {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 @utility scroll-thin {
   scrollbar-width: thin;
