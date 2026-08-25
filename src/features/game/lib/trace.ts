@@ -3,7 +3,7 @@ import type { Square, Trace, Step, Position } from '@/types/game'
 import { SIZE } from '@/constants/board'
 import { EMPEROR, MARSHAL } from '@/constants/piece'
 import { EVERY } from '@/constants/direction'
-import { DEST, DEST_CAPTURE, AWAKE, RIPOSTE, STAGGER } from '@/constants/style'
+import { AWAKE, RIPOSTE, MARKS, STAGGER } from '@/constants/style'
 import { parseSquare, makeSquare, isOnBoard, isLeapOffset } from './coordinate'
 
 const line = (from: Square, to: Square): Square[] => {
@@ -87,8 +87,8 @@ export const riposteFlag = (position: Position): Trace[] => {
           occupancy[square] === undefined
             ? RIPOSTE
             : occupancy[square].side === side
-              ? DEST
-              : DEST_CAPTURE
+              ? MARKS.green
+              : MARKS.red
       }))
     )
   ]
