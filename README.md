@@ -348,16 +348,19 @@ The Herald's enhanced count is 15.3846 + 3.6923 = 19.0769, its straight step bei
 
 ### Rate applied
 
-| Piece     | Pattern, enhanced | Average | × rate  | Pattern, restricted | Average | × rate  |
-| --------- | ----------------- | ------- | ------- | ------------------- | ------- | ------- |
-| Legionary | Diagonal capture  | 1.8462  | 0.6742  | same                | 1.8462  | 0.6742  |
-| Mage      | Ring of 8         | 7.1006  | 2.5931  | same                | 7.1006  | 2.5931  |
-| Templar   | Both leaps        | 11.4556 | 6.5461  | Leap 3-2            | 5.2071  | 2.9755  |
-| Herald    | Diagonal + step   | 19.0769 | 6.9669  | Diagonal to 6       | 13.2308 | 4.8319  |
-| Sentinel  | Straight unlim.   | 24.0000 | 8.7648  | Straight up to 6    | 17.5385 | 6.4051  |
-| Assassin  | Queen unlimited   | 39.3846 | 14.3833 | Queen up to 6       | 30.7692 | 11.2370 |
-| Marshal   | Queen unlimited   | 39.3846 | 14.3833 | N/A                 | N/A     | N/A     |
-| Emperor   | Queen unlimited   | 39.3846 | 14.3833 | same                | 39.3846 | 14.3833 |
+The rate is 0.3652, the figure read off chess above: the average of the bishop's
+0.3429, the rook's 0.3571 and the queen's 0.3956.
+
+| Piece     | Pattern, enhanced | Average | × 0.3652 | Pattern, restricted | Average | × 0.3652 |
+| --------- | ----------------- | ------- | -------- | ------------------- | ------- | -------- |
+| Legionary | Diagonal capture  | 1.8462  | 0.6742   | same                | 1.8462  | 0.6742   |
+| Mage      | Ring of 8         | 7.1006  | 2.5931   | same                | 7.1006  | 2.5931   |
+| Templar   | Both leaps        | 11.4556 | 6.5461   | Leap 3-2            | 5.2071  | 2.9755   |
+| Herald    | Diagonal + step   | 19.0769 | 6.9669   | Diagonal to 6       | 13.2308 | 4.8319   |
+| Sentinel  | Straight unlim.   | 24.0000 | 8.7648   | Straight up to 6    | 17.5385 | 6.4051   |
+| Assassin  | Queen unlimited   | 39.3846 | 14.3833  | Queen up to 6       | 30.7692 | 11.2370  |
+| Marshal   | Queen unlimited   | 39.3846 | 14.3833  | N/A                 | N/A     | N/A      |
+| Emperor   | Queen unlimited   | 39.3846 | 14.3833  | same                | 39.3846 | 14.3833  |
 
 The Templar's two figures carry the leaper premium: 11.4556 × 0.3652 × 1.5647 = 6.5461 and 5.2071 × 0.3652 × 1.5647 = 2.9755.
 
