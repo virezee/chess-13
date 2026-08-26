@@ -262,36 +262,87 @@ Every number below is worked out rather than assigned. The method is the one che
 
 ### The rate, read off chess
 
-Chess sets its own values against its own mobility on 8 × 8:
+Chess sets its own values against its own mobility on 8 × 8. Every mobility
+figure below is counted on an empty board, using three rules that hold for any
+n × n board:
 
-| Piece  | Attacks, all squares | Average | Value | Value ÷ average |
-| ------ | -------------------- | ------- | ----- | --------------- |
-| Knight | 336                  | 5.2500  | 3     | 0.5714          |
-| Bishop | 560                  | 8.7500  | 3.25  | 0.3714          |
-| Rook   | 896                  | 14.0000 | 5     | 0.3571          |
-| Queen  | 1456                 | 22.7500 | 9     | 0.3956          |
+- **Straight lines:** `2n²(n − 1)`. Each of the n² squares sees n − 1 squares
+  each way along its rank, and the same along its file.
+- **Diagonals:** `2n(n − 1)(2n − 1) / 3`. A diagonal of length L carries
+  L(L − 1) ordered pairs of squares. Summing that over the diagonal lengths
+  1, 2, … n − 1, n, n − 1, … 1 and doubling for the second direction gives the
+  closed form.
+- **Leap (a, b):** `8(n − a)(n − b)`. A leaper has 8 fixed vectors, and the
+  vector (a, b) fits on the (n − a)(n − b) squares that leave room for it.
 
-The three sliders agree: 0.3714, 0.3571 and 0.3956 average to 0.3747, which is the **rate 0.375 points per square**. The knight does not, at 0.5714, and the ratio 0.5714 ÷ 0.3747 = 1.5249 is the **leaper premium 1.52**. It is not an error in the rate. A leaper keeps its whole count in a crowded position while a slider loses most of its own, so the same paper mobility is worth half as much again on a knight.
+| Piece  | Value | Attacks, all squares     | Average           | Value ÷ average |
+| ------ | ----- | ------------------------ | ----------------- | --------------- |
+| Pawn   | 1     | 84 = 6 × 14              | 1.75 = 84 / 48    | 0.5714          |
+| Knight | 3     | 336 = 8 × 6 × 7          | 5.25 = 336 / 64   | 0.5714          |
+| Bishop | 3     | 560 = 2 × 8 × 7 × 15 / 3 | 8.75 = 560 / 64   | 0.3429          |
+| Rook   | 5     | 896 = 2 × 64 × 7         | 14 = 896 / 64     | 0.3571          |
+| Queen  | 9     | 1456 = 896 + 560         | 22.75 = 1456 / 64 | 0.3956          |
 
-The pawn is the third calibration. It attacks 1.75 squares on average, worth 1.75 × 0.375 = 0.6563, yet it is valued at 1. The missing **0.3437 is the price of promotion**, and it carries over to the Legionary unchanged.
+The Value column is the only thing here that is not counted. It is the
+conventional chess scale, taken as given, and the rate is calibrated against
+it. That scale is a convention rather than a measurement. Different sources set
+it differently, some rating the bishop above the knight and the statistical
+studies putting both minor pieces above 3, so the rate carries whatever
+uncertainty the convention it is read from carries.
+
+The three sliders come out at 0.3429, 0.3571 and 0.3956, which average to
+0.3652: the **rate 0.365 points per square**. They do not land on one figure.
+Bishop and rook sit close together and the queen sits 0.05 above them, so the
+rate is the midpoint of a spread rather than a value all three share.
+
+The knight sits far outside that spread, at 0.5714, and the ratio
+0.5714 / 0.3652 = 1.5647 is the **leaper premium 1.565**. It is not an error in
+the rate. A leaper keeps its whole count in a crowded position while a slider
+loses most of its own, so the same paper mobility is worth half as much again on
+a knight.
+
+The pawn is the third calibration. It attacks 1.75 squares on average, worth
+1.75 × 0.365 = 0.6391, yet it is valued at 1. The missing **0.361 is the price
+of promotion**. Its ratio reads 0.5714 as well, matching the knight exactly,
+because the conventional values put both its mobility and its value at a third
+of the knight's. The two premiums have nothing to do with each other and the
+match is arithmetic.
 
 ### Mobility on this board
 
-169 squares, empty board, counting attacked squares rather than quiet steps, because value follows what a piece threatens:
+169 squares, empty board, counting attacked squares rather than quiet steps,
+because value follows what a piece threatens. The three rules above carry over
+with n = 13. Two shapes appear here that chess has no piece for, and they need
+rules of their own:
 
-| Pattern                  | Attacks, all squares | Average |
-| ------------------------ | -------------------- | ------- |
-| Queen lines, unlimited   | 6656                 | 39.3846 |
-| Queen lines, up to 6     | 5200                 | 30.7692 |
-| Straight, unlimited      | 4056                 | 24.0000 |
-| Straight, up to 6        | 2964                 | 17.5385 |
-| Diagonal, unlimited      | 2600                 | 15.3846 |
-| Diagonal, up to 6        | 2236                 | 13.2308 |
-| Ring of 8                | 1200                 | 7.1006  |
-| Straight step of 1       | 624                  | 3.6923  |
-| Leap 3-2 and 2-1         | 1936                 | 11.4556 |
-| Leap 3-2 only            | 880                  | 5.2071  |
-| Diagonal forward capture | 24 per rank          | 1.8462  |
+- **A range cap of r** replaces the full line with min(r, distance to the edge)
+  in each direction. A line of 13 squares sums to 57 looking one way and 114
+  looking both, and the board holds 26 such lines, 13 ranks and 13 files.
+  Diagonals have no single length, so the same cap is summed over the diagonal
+  lengths 1, 2, … 13, … 2, 1, which comes to 1118 per direction.
+- **A step of 1** is `4n(n − 1)` straight and `4(n − 1)²` diagonal, 624 and 576
+  here. The ring of 8 is the two together.
+
+Ordered from the least mobile pattern to the most:
+
+| Pattern                  | Attacks, all squares | Average              |
+| ------------------------ | -------------------- | -------------------- |
+| Diagonal forward capture | 240 = 10 × 24        | 1.8462 = 240 / 130   |
+| Straight step of 1       | 624 = 4 × 13 × 12    | 3.6923 = 624 / 169   |
+| Leap 3-2 only            | 880 = 8 × 10 × 11    | 5.2071 = 880 / 169   |
+| Ring of 8                | 1200 = 624 + 576     | 7.1006 = 1200 / 169  |
+| Leap 3-2 and 2-1         | 1936 = 880 + 1056    | 11.4556 = 1936 / 169 |
+| Diagonal, up to 6        | 2236 = 2 × 1118      | 13.2308 = 2236 / 169 |
+| Diagonal, unlimited      | 2600 = 2 × 1300      | 15.3846 = 2600 / 169 |
+| Straight, up to 6        | 2964 = 26 × 114      | 17.5385 = 2964 / 169 |
+| Straight, unlimited      | 4056 = 26 × 156      | 24 = 4056 / 169      |
+| Queen lines, up to 6     | 5200 = 2964 + 2236   | 30.7692 = 5200 / 169 |
+| Queen lines, unlimited   | 6656 = 4056 + 2600   | 39.3846 = 6656 / 169 |
+
+The diagonal forward capture follows the pawn's count on the chess board. Each
+rank carries 24 attacks, 1 from each edge file and 2 from the 11 files between
+them, and the Legionary stands on 10 of the 13 ranks, so the average is taken
+over 130 squares rather than 169.
 
 The Herald's enhanced count is 15.3846 + 3.6923 = 19.0769, its straight step being able to capture. Its restricted count is the diagonal alone, 13.2308, because that step cannot capture there. The Sentinel is read on its capture range, not its quiet range, which is why the enhanced one counts the whole line.
 
@@ -299,16 +350,16 @@ The Herald's enhanced count is 15.3846 + 3.6923 = 19.0769, its straight step bei
 
 | Piece     | Pattern, enhanced | Average | × rate  | Pattern, restricted | Average | × rate  |
 | --------- | ----------------- | ------- | ------- | ------------------- | ------- | ------- |
-| Emperor   | Queen unlimited   | 39.3846 | 14.7692 | same                | 39.3846 | 14.7692 |
-| Marshal   | Queen unlimited   | 39.3846 | 14.7692 | N/A                 | N/A     | N/A     |
-| Assassin  | Queen unlimited   | 39.3846 | 14.7692 | Queen up to 6       | 30.7692 | 11.5385 |
-| Sentinel  | Straight unlim.   | 24.0000 | 9.0000  | Straight up to 6    | 17.5385 | 6.5769  |
-| Herald    | Diagonal + step   | 19.0769 | 7.1538  | Diagonal to 6       | 13.2308 | 4.9615  |
-| Templar   | Both leaps        | 11.4556 | 6.5297  | Leap 3-2            | 5.2071  | 2.9681  |
-| Mage      | Ring of 8         | 7.1006  | 2.6627  | same                | 7.1006  | 2.6627  |
-| Legionary | Diagonal capture  | 1.8462  | 0.6923  | same                | 1.8462  | 0.6923  |
+| Legionary | Diagonal capture  | 1.8462  | 0.6742  | same                | 1.8462  | 0.6742  |
+| Mage      | Ring of 8         | 7.1006  | 2.5931  | same                | 7.1006  | 2.5931  |
+| Templar   | Both leaps        | 11.4556 | 6.5461  | Leap 3-2            | 5.2071  | 2.9755  |
+| Herald    | Diagonal + step   | 19.0769 | 6.9669  | Diagonal to 6       | 13.2308 | 4.8319  |
+| Sentinel  | Straight unlim.   | 24.0000 | 8.7648  | Straight up to 6    | 17.5385 | 6.4051  |
+| Assassin  | Queen unlimited   | 39.3846 | 14.3833 | Queen up to 6       | 30.7692 | 11.2370 |
+| Marshal   | Queen unlimited   | 39.3846 | 14.3833 | N/A                 | N/A     | N/A     |
+| Emperor   | Queen unlimited   | 39.3846 | 14.3833 | same                | 39.3846 | 14.3833 |
 
-The Templar's two figures carry the leaper premium: 11.4556 × 0.375 × 1.52 = 6.5297 and 5.2071 × 0.375 × 1.52 = 2.9681.
+The Templar's two figures carry the leaper premium: 11.4556 × 0.3652 × 1.5647 = 6.5461 and 5.2071 × 0.3652 × 1.5647 = 2.9755.
 
 ### Four adjustments, each for a rule
 
