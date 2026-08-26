@@ -40,13 +40,13 @@ const isLandingClear = (
   view: View,
   square: string,
   dest: string,
-  pending: readonly string[]
+  chain: readonly string[]
 ): boolean => {
   const key = `${side}${square}`
-  if (pending.includes(key)) return true
+  if (chain.includes(key)) return true
   return (
     threats(board, side === WHITE ? BLACK : WHITE, hopped(view, square), false, dest, [
-      ...pending,
+      ...chain,
       key
     ]).length === 0
   )
@@ -128,7 +128,7 @@ export const threats = (
   view: View = {},
   dormant: boolean,
   square: string,
-  pending: readonly string[] = []
+  chain: readonly string[] = []
 ): string[] => {
   const { pieces, occupancy } = board
   const popeSq = parseSquare(pieces[side][POPE][0]!)
@@ -156,7 +156,7 @@ export const threats = (
           : makeSquare({ file: target.file - fileStep, rank: target.rank - rankStep })
         if (
           isAssassinReachable(occupancy, view, square, fileStep, rankStep, enhanced, distance) &&
-          isLandingClear(board, side, view, square, dest, pending)
+          isLandingClear(board, side, view, square, dest, chain)
         )
           attackers.push(attacker)
       } else if (occupant.piece === MAGE) {
