@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { SIZE, FILES, RANKS } from '@/constants/board'
 import { WHITE } from '@/constants/player'
 import { SENTINEL, MARSHAL } from '@/constants/piece'
 import { sentinel } from '@/features/game/engine/moves/sentinel'
@@ -6,9 +7,12 @@ import { Diagram } from '../Diagram'
 
 const PIECE = { square: 'a1', name: SENTINEL }
 const MARSHAL_PIECE = { square: 'd1', name: MARSHAL }
+const BUFFED = { ...PIECE, isBuffed: true }
 const PIECES = [MARSHAL_PIECE]
-const ENHANCED = ['a8', 'a9', 'a10', 'a11', 'a12', 'a13']
-const RESTRICTED = ['a5', 'a6', 'a7', 'e1', 'f1', 'g1']
+const upward = (count: number): string[] => RANKS.slice(1, count + 1).map(rank => `a${rank}`)
+const rightward = (count: number): string[] => FILES.slice(1, count + 1).map(file => `${file}1`)
+const ENHANCED = [...upward(SIZE - 1), ...rightward(2)]
+const RESTRICTED = [...upward(6), ...rightward(6)]
 const targets = (isEnhanced: boolean): string[] =>
   sentinel(
     WHITE,
@@ -40,7 +44,7 @@ export function Sentinel() {
             Up to six squares on a quiet move, and no limit for capturing. It also passes through
             your own pieces when it moves towards your Marshal.
           </p>
-          <Diagram piece={PIECE} pieces={PIECES} moves={targets(true)} captures={ENHANCED} />
+          <Diagram piece={BUFFED} pieces={PIECES} moves={targets(true)} captures={ENHANCED} />
         </div>
         <div className='rounded border border-alert/60 bg-alert/10 px-3.5 py-3'>
           <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-alert'>

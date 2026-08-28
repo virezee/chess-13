@@ -1,10 +1,12 @@
 import Image from 'next/image'
 import { WHITE } from '@/constants/player'
-import { TEMPLAR } from '@/constants/piece'
+import { TEMPLAR, MARSHAL } from '@/constants/piece'
 import { templar } from '@/features/game/engine/moves/templar'
 import { Diagram } from '../Diagram'
 
 const PIECE = { square: 'g7', name: TEMPLAR }
+const BUFFED = { ...PIECE, isBuffed: true }
+const PIECES = [{ square: 'g6', name: MARSHAL }]
 const targets = (isEnhanced: boolean): string[] =>
   templar(WHITE, {}, PIECE.square, isEnhanced).map(move => move.to)
 
@@ -30,7 +32,7 @@ export function Templar() {
             Two jump shapes, three squares one way and two the other, or two squares one way and one
             the other, which is the knight jump of chess.
           </p>
-          <Diagram piece={PIECE} moves={targets(true)} />
+          <Diagram piece={BUFFED} pieces={PIECES} moves={targets(true)} captures={targets(true)} />
         </div>
         <div className='rounded border border-alert/60 bg-alert/10 px-3.5 py-3'>
           <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-alert'>
@@ -39,7 +41,7 @@ export function Templar() {
           <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
             One jump shape only, three squares one way and two the other. The knight jump is gone.
           </p>
-          <Diagram piece={PIECE} moves={targets(false)} />
+          <Diagram piece={PIECE} moves={targets(false)} captures={targets(false)} />
         </div>
       </div>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>

@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import type { Side } from '@/types/material'
 import Image from 'next/image'
 import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import {
@@ -9,8 +10,10 @@ import {
   BASELINE,
   SELECTED,
   DEST,
-  DEST_CAPTURE
+  DEST_CAPTURE,
+  BUFF
 } from '@/constants/style'
+import { WHITE } from '@/constants/player'
 import { translate } from '@/features/game/lib/layout'
 
 function CommandSquare() {
@@ -36,18 +39,48 @@ function Fill({ square, background }: { square: string; background: string }) {
     <div className='absolute left-0 top-0' style={{ ...translate(square, false), background }} />
   )
 }
-function Piece({ square, name }: { square: string; name: string }) {
+function Piece({
+  square,
+  name,
+  side,
+  isBuffed
+}: {
+  square: string
+  name: string
+  side?: Side | undefined
+  isBuffed?: boolean | undefined
+}) {
   return (
     <div className='absolute left-0 top-0' style={translate(square, false)}>
-      <Image src={`/white/${name}.png`} alt={name} fill sizes={SQUARE} className='object-contain' />
+      {isBuffed === true && (
+        <span
+          className='absolute inset-0'
+          style={{
+            background: BUFF[side ?? WHITE],
+            clipPath: 'polygon(50% 0, 100% 50%, 50% 100%, 0 50%)'
+          }}
+        />
+      )}
+      <Image
+        src={`/${side ?? WHITE}/${name}.png`}
+        alt={name}
+        fill
+        sizes={SQUARE}
+        className='object-contain'
+      />
     </div>
   )
 }
-function Mover({ square, name }: { square: string; name: string }) {
+function Mover(figure: {
+  square: string
+  name: string
+  side?: Side | undefined
+  isBuffed?: boolean | undefined
+}) {
   return (
     <>
-      <Fill square={square} background={SELECTED} />
-      <Piece square={square} name={name} />
+      <Fill square={figure.square} background={SELECTED} />
+      <Piece {...figure} />
     </>
   )
 }
@@ -83,8 +116,8 @@ export function Diagram({
   moves,
   captures
 }: {
-  piece?: { square: string; name: string }
-  pieces?: { square: string; name: string }[]
+  piece?: { square: string; name: string; side?: Side; isBuffed?: boolean }
+  pieces?: { square: string; name: string; side?: Side; isBuffed?: boolean }[]
   moves?: string[]
   captures?: string[]
 }) {
@@ -115,10 +148,10 @@ export function Diagram({
           {captures?.map(square => (
             <Fill key={square} square={square} background={DEST_CAPTURE} />
           ))}
-          {pieces?.map(({ square, name }) => (
-            <Piece key={square} square={square} name={name} />
+          {pieces?.map(figure => (
+            <Piece key={figure.square} {...figure} />
           ))}
-          {piece !== undefined && <Mover square={piece.square} name={piece.name} />}
+          {piece !== undefined && <Mover {...piece} />}
         </div>
         <div />
         <Files />

@@ -1,12 +1,16 @@
 import Image from 'next/image'
 import { WHITE } from '@/constants/player'
-import { HERALD } from '@/constants/piece'
+import { HERALD, MARSHAL } from '@/constants/piece'
 import { herald } from '@/features/game/engine/moves/herald'
 import { Diagram } from '../Diagram'
 
 const PIECE = { square: 'c3', name: HERALD }
+const BUFFED = { ...PIECE, isBuffed: true }
+const PIECES = [{ square: 'f3', name: MARSHAL }]
 const targets = (isEnhanced: boolean): string[] =>
   herald(WHITE, {}, PIECE.square, isEnhanced).map(move => move.to)
+const diagonals = (isEnhanced: boolean): string[] =>
+  targets(isEnhanced).filter(square => !new Set(['b3', 'c2', 'c4', 'd3']).has(square))
 export function Herald() {
   return (
     <section>
@@ -30,7 +34,7 @@ export function Herald() {
             Diagonals with no limit, for moving and for capturing. The straight step can capture as
             well.
           </p>
-          <Diagram piece={PIECE} moves={targets(true)} captures={['b3', 'c2', 'c4', 'd3']} />
+          <Diagram piece={BUFFED} pieces={PIECES} moves={targets(true)} captures={targets(true)} />
         </div>
         <div className='rounded border border-alert/60 bg-alert/10 px-3.5 py-3'>
           <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-alert'>
@@ -40,7 +44,7 @@ export function Herald() {
             Diagonals up to six squares, for moving and for capturing. The straight step is still
             there, but it cannot capture.
           </p>
-          <Diagram piece={PIECE} moves={targets(false)} />
+          <Diagram piece={PIECE} moves={targets(false)} captures={diagonals(false)} />
         </div>
       </div>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
