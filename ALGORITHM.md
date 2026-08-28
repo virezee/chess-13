@@ -39,8 +39,9 @@ Four kinds answer that question differently:
 - A Marshal answers on its own, for check and for pin alike, because the enemy Pope is
   exempt from the support its other captures need.
 - A Mage answers at distance 1 in any of the eight directions and never further, because it
-  blasts the ring around it capturing all the pieces, unless the black Pope stands in that
-  same ring, since a blast holding both Popes is not allowed.
+  blasts the ring around it. An enhanced Mage destroys only what belongs to the other side, a
+  restricted one destroys everything standing there, so a restricted Mage answers no with the
+  black Pope in that same ring, a blast holding both Popes not being allowed.
 - An Assassin lands one square past what it takes, so it answers yes only when the square one
   further along the line, past the Pope, is empty and not defended by White. The white Marshal
   and a white Emperor still dormant are ignored there, since neither guards the square, and the
@@ -137,8 +138,9 @@ that is pinned, since no leap ever lands on a pin line.
 Ask each piece that survives for the moves its own rules allow, reading it as enhanced or
 restricted by the white Marshal's command zone at the square it starts from. A pinned piece is
 asked along the direction step 1 recorded for it and no other. A Mage blast carries a condition
-of its own: at least one black piece the blast can destroy must stand in its ring, it may not
-destroy the white Pope, and a ring holding both Popes is not allowed. A pinned Mage still blasts,
+of its own: at least one black piece the blast can destroy must stand in its ring. A restricted
+Mage destroys everything standing there, so two more hold for it, that it may not destroy the
+white Pope and that a ring holding both Popes is not allowed. A pinned Mage still blasts,
 since the blast leaves it on its square and never opens the pin line.
 
 Three moves come from the rights rather than from the piece alone.
@@ -177,9 +179,10 @@ moves are worth keeping.
 Every test here reads the board as it would be after the move, through a view that marks
 which squares are emptied and which piece stands where. Nothing is copied.
 
-- **The Pope moves.** Its destination must not be attacked, read as step 1 reads it, so a Mage
-  standing with both Popes in its ring does not attack that square. Castling covers the tiles it
-  crosses as well, so f1, e1 and d1 on the left and h1, i1 and j1 on the right.
+- **The Pope moves.** Its destination must not be attacked, read as step 1 reads it, so a
+  restricted Mage standing with both Popes in its ring does not attack that square. Castling
+  covers the tiles it crosses as well, so f1, e1 and d1 on the left and h1, i1 and j1 on the
+  right.
 - **Any other piece while in check.** After the move, the Pope must not be attacked.
 - **The Assassin captures.** Its landing square must not be attacked. The enemy Marshal and a
   dormant Emperor are ignored, since neither guards the square. A pinned enemy piece counts, in
