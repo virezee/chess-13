@@ -100,13 +100,13 @@ export const CLASSIC_PLY: Record<string, string> = Object.fromEntries(
   Object.entries(LETTER).map(([name, letter]) => [letter, CLASSIC_LETTER[name as PieceName]])
 )
 export const VALUE = {
-  pope: { restricted: Infinity, enhanced: Infinity },
-  emperor: { restricted: 15, enhanced: 15 },
-  marshal: { restricted: 12, enhanced: 12 },
-  assassin: { restricted: 7, enhanced: 9 },
-  sentinel: { restricted: 7, enhanced: 9 },
-  mage: { restricted: 4, enhanced: 8 },
-  herald: { restricted: 5, enhanced: 7 },
-  templar: { restricted: 3, enhanced: 7 },
-  legionary: { restricted: 1, enhanced: 1 }
+  pope: { enhanced: Infinity, restricted: Infinity },
+  emperor: { enhanced: 15, restricted: 15 },
+  marshal: { enhanced: 13, restricted: 13 },
+  assassin: { enhanced: 10, restricted: 7 },
+  sentinel: { enhanced: 9, restricted: 6 },
+  mage: { enhanced: 8, restricted: 5 },
+  herald: { enhanced: 7, restricted: 5 },
+  templar: { enhanced: 7, restricted: 5 },
+  legionary: { enhanced: 2, restricted: 2 }
 } as const satisfies Record<PieceName, Record<Zone, number>>

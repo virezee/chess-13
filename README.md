@@ -66,7 +66,7 @@ g7 is the centre of the board and sits 6 ranks from either back rank, so both si
 | Sentinel  | 6 tiles without capturing, unlimited when capturing, and passes through its own pieces when closing on the Marshal | 3 tiles without capturing, 6 tiles when capturing, blocked by any piece |
 | Templar   | Leaps 3 and 2, or 2 and 1                                                                                          | Leaps 3 and 2 only                                                      |
 | Herald    | Unlimited diagonal, and the 1-tile straight step can capture                                                       | Diagonal up to 6 tiles, and the 1-tile straight step cannot capture     |
-| Mage      | The blast spares its own pieces                                                                                    | The blast destroys its own pieces as well                              |
+| Mage      | The blast spares its own pieces                                                                                    | The blast destroys its own pieces as well                               |
 | Assassin  | Unlimited range                                                                                                    | Range 6, counting the landing tile                                      |
 
 The restricted version never carries an advantage of its own. The owner decides which pieces stand outside the command zone, so any benefit available out there would be claimed deliberately rather than suffered.
@@ -258,316 +258,17 @@ The Marshal carries the command zone, so its position is a decision every turn. 
 
 ## Piece values
 
-Every number below is worked out rather than assigned. The method is the one chess uses: count how many squares a piece attacks on an empty board, average that over every square it could stand on, and convert the average into points with a rate read off chess itself. Each step is written out at full precision and rounded only at the end.
-
-### The rate, read off chess
-
-Chess sets its own values against its own mobility on 8 × 8. Every mobility
-figure below is counted on an empty board, using three rules that hold for any
-n × n board:
-
-- **Straight lines:** `2n²(n − 1)`. Each of the n² squares sees n − 1 squares
-  each way along its rank, and the same along its file.
-- **Diagonals:** `2n(n − 1)(2n − 1) / 3`. A diagonal of length L carries
-  L(L − 1) ordered pairs of squares. Summing that over the diagonal lengths
-  1, 2, … n − 1, n, n − 1, … 1 and doubling for the second direction gives the
-  closed form.
-- **Leap (a, b):** `8(n − a)(n − b)`. A leaper has 8 fixed vectors, and the
-  vector (a, b) fits on the (n − a)(n − b) squares that leave room for it.
-
-| Piece  | Value | Attacks, all squares     | Average           | Value ÷ average |
-| ------ | ----- | ------------------------ | ----------------- | --------------- |
-| Pawn   | 1     | 84 = 6 × 14              | 1.75 = 84 / 48    | 0.5714          |
-| Knight | 3     | 336 = 8 × 6 × 7          | 5.25 = 336 / 64   | 0.5714          |
-| Bishop | 3     | 560 = 2 × 8 × 7 × 15 / 3 | 8.75 = 560 / 64   | 0.3429          |
-| Rook   | 5     | 896 = 2 × 64 × 7         | 14 = 896 / 64     | 0.3571          |
-| Queen  | 9     | 1456 = 896 + 560         | 22.75 = 1456 / 64 | 0.3956          |
-
-The Value column is the only thing here that is not counted. It is the
-conventional chess scale, taken as given, and the rate is calibrated against
-it. That scale is a convention rather than a measurement. Different sources set
-it differently, some rating the bishop above the knight and the statistical
-studies putting both minor pieces above 3, so the rate carries whatever
-uncertainty the convention it is read from carries.
-
-The three sliders come out at 0.3429, 0.3571 and 0.3956, which average to
-0.3652: the **rate 0.365 points per square**. They do not land on one figure.
-Bishop and rook sit close together and the queen sits 0.05 above them, so the
-rate is the midpoint of a spread rather than a value all three share.
-
-The knight sits far outside that spread, at 0.5714, and the ratio
-0.5714 / 0.3652 = 1.5647 is the **leaper premium 1.565**. It is not an error in
-the rate. A leaper keeps its whole count in a crowded position while a slider
-loses most of its own, so the same paper mobility is worth half as much again on
-a knight.
-
-The pawn is the third calibration. It attacks 1.75 squares on average, worth
-1.75 × 0.365 = 0.6391, yet it is valued at 1. The missing **0.361 is the price
-of promotion**. Its ratio reads 0.5714 as well, matching the knight exactly,
-because the conventional values put both its mobility and its value at a third
-of the knight's. The two premiums have nothing to do with each other and the
-match is arithmetic.
-
-### Mobility on this board
-
-169 squares, empty board, counting attacked squares rather than quiet steps,
-because value follows what a piece threatens. The three rules above carry over
-with n = 13. Two shapes appear here that chess has no piece for, and they need
-rules of their own:
-
-- **A range cap of r** replaces the full line with min(r, distance to the edge)
-  in each direction. A line of 13 squares sums to 57 looking one way and 114
-  looking both, and the board holds 26 such lines, 13 ranks and 13 files.
-  Diagonals have no single length, so the same cap is summed over the diagonal
-  lengths 1, 2, … 13, … 2, 1, which comes to 1118 per direction.
-- **A step of 1** is `4n(n − 1)` straight and `4(n − 1)²` diagonal, 624 and 576
-  here. The ring of 8 is the two together.
-
-Ordered from the least mobile pattern to the most:
-
-| Pattern                  | Attacks, all squares | Average              |
-| ------------------------ | -------------------- | -------------------- |
-| Diagonal forward capture | 240 = 10 × 24        | 1.8462 = 240 / 130   |
-| Straight step of 1       | 624 = 4 × 13 × 12    | 3.6923 = 624 / 169   |
-| Leap 3-2 only            | 880 = 8 × 10 × 11    | 5.2071 = 880 / 169   |
-| Ring of 8                | 1200 = 624 + 576     | 7.1006 = 1200 / 169  |
-| Leap 3-2 and 2-1         | 1936 = 880 + 1056    | 11.4556 = 1936 / 169 |
-| Diagonal, up to 6        | 2236 = 2 × 1118      | 13.2308 = 2236 / 169 |
-| Diagonal, unlimited      | 2600 = 2 × 1300      | 15.3846 = 2600 / 169 |
-| Straight, up to 6        | 2964 = 26 × 114      | 17.5385 = 2964 / 169 |
-| Straight, unlimited      | 4056 = 26 × 156      | 24 = 4056 / 169      |
-| Queen lines, up to 6     | 5200 = 2964 + 2236   | 30.7692 = 5200 / 169 |
-| Queen lines, unlimited   | 6656 = 4056 + 2600   | 39.3846 = 6656 / 169 |
-
-The diagonal forward capture follows the pawn's count on the chess board. Each
-rank carries 24 attacks, 1 from each edge file and 2 from the 11 files between
-them, and the Legionary stands on 10 of the 13 ranks, so the average is taken
-over 130 squares rather than 169.
-
-The Herald's enhanced count is 15.3846 + 3.6923 = 19.0769, its straight step being able to capture. Its restricted count is the diagonal alone, 13.2308, because that step cannot capture there. The Sentinel is read on its capture range, not its quiet range, which is why the enhanced one counts the whole line.
-
-### Rate applied
-
-The rate is 0.3652, the figure read off chess above: the average of the bishop's
-0.3429, the rook's 0.3571 and the queen's 0.3956.
-
-| Piece     | Pattern, enhanced | Average | × 0.3652 | Pattern, restricted | Average | × 0.3652 |
-| --------- | ----------------- | ------- | -------- | ------------------- | ------- | -------- |
-| Legionary | Diagonal capture  | 1.8462  | 0.6742   | same                | 1.8462  | 0.6742   |
-| Mage      | Ring of 8         | 7.1006  | 2.5931   | same                | 7.1006  | 2.5931   |
-| Templar   | Both leaps        | 11.4556 | 6.5461   | Leap 3-2            | 5.2071  | 2.9755   |
-| Herald    | Diagonal + step   | 19.0769 | 6.9669   | Diagonal to 6       | 13.2308 | 4.8319   |
-| Sentinel  | Straight unlim.   | 24.0000 | 8.7648   | Straight up to 6    | 17.5385 | 6.4051   |
-| Assassin  | Queen unlimited   | 39.3846 | 14.3833  | Queen up to 6       | 30.7692 | 11.2370  |
-| Marshal   | Queen unlimited   | 39.3846 | 14.3833  | N/A                 | N/A     | N/A      |
-| Emperor   | Queen unlimited   | 39.3846 | 14.3833  | same                | 39.3846 | 14.3833  |
-
-The Templar's two figures carry the leaper premium: 11.4556 × 0.3652 × 1.5647 = 6.5461 and 5.2071 × 0.3652 × 1.5647 = 2.9755.
-
-### The Marshal's condition
-
-The Marshal moves on queen lines, so its mobility matches the Emperor's at
-39.3846. The two separate on a rule rather than a count: the Marshal may capture
-only a piece that one of its own pieces already attacks.
-
-The rule is priced as a third term beside the two the table already carries:
-
-```
-V = A × r × c
-```
-
-`A` is attacks, the squares the piece covers. `r` is the rate, points per square.
-`c` is capture, the share of those attacks that can actually be taken. Every
-other piece on the page carries `c = 1` and so needs only the first two.
-
-The condition delays a capture more often than it cancels one. Support can be
-brought to a square, and the Marshal goes on threatening that square while it
-waits, so the opponent has to answer the threat whether or not it can be
-executed this turn. A target is lost outright only when no friendly piece
-attacks it now and none can attack it after one move. Two independent misses
-multiply:
-
-```
-c = 1 − (1 − c₀)(1 − c₁)
-```
-
-`c₀` is the chance a square is already attacked by a friendly piece, `c₁` the
-chance one can be brought to bear on it in a single move.
-
-Both come from the same count. Spread `T` attacks across 169 squares and the
-chance a given square escapes every one of them is `(1 − 1/169)ᵀ`, which is
-`e^(−λ)` with `λ = T / 169`. So `c₀ = 1 − e^(−λ₀)` and `c₁ = 1 − e^(−λ₁)`, and
-because the two misses multiply, the pair collapses into a single term:
-
-```
-c = 1 − e^(−(λ₀ + λ₁))
-```
-
-`T` for `λ₀` is the sum of the mobility figures already tabulated, taken over the
-army with the Marshal left out, since it cannot support its own capture. At the
-opening that is 178.79 across 25 pieces, the dormant Emperor counting zero, so
-`λ₀ = 1.058`. Reading `λ₁` off the squares the army can attack after one move
-rather than the squares it attacks now gives about three times that. Writing the
-army as `n` pieces, where `n` counts the pieces standing with the Marshal and
-runs from 25 down to 1:
-
-```
-c(n) = 1 − e^(−0.1693 n)
-```
-
-The factor moves through the game. It stands near 1 while the army is whole and
-falls as the army dies, which is what the rule describes: a Marshal with nothing
-left to support it captures nothing.
-
-```
-n = 25   c = 0.9855
-n = 18   c = 0.9524
-n = 13   c = 0.8892
-n =  5   c = 0.5709
-n =  1   c = 0.1557
-```
-
-The table takes one number, and for a quantity that moves that number is its
-average over the range, not its value at the midpoint. The curve is concave, so
-the two differ: the thin end pulls down harder than the full end pulls up.
-
-```
-average c over n = 1 … 25   = 0.7863
-39.3846 × 0.3652 × 0.7863   = 11.3092
-```
-
-Two estimates hold the figure up. The multiplier of three on `λ₁` is not
-counted. And the spread is treated as uniform, though attacks cluster around the
-pieces that make them and the Marshal's targets usually stand where its own
-coverage is thinnest, so `c₀` reads high.
-
-### The Assassin's landing
-
-The Assassin does not take the victim's square. It lands one tile beyond, and
-the capture exists only when that tile is on the board, empty, and unwatched by
-the enemy. Three conditions on one square, and all three have to hold.
-
-The first is geometry and can be counted on an empty board. Of the 39.3846
-squares the Assassin reaches along queen lines, 33.14 have a landing tile behind
-them, the rest running off the edge:
-
-```
-g = 33.14 / 39.3846 = 0.8414
-```
-
-The other two follow the board. Writing `n` for the size of one army, a tile is
-empty with probability `1 − 2n / 169`, and unwatched with probability `e^(−λ)`,
-the same spread that gave the Marshal its `c₀` read against the enemy army
-rather than its own:
-
-```
-p(n) = (1 − 2n / 169) · e^(−0.0423 n)
-```
-
-`p` is the chance the landing tile is usable as the board stands. As with the
-Marshal, a tile that is unusable now is not a target lost. The square can be
-cleared, the defender driven off, or the victim approached from another angle.
-The capture disappears only when the tile fails now and cannot be made to work
-next move:
-
-```
-c(n) = 1 − (1 − p)²
-```
-
-Immunity is not a fourth term. The Assassin cannot be recaptured, but that
-follows from the landing rule rather than adding to it, since any piece standing
-on an unwatched square is safe there. What the rule costs is the favourable
-trade, the capture a normal piece makes on a defended square because the
-exchange is worth it, and that cost already sits in `p`.
-
-The factor runs opposite to the Marshal's. A crowded board fills and covers
-landing tiles, an empty one frees them, so the Assassin is at its weakest in the
-opening and its strongest at the end.
-
-```
-n = 25   c = 0.4296
-n = 13   c = 0.7380
-n =  1   c = 0.9972
-```
-
-```
-average c over n = 1 … 25   = 0.7322
-39.3846 × 0.3652 × 0.8414 × 0.7322   = 8.8615
-```
-
-The restricted version runs through the same formula on its own numbers, 30.7692
-attacked squares and the `g` that goes with a range of 6.
-
-Two estimates hold the figure up, the same two as the Marshal's. The spread is
-treated as uniform. And the second chance is treated as neither better nor worse
-than the first, where in practice it is worse, because the defender of a landing
-tile belongs to the opponent and does not have to move.
-
-### The Mage's blast
-
-The Mage moves one tile like a king, and its attack is a blast rather than a
-capture. It does not move when it fires and survives its own blast, and what the
-blast takes stands in the ring of 8 around it, 7.1006 squares on average.
-
-```
-V = A × r × m
-```
-
-`m` is what one blast takes, counted in ordinary captures, an ordinary piece
-taking exactly 1.
-
-At the opening each side holds 26 pieces on 169 squares, so the ring holds
-
-```
-λ = 7.1006 × 26 / 169 = 1.0924
-```
-
-of them on average, and the same figure serves for the enemy pieces `X` and for
-its own `Y`. A blast is legal only with an enemy in the ring, so both versions
-are read on that condition:
-
-```
-enhanced     m = E[ X | X ≥ 1 ]
-restricted   m = E[ max(X − Y, 0) | X ≥ 1 ]
-```
-
-The enhanced blast leaves its own army standing and takes everything the ring
-holds. The restricted one takes the difference, and where the difference runs
-against it the blast is left unplayed.
-
-```
-enhanced     m = 1.0924 / (1 − e^(−1.0924)) = 1.6436
-restricted   m = 0.7940
-```
-
-```
-enhanced     7.1006 × 0.3652 × 1.6436 = 4.2621
-restricted   7.1006 × 0.3652 × 0.7940 = 2.0589
-```
-
-The ring is a small target. Eight tiles, and both armies spread alike, so the
-enemy holds no more of it than your own side does and the restricted margin is
-thin. That even spread is the estimate the two figures rest on, and it reads the
-restricted version low, since your own pieces stand where you put them.
-
-### The adjustments, each for a rule
-
-Mobility cannot see a condition attached to a capture, and it cannot see a capture that takes more than one piece. Four pieces carry a factor beside their mobility, each of them worked out in the sections above:
-
-| Piece                | Factor   | Where it comes from                                                                                                            |
-| -------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Marshal              | × 0.7863 | The capture share `c`, averaged over n = 1 … 25.                                                                               |
-| Assassin, enhanced   | × 0.6161 | The landing geometry `g` 0.8414 times the capture share `c` 0.7322.                                                            |
-| Assassin, restricted | × 0.5734 | The same `c`, with the `g` that goes with a range of 6: 24.0947 / 30.7692 = 0.7831.                                            |
-| Mage, enhanced       | × 1.6436 | `m`, the enemies one blast takes.                                                                                              |
-| Mage, restricted     | × 0.7940 | The same `m` with its own army destroyed alongside.                                                                            |
-| Legionary            | + 0.3609 | Promotion, the same premium chess pays its pawn, added rather than multiplied because it does not scale with what it attacks.   |
-
-Working them through: 14.3833 × 0.7863 = 11.3092. 14.3833 × 0.6161 = 8.8615 and 11.2370 × 0.5734 = 6.4433. 2.5931 × 1.6436 = 4.2621 and 2.5931 × 0.7940 = 2.0589. 0.6742 + 0.3609 = 1.0351, which stands for both Legionaries: they attack the same squares and differ only in how fast they walk.
-
-### The table
-
-Rounded up to whole points, the way chess carries its 1, 3, 5 and 9. Any fraction at all takes the figure to the point above:
+Whole points, on the scale chess reads its own pieces by:
+
+| Piece  | Value |
+| ------ | ----- |
+| Pawn   | 1     |
+| Knight | 3     |
+| Bishop | 3     |
+| Rook   | 5     |
+| Queen  | 9     |
+
+The pieces of this game against it:
 
 <table>
   <thead>
@@ -575,24 +276,22 @@ Rounded up to whole points, the way chess carries its 1, 3, 5 and 9. Any fractio
   </thead>
   <tbody>
     <tr><td>Pope</td><td colspan="2" align="center">∞</td></tr>
-    <tr><td>Emperor</td><td colspan="2" align="center">14.3833 → 15</td></tr>
-    <tr><td>Marshal</td><td colspan="2" align="center">11.3092 → 12</td></tr>
-    <tr><td>Assassin</td><td>8.8615 → 9</td><td>6.4433 → 7</td></tr>
-    <tr><td>Sentinel</td><td>8.7648 → 9</td><td>6.4051 → 7</td></tr>
-    <tr><td>Herald</td><td>6.9669 → 7</td><td>4.8319 → 5</td></tr>
-    <tr><td>Templar</td><td>6.5461 → 7</td><td>2.9755 → 3</td></tr>
-    <tr><td>Mage</td><td>4.2621 → 5</td><td>2.0589 → 3</td></tr>
-    <tr><td>Legionary</td><td>1.0351 → 2</td><td>1.0351 → 2</td></tr>
+    <tr><td>Emperor</td><td colspan="2" align="center">15</td></tr>
+    <tr><td>Marshal</td><td colspan="2" align="center">13</td></tr>
+    <tr><td>Assassin</td><td>10</td><td>7</td></tr>
+    <tr><td>Sentinel</td><td>9</td><td>6</td></tr>
+    <tr><td>Mage</td><td>8</td><td>5</td></tr>
+    <tr><td>Herald</td><td>7</td><td>5</td></tr>
+    <tr><td>Templar</td><td>7</td><td>5</td></tr>
+    <tr><td>Legionary</td><td>2</td><td>2</td></tr>
   </tbody>
 </table>
 
-The Pope carries no number at all. Losing it ends the game, so it is never traded and there is nothing to price it against, which is the reading chess gives its own king. It also stands outside the command zone, so both columns hold the same mark.
+Both tables are set by hand. Chess's own 1, 3, 5 and 9 is a convention rather than a measurement, and the figures for this game are judged against it by eye, so no calculation stands behind either column.
 
-One piece stands well clear at the top of the rest. Below it the ladder ties at 9 between the Assassin and the Sentinel, and again at 7, where the enhanced Herald and Templar meet those same two restricted, in the way the bishop and the knight tie in chess. The restricted Templar and the restricted Mage share 3, and the two Legionaries carry one figure between them, since they attack the same squares and differ only in how fast they walk.
+The Pope carries no number at all. Losing it ends the game, so it is never traded and there is nothing to price it against, which is the reading chess gives its own king. The Pope and the Emperor stand outside the command zone and the Marshal carries it wherever it goes, so those three hold one figure across both columns.
 
-Every figure carries a fraction, so every one of them takes the point above rather than the point it counted to, and what each is credited with runs from almost nothing to almost a whole point: the restricted Templar 0.0245, the enhanced Herald 0.0331, the enhanced Assassin 0.1385, the restricted Herald 0.1681, the enhanced Sentinel 0.2352, the enhanced Templar 0.4539, the restricted Assassin 0.5567, the restricted Sentinel 0.5949, the Emperor 0.6167, the Marshal 0.6908, the enhanced Mage 0.7379, the restricted Mage 0.9411, and either Legionary 0.9649. The last three are worth reading twice, since the credit is most of what those pieces hold.
-
-Two warnings apply. The rate is read off a convention rather than a measurement, and every factor rests on treating both armies as evenly spread, so each figure carries the error of both. The ties sit inside that error, which makes them an accident of arithmetic rather than a measured equality. In addition, the command zone is positional value rather than material. Like space or king safety, it is not priced into the Marshal. Capturing the Marshal is worth its 12 plus whatever the command zone was contributing at that moment.
+The command zone itself is positional value rather than material, so it is not priced into the Marshal. Capturing the Marshal is worth its 12 plus whatever the zone was contributing at that moment.
 
 ## Promotion
 
