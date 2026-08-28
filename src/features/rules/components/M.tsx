@@ -1,3 +1,23 @@
+import { FONT_SIZE, BASELINE } from '@/constants/style'
+
+function CommandSquare() {
+  return (
+    <div className='mt-4 flex select-none justify-center'>
+      <div className='h-18 w-18 rounded-[3px] bg-square-command outline outline-square-edge'>
+        <svg viewBox='0 0 100 100' className='h-full w-full opacity-70' aria-hidden>
+          <text
+            x='50'
+            y={BASELINE}
+            textAnchor='middle'
+            fontSize={FONT_SIZE}
+            className='fill-square-command-ink font-command'>
+            M
+          </text>
+        </svg>
+      </div>
+    </div>
+  )
+}
 export function M() {
   return (
     <section>
@@ -7,6 +27,7 @@ export function M() {
         you own has two versions, enhanced and restricted. Which one you get depends only on how far
         that piece is standing from your own Marshal.
       </p>
+      <CommandSquare />
       <ul className='mt-3 space-y-2 text-[15px] leading-relaxed text-ink-dim'>
         <li>
           <span className='font-semibold text-ink'>Marshal on g7.</span> Your whole army is

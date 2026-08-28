@@ -14,7 +14,9 @@ export function AppHeader() {
       <div className='mx-auto flex h-14 w-full max-w-[1600px] items-center justify-between px-5'>
         <div className='flex items-center gap-3'>
           <div className='flex items-baseline gap-2.5'>
-            <span className='font-display text-[30px] leading-none text-ink'>Chess 13: Epoch</span>
+            <span className='whitespace-nowrap font-display text-[30px] leading-none text-ink'>
+              Chess 13<span className='hidden sm:inline'>: Epoch</span>
+            </span>
             <span className='hidden text-[10px] uppercase tracking-[0.18em] text-ink-faint sm:inline'>
               Hotseat
             </span>
