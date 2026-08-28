@@ -161,7 +161,7 @@ export const threats = (
           attackers.push(attacker)
       } else if (occupant.piece === MAGE) {
         const isInRing = Math.max(Math.abs(popeSq.file - file), Math.abs(popeSq.rank - rank)) === 1
-        if (distance === 1 && !(isEnemyPope && isInRing)) attackers.push(attacker)
+        if (distance === 1 && (enhanced || !(isEnemyPope && isInRing))) attackers.push(attacker)
       } else if (isReachable(occupant, dormant, isDiagonal, rankStep, enhanced, distance))
         attackers.push(attacker)
       break

@@ -28,23 +28,20 @@ const blast = (
   const victims: string[] = []
   let hasEnemy = false
   let ownPope = false
-  let enemyPope = false
   for (const to of ring(from)) {
     const occupant = occupancy[to]
     if (!occupant) continue
     if (occupant.side !== side) {
       if (isDormant(occupant)) continue
       hasEnemy = true
-      if (occupant.piece === POPE) enemyPope = true
       victims.push(to)
       continue
     }
     if (occupant.piece === POPE) ownPope = true
-    if (isEnhanced && !isDormant(occupant)) victims.push(to)
+    if (!isEnhanced && !isDormant(occupant)) victims.push(to)
   }
   if (!hasEnemy) return []
-  if (ownPope && (isEnhanced || enemyPope)) return []
-  if (!isEnhanced) victims.push(from)
+  if (!isEnhanced && ownPope) return []
   return [{ from, to: from, captures: victims }]
 }
 export const mage = (

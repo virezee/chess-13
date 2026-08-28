@@ -91,7 +91,7 @@ const sliderCheckers = (
         break
       }
       case MAGE:
-        isAttacked = distance === 1 && !isInRing({ from: square, to: enemyPope })
+        isAttacked = distance === 1 && (enhanced || !isInRing({ from: square, to: enemyPope }))
         break
       default:
         isAttacked = isReachable(
