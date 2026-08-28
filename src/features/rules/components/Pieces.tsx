@@ -1,4 +1,6 @@
 import { Herald } from './pieces/Herald'
+import { Sentinel } from './pieces/Sentinel'
+import { Templar } from './pieces/Templar'
 
 export function Pieces() {
   return (
@@ -16,6 +18,8 @@ export function Pieces() {
         </p>
       </section>
       <Herald />
+      <Sentinel />
+      <Templar />
     </>
   )
 }

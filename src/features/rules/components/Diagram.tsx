@@ -36,19 +36,18 @@ function Fill({ square, background }: { square: string; background: string }) {
     <div className='absolute left-0 top-0' style={{ ...translate(square, false), background }} />
   )
 }
+function Piece({ square, name }: { square: string; name: string }) {
+  return (
+    <div className='absolute left-0 top-0' style={translate(square, false)}>
+      <Image src={`/white/${name}.png`} alt={name} fill sizes={SQUARE} className='object-contain' />
+    </div>
+  )
+}
 function Mover({ square, name }: { square: string; name: string }) {
   return (
     <>
       <Fill square={square} background={SELECTED} />
-      <div className='absolute left-0 top-0' style={translate(square, false)}>
-        <Image
-          src={`/white/${name}.png`}
-          alt={name}
-          fill
-          sizes={SQUARE}
-          className='object-contain'
-        />
-      </div>
+      <Piece square={square} name={name} />
     </>
   )
 }
@@ -80,10 +79,12 @@ function Ranks() {
 }
 export function Diagram({
   piece,
+  pieces,
   moves,
   captures
 }: {
   piece?: { square: string; name: string }
+  pieces?: { square: string; name: string }[]
   moves?: string[]
   captures?: string[]
 }) {
@@ -113,6 +114,9 @@ export function Diagram({
           ))}
           {captures?.map(square => (
             <Fill key={square} square={square} background={DEST_CAPTURE} />
+          ))}
+          {pieces?.map(({ square, name }) => (
+            <Piece key={square} square={square} name={name} />
           ))}
           {piece !== undefined && <Mover square={piece.square} name={piece.name} />}
         </div>
