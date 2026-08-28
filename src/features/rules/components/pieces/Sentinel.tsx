@@ -8,11 +8,11 @@ const PIECE = { square: 'a1', name: SENTINEL }
 const MARSHAL_PIECE = { square: 'd1', name: MARSHAL }
 const PIECES = [MARSHAL_PIECE]
 const ENHANCED = ['a8', 'a9', 'a10', 'a11', 'a12', 'a13']
-const RESTRICTED = ['a5', 'a6', 'a7']
+const RESTRICTED = ['a5', 'a6', 'a7', 'e1', 'f1', 'g1']
 const targets = (isEnhanced: boolean): string[] =>
   sentinel(
     WHITE,
-    { [MARSHAL_PIECE.square]: { side: WHITE, piece: MARSHAL } },
+    isEnhanced ? { [MARSHAL_PIECE.square]: { side: WHITE, piece: MARSHAL } } : {},
     PIECE.square,
     MARSHAL_PIECE.square,
     isEnhanced
@@ -50,7 +50,7 @@ export function Sentinel() {
             Up to three squares on a quiet move, up to six on a move that captures. Any piece blocks
             it, yours or theirs.
           </p>
-          <Diagram piece={PIECE} pieces={PIECES} moves={targets(false)} captures={RESTRICTED} />
+          <Diagram piece={PIECE} moves={targets(false)} captures={RESTRICTED} />
         </div>
       </div>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
