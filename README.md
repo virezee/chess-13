@@ -291,7 +291,7 @@ Both tables are set by hand. Chess's own 1, 3, 5 and 9 is a convention rather th
 
 The Pope carries no number at all. Losing it ends the game, so it is never traded and there is nothing to price it against, which is the reading chess gives its own king. The Pope and the Emperor stand outside the command zone and the Marshal carries it wherever it goes, so those three hold one figure across both columns.
 
-The command zone itself is positional value rather than material, so it is not priced into the Marshal. Capturing the Marshal is worth its 12 plus whatever the zone was contributing at that moment.
+The command zone itself is positional value rather than material, so it is not priced into the Marshal. Capturing the Marshal is worth its 13 plus whatever the zone was contributing at that moment.
 
 ## Promotion
 

@@ -8,8 +8,9 @@ import { typography } from '@/styles/typography'
 import '@/styles/globals.css'
 
 export const metadata: Metadata = {
-  title: 'Chess 13 (Chess II: Epoch)',
-  description: 'A 13 × 13 chess variant.'
+  title: { default: 'Play Chess 13: Epoch', template: '%s | Chess 13: Epoch' },
+  description:
+    'A free chess game on a 13 × 13 board with new pieces and one commander. Two players, one screen, no install.'
 }
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (

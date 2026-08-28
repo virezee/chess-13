@@ -1,33 +1,14 @@
 'use client'
 
-import type { Move, Save, Position } from '@/types/game'
+import type { Move, Save } from '@/types/game'
 import { useState, useMemo, useEffect } from 'react'
 import { canSwap } from '@/features/game/engine/apply'
 import { opening, turn } from '@/features/game/engine/turn'
 import { readSave, writeSave, clearSave } from '@/features/game/lib/save'
 import { Board } from '@/features/game/components/Board'
 import { Panel } from '@/features/game/components/Panel'
+import { takeResign, takeNewGame } from '@/lib/action'
 
-const takeResign = (
-  save: Save,
-  setSave: (save: Save) => void,
-  setPromotions: (moves: Move[]) => void,
-  position: Position
-): void => {
-  setSave({ ...save, match: { ...save.match, resigned: position.side } })
-  setPromotions([])
-  clearSave()
-}
-const takeNewGame = (
-  setSave: (save: Save) => void,
-  setPromotions: (moves: Move[]) => void,
-  setKey: (next: (round: number) => number) => void
-): void => {
-  setSave(opening())
-  setPromotions([])
-  setKey(round => round + 1)
-  clearSave()
-}
 export default function Home() {
   const [load, setLoad] = useState(false)
   const [save, setSave] = useState<Save>(opening)

@@ -1,4 +1,4 @@
-import { UnifrakturMaguntia, Archivo, Tinos, Cinzel } from 'next/font/google'
+import { UnifrakturMaguntia, Archivo, Tinos, Cinzel, EB_Garamond } from 'next/font/google'
 import localFont from 'next/font/local'
 
 const cloisterBlack = localFont({
@@ -25,10 +25,16 @@ const cinzel = Cinzel({
   subsets: ['latin'],
   weight: '500'
 })
+const ebGaramond = EB_Garamond({
+  variable: '--font-eb-garamond',
+  subsets: ['latin'],
+  weight: ['400', '500', '600']
+})
 export const typography = [
   cloisterBlack.variable,
   unifrakturMaguntia.variable,
   archivo.variable,
   tinos.variable,
-  cinzel.variable
+  cinzel.variable,
+  ebGaramond.variable
 ].join(' ')

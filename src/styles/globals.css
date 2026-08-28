@@ -96,6 +96,7 @@
   --font-mono: var(--font-unifraktur-maguntia);
   --font-notation: var(--font-tinos);
   --font-command: var(--font-cinzel);
+  --font-reading: var(--font-eb-garamond);
   --font-display: var(--font-cloister-black);
 }
 @layer base {
