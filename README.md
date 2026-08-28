@@ -364,6 +364,192 @@ The rate is 0.3652, the figure read off chess above: the average of the bishop's
 
 The Templar's two figures carry the leaper premium: 11.4556 × 0.3652 × 1.5647 = 6.5461 and 5.2071 × 0.3652 × 1.5647 = 2.9755.
 
+### The Marshal's condition
+
+The Marshal moves on queen lines, so its mobility matches the Emperor's at
+39.3846. The two separate on a rule rather than a count: the Marshal may capture
+only a piece that one of its own pieces already attacks.
+
+The rule is priced as a third term beside the two the table already carries:
+
+```
+V = A × r × c
+```
+
+`A` is attacks, the squares the piece covers. `r` is the rate, points per square.
+`c` is capture, the share of those attacks that can actually be taken. Every
+other piece on the page carries `c = 1` and so needs only the first two.
+
+The condition delays a capture more often than it cancels one. Support can be
+brought to a square, and the Marshal goes on threatening that square while it
+waits, so the opponent has to answer the threat whether or not it can be
+executed this turn. A target is lost outright only when no friendly piece
+attacks it now and none can attack it after one move. Two independent misses
+multiply:
+
+```
+c = 1 − (1 − c₀)(1 − c₁)
+```
+
+`c₀` is the chance a square is already attacked by a friendly piece, `c₁` the
+chance one can be brought to bear on it in a single move.
+
+Both come from the same count. Spread `T` attacks across 169 squares and the
+chance a given square escapes every one of them is `(1 − 1/169)ᵀ`, which is
+`e^(−λ)` with `λ = T / 169`. So `c₀ = 1 − e^(−λ₀)` and `c₁ = 1 − e^(−λ₁)`, and
+because the two misses multiply, the pair collapses into a single term:
+
+```
+c = 1 − e^(−(λ₀ + λ₁))
+```
+
+`T` for `λ₀` is the sum of the mobility figures already tabulated, taken over the
+army with the Marshal left out, since it cannot support its own capture. At the
+opening that is 178.79 across 25 pieces, the dormant Emperor counting zero, so
+`λ₀ = 1.058`. Reading `λ₁` off the squares the army can attack after one move
+rather than the squares it attacks now gives about three times that. Writing the
+army as `n` pieces, where `n` counts the pieces standing with the Marshal and
+runs from 25 down to 1:
+
+```
+c(n) = 1 − e^(−0.1693 n)
+```
+
+The factor moves through the game. It stands near 1 while the army is whole and
+falls as the army dies, which is what the rule describes: a Marshal with nothing
+left to support it captures nothing.
+
+```
+n = 25   c = 0.9855
+n = 18   c = 0.9524
+n = 13   c = 0.8892
+n =  5   c = 0.5709
+n =  1   c = 0.1557
+```
+
+The table takes one number, and for a quantity that moves that number is its
+average over the range, not its value at the midpoint. The curve is concave, so
+the two differ: the thin end pulls down harder than the full end pulls up.
+
+```
+average c over n = 1 … 25   = 0.7863
+39.3846 × 0.3652 × 0.7863   = 11.3092   →  11
+```
+
+Two estimates hold the figure up. The multiplier of three on `λ₁` is not
+counted. And the spread is treated as uniform, though attacks cluster around the
+pieces that make them and the Marshal's targets usually stand where its own
+coverage is thinnest, so `c₀` reads high.
+
+### The Assassin's landing
+
+The Assassin does not take the victim's square. It lands one tile beyond, and
+the capture exists only when that tile is on the board, empty, and unwatched by
+the enemy. Three conditions on one square, and all three have to hold.
+
+The first is geometry and can be counted on an empty board. Of the 39.3846
+squares the Assassin reaches along queen lines, 33.14 have a landing tile behind
+them, the rest running off the edge:
+
+```
+g = 33.14 / 39.3846 = 0.8414
+```
+
+The other two follow the board. Writing `n` for the size of one army, a tile is
+empty with probability `1 − 2n / 169`, and unwatched with probability `e^(−λ)`,
+the same spread that gave the Marshal its `c₀` read against the enemy army
+rather than its own:
+
+```
+p(n) = (1 − 2n / 169) · e^(−0.0423 n)
+```
+
+`p` is the chance the landing tile is usable as the board stands. As with the
+Marshal, a tile that is unusable now is not a target lost. The square can be
+cleared, the defender driven off, or the victim approached from another angle.
+The capture disappears only when the tile fails now and cannot be made to work
+next move:
+
+```
+c(n) = 1 − (1 − p)²
+```
+
+Immunity is not a fourth term. The Assassin cannot be recaptured, but that
+follows from the landing rule rather than adding to it, since any piece standing
+on an unwatched square is safe there. What the rule costs is the favourable
+trade, the capture a normal piece makes on a defended square because the
+exchange is worth it, and that cost already sits in `p`.
+
+The factor runs opposite to the Marshal's. A crowded board fills and covers
+landing tiles, an empty one frees them, so the Assassin is at its weakest in the
+opening and its strongest at the end.
+
+```
+n = 25   c = 0.4296
+n = 13   c = 0.7380
+n =  1   c = 0.9972
+```
+
+```
+average c over n = 1 … 25   = 0.7322
+39.3846 × 0.3652 × 0.8414 × 0.7322   = 8.86   →  9
+```
+
+The restricted version runs through the same formula on its own numbers, 30.7692
+attacked squares and the `g` that goes with a range of 6.
+
+Two estimates hold the figure up, the same two as the Marshal's. The spread is
+treated as uniform. And the second chance is treated as neither better nor worse
+than the first, where in practice it is worse, because the defender of a landing
+tile belongs to the opponent and does not have to move.
+
+### The Mage's blast
+
+The Mage moves one tile like a king, and its attack is a blast rather than a
+capture. It fires at one of eight target points, each two tiles away along a
+queen line, and everything standing in the 3 × 3 block on that point is
+destroyed. The Mage does not move when it fires.
+
+Two things separate it from every other piece on the page. It clears a whole
+block at once instead of taking one piece, and it picks which block. Both have
+to be priced, and the second matters more than the first.
+
+The block averages 8.10 squares across the board, the edges cutting the rest
+away. At the opening, 26 enemy pieces on 169 squares, a block holds
+
+```
+λ = 8.10 × 26 / 169 = 1.246
+```
+
+enemy pieces on average. That figure alone would make the blast barely better
+than an ordinary capture. What lifts it is the choice of target:
+
+```
+V = A × r × m
+
+enhanced     m = E[ max (Xₖ) ]           k = 1 … 8
+restricted   m = E[ max (Xₖ − Yₖ) ]      k = 1 … 8
+```
+
+`Xₖ` is the number of enemy pieces in block `k` and `Yₖ` the number of its own.
+The enhanced blast spares nothing of the enemy and nothing of its own army is at
+risk, so it takes the block holding the most enemies. The restricted blast kills
+friend and foe alike, so it takes the block with the widest margin between them.
+
+```
+enhanced     m ≈ 2.85    8.10 × 0.3652 × 2.85 = 8.43   →  8
+restricted   m ≈ 2.25    8.10 × 0.3652 × 2.25 = 6.65   →  7
+```
+
+The gap between the two versions is narrow because aiming rescues the restricted
+blast. Friendly fire is rarely forced when eight blocks are on offer, so the
+penalty is one block's worth of margin rather than the loss it would be with a
+single fixed ring.
+
+Both figures for `m` are estimates. The eight blocks overlap, so they are not
+eight independent draws, and the exact value needs enumeration rather than a
+closed form.
+
 ### Four adjustments, each for a rule
 
 Mobility cannot see a condition attached to a capture, and it cannot see a capture that takes more than one piece. Four pieces need a factor, and the factor is stated rather than hidden:
