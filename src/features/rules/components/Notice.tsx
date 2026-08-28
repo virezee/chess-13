@@ -17,9 +17,9 @@ export function Notice() {
         something you have to decode.
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        If you already play, take it slowly anyway. There is a lot here. Read the command zone part
-        twice, because everything after it depends on it. And do not try to hold all of it at once.
-        Most people come back to this page during their first few games, and that is normal.
+        If you already play, take it slowly anyway. There is a lot here. Read the command square
+        part twice, because everything after it depends on it. And do not try to hold all of it at
+        once. Most people come back to this page during their first few games, and that is normal.
       </p>
     </section>
   )

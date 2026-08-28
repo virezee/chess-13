@@ -3,6 +3,7 @@ import { Intro } from '@/features/rules/components/Intro'
 import { Notice } from '@/features/rules/components/Notice'
 import { Board } from '@/features/rules/components/Board'
 import { M } from '@/features/rules/components/M'
+import { Pieces } from '@/features/rules/components/Pieces'
 
 export const metadata: Metadata = {
   title: 'Rules'
@@ -14,6 +15,7 @@ export default function Rules() {
       <Notice />
       <Board />
       <M />
+      <Pieces />
     </main>
   )
 }

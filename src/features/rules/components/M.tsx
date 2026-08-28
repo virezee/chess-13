@@ -21,7 +21,7 @@ function CommandSquare() {
 export function M() {
   return (
     <section>
-      <h2 className='font-reading text-[22px] leading-none text-ink'>The Command Zone</h2>
+      <h2 className='font-reading text-[22px] leading-none text-ink'>The Command Square</h2>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         This is the one rule that has nothing like it in chess, so read it carefully. Every piece
         you own has two versions, enhanced and restricted. Which one you get depends only on how far

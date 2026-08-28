@@ -15,7 +15,7 @@ export function Intro() {
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         Everything you need is on this page, in the order you need it. First the board, then the
-        command zone, then each piece on its own, then promotion, then the ways a game ends.
+        command square, then each piece on its own, then promotion, then the ways a game ends.
       </p>
     </header>
   )
