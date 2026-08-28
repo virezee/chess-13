@@ -66,10 +66,10 @@ g7 is the centre of the board and sits 6 ranks from either back rank, so both si
 | Sentinel  | 6 tiles without capturing, unlimited when capturing, and passes through its own pieces when closing on the Marshal | 3 tiles without capturing, 6 tiles when capturing, blocked by any piece |
 | Templar   | Leaps 3 and 2, or 2 and 1                                                                                          | Leaps 3 and 2 only                                                      |
 | Herald    | Unlimited diagonal, and the 1-tile straight step can capture                                                       | Diagonal up to 6 tiles, and the 1-tile straight step cannot capture     |
-| Mage      | The blast destroys its own pieces as well, and the Mage survives it                                                | The blast spares its own pieces, and the Mage dies with it              |
+| Mage      | The blast spares its own pieces                                                                                    | The blast destroys its own pieces as well                              |
 | Assassin  | Unlimited range                                                                                                    | Range 6, counting the landing tile                                      |
 
-The restricted version never carries an advantage of its own. The owner decides which pieces stand outside the command zone, so any benefit available out there would be claimed deliberately rather than suffered. The Mage is the only exception, because its restricted blast spares its own pieces. It pays for that with its life, and a blast that can be repeated every turn is worth more than a blast that can be used once. Its friendly fire is avoidable in any case, by keeping your own pieces off the surrounding tiles.
+The restricted version never carries an advantage of its own. The owner decides which pieces stand outside the command zone, so any benefit available out there would be claimed deliberately rather than suffered.
 
 ## Piece moves
 
@@ -120,7 +120,7 @@ The restricted Templar is deliberately not a chess knight. A 3-and-2 leap belong
 
 Both leaps change square colour on every jump, so neither confines the Templar to one colour of square. A 3-and-1 leap would, which is why it is not used.
 
-Averaged over the whole board the restricted Templar reaches 5.2 squares and the enhanced one 11.5, against 13.2 and 19.1 for the Herald. A leaper keeps its full count in a crowded position while a slider loses most of its own, so the gap on paper is wider than the gap in play. This is the relationship the knight and the bishop have in chess, where mobility differs by 40 per cent and value by 8.
+Averaged over the whole board the restricted Templar reaches 5.2 squares and the enhanced one 11.5, against 13.2 and 19.1 for the Herald. A leaper keeps its full count in a crowded position while a slider loses most of its own, so the gap on paper is wider than the gap in play. This is the relationship the knight and the bishop have in chess, where mobility differs by 40 per cent and the conventional value not at all.
 
 ### Herald (H)
 
@@ -140,15 +140,15 @@ Moves like a king: 1 tile in any of the 8 directions.
 Its attack is a blast rather than a normal capture.
 
 - A turn is either a move or a blast, never both.
-- When it blasts, the Mage does not move. Everything on the 8 surrounding tiles is destroyed. From b2 that covers a1, a2, a3, b3, c3, c2, c1 and b1.
-- **Enhanced.** The blast destroys everything in the ring, including its own pieces, and the Mage survives. It may blast every turn.
-- **Restricted.** Its own pieces are spared, but the Mage dies with the blast.
+- When it blasts, the Mage does not move and survives its own blast. It may blast every turn. The ring is the 8 surrounding tiles. From b2 that covers a1, a2, a3, b3, c3, c2, c1 and b1.
+- **Enhanced.** Only the enemy pieces in the ring are destroyed.
+- **Restricted.** Its own pieces are destroyed with them.
 
 Conditions for a legal blast:
 
-- **At least one enemy piece must stand in the ring.** An empty ring is not allowed, because that amounts to a skipped turn. A ring holding only friendly pieces is not allowed either, because that is damage for no gain.
-- A blast that would destroy your own Pope is not allowed.
-- A Mage standing next to the enemy Pope **already gives check**, because its next turn blasts. If both Popes stand in the ring, the blast is not allowed, so there is no check and no real threat.
+- **At least one enemy piece must stand in the ring.** An empty ring is not allowed, because that amounts to a skipped turn, and a ring holding only friendly pieces is not allowed for the same reason.
+- A restricted blast that would destroy your own Pope is not allowed. An enhanced blast never touches it.
+- A Mage standing next to the enemy Pope **already gives check**, because its next turn blasts. With both Popes in the ring a restricted Mage cannot blast, so there is no check. An enhanced Mage spares its own Pope, and the check stands.
 - **A dormant Emperor survives the blast**, whether it belongs to the Mage's own side or to the opponent. It stays on its square and the blast passes around it. A sleeping enemy Emperor therefore does not satisfy the condition above, because a ring holding nothing else is a ring the blast cannot touch.
 - **Blasts do not chain.** A Mage that dies, whether to another blast or to an ordinary capture, does not explode.
 
@@ -161,7 +161,7 @@ The Assassin does not occupy the victim's square. It slides up to the victim and
 A capture is allowed only when the landing tile is:
 
 - **empty.** Any piece standing there blocks the capture, friendly or enemy.
-- **not watched by the enemy.** If the enemy could capture the Assassin on that tile, the capture is unavailable even though the tile is empty.
+- **not watched by the enemy.** If the enemy attacks that tile, the capture is unavailable even though the tile is empty.
 
 Both conditions apply to the enhanced and restricted versions alike.
 
@@ -242,7 +242,7 @@ Moves like a queen. Its captures are conditional. It may capture only a piece th
 - **The riposte.** Answering a capture in its own lines is exempt. The trigger is _where_ the opponent captured, not which piece died. If the opponent's last move captured one of your pieces **on a square that lies on one of the Marshal's eight lines, with a clear path from the Marshal to that square**, then for that one turn the Marshal may capture any enemy piece standing on its lines, with no support required. If the capture happened off its lines, nothing changes and the support rule applies as usual. The right expires if it is not used on your immediate reply.
   - The square that counts is the one your captured piece was standing on, not the square the capturing piece ended on. The two differ for an Assassin, which lands one tile beyond, for a Mage blast, where the Mage never moves, and for en passant, where the capturing Legionary ends up one rank short of its victim.
   - The line is judged at the moment your piece died, on the board the opponent's move produced. Whether the opponent closes it again afterwards does not matter, because the reply comes immediately.
-  - **The killer has to be an enemy piece.** Your own enhanced Mage destroying your own pieces, and your own restricted Mage dying on its own square, do not arm the riposte. Without that condition a Legionary fed to your own blast would buy a free capture.
+  - **The killer has to be an enemy piece.** Your own restricted Mage destroying your own pieces does not arm the riposte. Without that condition a Legionary fed to your own blast would buy a free capture.
   - One enemy move arms one riposte, including a blast that kills several of your pieces at once, because the Marshal moves only once.
 
 Worked example. The Marshal stands on d4. The opponent's Herald captures your Legionary on d8 and now occupies that square. An enemy Sentinel sits on g4 and has done nothing.
@@ -433,7 +433,7 @@ the two differ: the thin end pulls down harder than the full end pulls up.
 
 ```
 average c over n = 1 … 25   = 0.7863
-39.3846 × 0.3652 × 0.7863   = 11.3092   →  11
+39.3846 × 0.3652 × 0.7863   = 11.3092
 ```
 
 Two estimates hold the figure up. The multiplier of three on `λ₁` is not
@@ -492,7 +492,7 @@ n =  1   c = 0.9972
 
 ```
 average c over n = 1 … 25   = 0.7322
-39.3846 × 0.3652 × 0.8414 × 0.7322   = 8.86   →  9
+39.3846 × 0.3652 × 0.8414 × 0.7322   = 8.8615
 ```
 
 The restricted version runs through the same formula on its own numbers, 30.7692
@@ -506,67 +506,68 @@ tile belongs to the opponent and does not have to move.
 ### The Mage's blast
 
 The Mage moves one tile like a king, and its attack is a blast rather than a
-capture. It fires at one of eight target points, each two tiles away along a
-queen line, and everything standing in the 3 × 3 block on that point is
-destroyed. The Mage does not move when it fires.
-
-Two things separate it from every other piece on the page. It clears a whole
-block at once instead of taking one piece, and it picks which block. Both have
-to be priced, and the second matters more than the first.
-
-The block averages 8.10 squares across the board, the edges cutting the rest
-away. At the opening, 26 enemy pieces on 169 squares, a block holds
-
-```
-λ = 8.10 × 26 / 169 = 1.246
-```
-
-enemy pieces on average. That figure alone would make the blast barely better
-than an ordinary capture. What lifts it is the choice of target:
+capture. It does not move when it fires and survives its own blast, and what the
+blast takes stands in the ring of 8 around it, 7.1006 squares on average.
 
 ```
 V = A × r × m
-
-enhanced     m = E[ max (Xₖ) ]           k = 1 … 8
-restricted   m = E[ max (Xₖ − Yₖ) ]      k = 1 … 8
 ```
 
-`Xₖ` is the number of enemy pieces in block `k` and `Yₖ` the number of its own.
-The enhanced blast spares nothing of the enemy and nothing of its own army is at
-risk, so it takes the block holding the most enemies. The restricted blast kills
-friend and foe alike, so it takes the block with the widest margin between them.
+`m` is what one blast takes, counted in ordinary captures, an ordinary piece
+taking exactly 1.
+
+At the opening each side holds 26 pieces on 169 squares, so the ring holds
 
 ```
-enhanced     m ≈ 2.85    8.10 × 0.3652 × 2.85 = 8.43   →  8
-restricted   m ≈ 2.25    8.10 × 0.3652 × 2.25 = 6.65   →  7
+λ = 7.1006 × 26 / 169 = 1.0924
 ```
 
-The gap between the two versions is narrow because aiming rescues the restricted
-blast. Friendly fire is rarely forced when eight blocks are on offer, so the
-penalty is one block's worth of margin rather than the loss it would be with a
-single fixed ring.
+of them on average, and the same figure serves for the enemy pieces `X` and for
+its own `Y`. A blast is legal only with an enemy in the ring, so both versions
+are read on that condition:
 
-Both figures for `m` are estimates. The eight blocks overlap, so they are not
-eight independent draws, and the exact value needs enumeration rather than a
-closed form.
+```
+enhanced     m = E[ X | X ≥ 1 ]
+restricted   m = E[ max(X − Y, 0) | X ≥ 1 ]
+```
 
-### Four adjustments, each for a rule
+The enhanced blast leaves its own army standing and takes everything the ring
+holds. The restricted one takes the difference, and where the difference runs
+against it the blast is left unplayed.
 
-Mobility cannot see a condition attached to a capture, and it cannot see a capture that takes more than one piece. Four pieces need a factor, and the factor is stated rather than hidden:
+```
+enhanced     m = 1.0924 / (1 − e^(−1.0924)) = 1.6436
+restricted   m = 0.7940
+```
 
-| Piece            | Factor | Why                                                                                                                                                       |
-| ---------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Marshal          | × 0.78 | It holds every queen line for moving but may only capture what its own army already attacks, so a large part of what it reaches it cannot take.           |
-| Assassin         | × 0.61 | The landing tile must be empty and unwatched, which strikes out most of what it attacks. What holds it as high as it is, is that it cannot be recaptured. |
-| Mage, enhanced   | × 3.00 | Its ring is only 7.1006 squares, but a blast destroys everything standing in it at once. Mobility prices one capture per turn, and this is up to eight.   |
-| Mage, restricted | × 1.50 | The same blast used once. The Mage dies with it, so the ring is worth half again rather than three times.                                                 |
-| Legionary        | + 0.34 | Promotion, the same premium chess pays its pawn, added rather than multiplied because it does not scale with what the piece attacks.                      |
+```
+enhanced     7.1006 × 0.3652 × 1.6436 = 4.2621
+restricted   7.1006 × 0.3652 × 0.7940 = 2.0589
+```
 
-Working them through: 14.7692 × 0.78 = 11.5200. 14.7692 × 0.61 = 9.0092 and 11.5385 × 0.61 = 7.0385. 2.6627 × 3.00 = 7.9880 and 2.6627 × 1.50 = 3.9940. 0.6923 + 0.3437 = 1.0360. The restricted Legionary attacks exactly what the enhanced one attacks and differs only in how fast it walks, so it takes a notch of its own to 0.9.
+The ring is a small target. Eight tiles, and both armies spread alike, so the
+enemy holds no more of it than your own side does and the restricted margin is
+thin. That even spread is the estimate the two figures rest on, and it reads the
+restricted version low, since your own pieces stand where you put them.
+
+### The adjustments, each for a rule
+
+Mobility cannot see a condition attached to a capture, and it cannot see a capture that takes more than one piece. Four pieces carry a factor beside their mobility, each of them worked out in the sections above:
+
+| Piece                | Factor   | Where it comes from                                                                                                            |
+| -------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Marshal              | × 0.7863 | The capture share `c`, averaged over n = 1 … 25.                                                                               |
+| Assassin, enhanced   | × 0.6161 | The landing geometry `g` 0.8414 times the capture share `c` 0.7322.                                                            |
+| Assassin, restricted | × 0.5734 | The same `c`, with the `g` that goes with a range of 6: 24.0947 / 30.7692 = 0.7831.                                            |
+| Mage, enhanced       | × 1.6436 | `m`, the enemies one blast takes.                                                                                              |
+| Mage, restricted     | × 0.7940 | The same `m` with its own army destroyed alongside.                                                                            |
+| Legionary            | + 0.3609 | Promotion, the same premium chess pays its pawn, added rather than multiplied because it does not scale with what it attacks.   |
+
+Working them through: 14.3833 × 0.7863 = 11.3092. 14.3833 × 0.6161 = 8.8615 and 11.2370 × 0.5734 = 6.4433. 2.5931 × 1.6436 = 4.2621 and 2.5931 × 0.7940 = 2.0589. 0.6742 + 0.3609 = 1.0351, which stands for both Legionaries: they attack the same squares and differ only in how fast they walk.
 
 ### The table
 
-Rounded to whole points, half up, the way chess carries its 1, 3, 5 and 9:
+Rounded up to whole points, the way chess carries its 1, 3, 5 and 9. Any fraction at all takes the figure to the point above:
 
 <table>
   <thead>
@@ -574,24 +575,24 @@ Rounded to whole points, half up, the way chess carries its 1, 3, 5 and 9:
   </thead>
   <tbody>
     <tr><td>Pope</td><td colspan="2" align="center">∞</td></tr>
-    <tr><td>Emperor</td><td colspan="2" align="center">14.7692 → 15</td></tr>
-    <tr><td>Marshal</td><td colspan="2" align="center">11.5200 → 12</td></tr>
-    <tr><td>Assassin</td><td>9.0092 → 9</td><td>7.0385 → 7</td></tr>
-    <tr><td>Sentinel</td><td>9.0000 → 9</td><td>6.5769 → 7</td></tr>
-    <tr><td>Mage</td><td>7.9880 → 8</td><td>3.9940 → 4</td></tr>
-    <tr><td>Herald</td><td>7.1538 → 7</td><td>4.9615 → 5</td></tr>
-    <tr><td>Templar</td><td>6.5297 → 7</td><td>2.9681 → 3</td></tr>
-    <tr><td>Legionary</td><td>1.0360 → 1</td><td>0.9000 → 1</td></tr>
+    <tr><td>Emperor</td><td colspan="2" align="center">14.3833 → 15</td></tr>
+    <tr><td>Marshal</td><td colspan="2" align="center">11.3092 → 12</td></tr>
+    <tr><td>Assassin</td><td>8.8615 → 9</td><td>6.4433 → 7</td></tr>
+    <tr><td>Sentinel</td><td>8.7648 → 9</td><td>6.4051 → 7</td></tr>
+    <tr><td>Herald</td><td>6.9669 → 7</td><td>4.8319 → 5</td></tr>
+    <tr><td>Templar</td><td>6.5461 → 7</td><td>2.9755 → 3</td></tr>
+    <tr><td>Mage</td><td>4.2621 → 5</td><td>2.0589 → 3</td></tr>
+    <tr><td>Legionary</td><td>1.0351 → 2</td><td>1.0351 → 2</td></tr>
   </tbody>
 </table>
 
 The Pope carries no number at all. Losing it ends the game, so it is never traded and there is nothing to price it against, which is the reading chess gives its own king. It also stands outside the command zone, so both columns hold the same mark.
 
-One piece stands well clear at the top of the rest. Below it the ladder ties twice, at 9 between the Assassin and the Sentinel and at 7 between the Herald and the Templar, in the way the bishop and the knight tie in chess. The two Legionaries land on the same point as well: the restricted one walks slower but attacks exactly what the enhanced one attacks, and that difference sits below the resolution of whole points.
+One piece stands well clear at the top of the rest. Below it the ladder ties at 9 between the Assassin and the Sentinel, and again at 7, where the enhanced Herald and Templar meet those same two restricted, in the way the bishop and the knight tie in chess. The restricted Templar and the restricted Mage share 3, and the two Legionaries carry one figure between them, since they attack the same squares and differ only in how fast they walk.
 
-Three numbers turn on the rounding rather than on the count. The restricted Sentinel at 6.5769 and the Templar at 6.5297 both cross to 7 from just above the halfway mark, and the Marshal reaches 12 by two hundredths.
+Every figure carries a fraction, so every one of them takes the point above rather than the point it counted to, and what each is credited with runs from almost nothing to almost a whole point: the restricted Templar 0.0245, the enhanced Herald 0.0331, the enhanced Assassin 0.1385, the restricted Herald 0.1681, the enhanced Sentinel 0.2352, the enhanced Templar 0.4539, the restricted Assassin 0.5567, the restricted Sentinel 0.5949, the Emperor 0.6167, the Marshal 0.6908, the enhanced Mage 0.7379, the restricted Mage 0.9411, and either Legionary 0.9649. The last three are worth reading twice, since the credit is most of what those pieces hold.
 
-Two warnings apply. The rate is read off chess and the adjustments are judgments, so the error on each number is roughly ±1.5, wider than any tie in the table, which makes those ties an accident of arithmetic rather than a measured equality. In addition, the command zone is positional value rather than material. Like space or king safety, it is not priced into the Marshal. Capturing the Marshal is worth its 12 plus whatever the command zone was contributing at that moment.
+Two warnings apply. The rate is read off a convention rather than a measurement, and every factor rests on treating both armies as evenly spread, so each figure carries the error of both. The ties sit inside that error, which makes them an accident of arithmetic rather than a measured equality. In addition, the command zone is positional value rather than material. Like space or king safety, it is not priced into the Marshal. Capturing the Marshal is worth its 12 plus whatever the command zone was contributing at that moment.
 
 ## Promotion
 
