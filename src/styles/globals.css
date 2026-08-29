@@ -100,6 +100,28 @@
   --font-display: var(--font-cloister-black);
 }
 @layer base {
+  html::-webkit-scrollbar {
+    width: 16px;
+  }
+  html::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  html::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 8px;
+    border: 5px solid transparent;
+    background-clip: content-box;
+  }
+  html::-webkit-scrollbar-thumb:hover {
+    background: var(--ink-faint);
+    background-clip: content-box;
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-strong) transparent;
+    }
+  }
   body {
     background-color: var(--bg);
     background-image: radial-gradient(110% 80% at 50% -10%,

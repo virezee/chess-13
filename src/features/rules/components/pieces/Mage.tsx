@@ -20,12 +20,8 @@ function Blast() {
         neither is a ring holding only your own pieces, because either one would be a wasted turn.
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        A restricted blast that would destroy your own Pope is not allowed. Standing next to the
-        enemy Pope is already check, because the blast on the next turn would take it.
-      </p>
-      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        A sleeping Emperor is left standing by any blast, yours or theirs, and a Mage that dies does
-        not explode.
+        A Mage that is taken does not explode. The blast only ever happens on its own turn, as the
+        move you choose, so taking a Mage costs nothing extra.
       </p>
     </>
   )

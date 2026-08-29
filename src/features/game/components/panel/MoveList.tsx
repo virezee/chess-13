@@ -1,4 +1,5 @@
 import type { Side } from '@/types/material'
+import { useRef, useEffect } from 'react'
 import { BLACK } from '@/constants/player'
 import { CLASSIC_PLY } from '@/constants/piece'
 import { NATIVE } from '@/constants/display'
@@ -39,6 +40,10 @@ export function MoveList({ pgn, toMove }: { pgn: string; toMove: Side }) {
   const moves = fullMoves(pgn)
   const lastIndex = moves.length - 1
   const isNative = useMode() === NATIVE
+  const tail = useRef<HTMLLIElement>(null)
+  useEffect(() => {
+    if (pgn !== '') tail.current?.scrollIntoView({ block: 'nearest' })
+  }, [pgn])
   const letters = (ply: string | null): string | null =>
     ply === null || isNative
       ? ply
@@ -58,6 +63,7 @@ export function MoveList({ pgn, toMove }: { pgn: string; toMove: Side }) {
             return (
               <li
                 key={move.number}
+                ref={isLast ? tail : null}
                 className='grid grid-cols-[2rem_1fr_1fr] items-center gap-1 rounded-xs px-1 py-0.5 hover:bg-surface-2'>
                 <span className='font-mono text-[11px] text-ink-faint'>{move.number}</span>
                 <Ply
