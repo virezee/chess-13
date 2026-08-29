@@ -3,6 +3,11 @@ import { Herald } from './pieces/Herald'
 import { Sentinel } from './pieces/Sentinel'
 import { Templar } from './pieces/Templar'
 import { Legionary } from './pieces/Legionary'
+import { Mage } from './pieces/Mage'
+// import { Assassin } from './pieces/Assassin'
+// import { Marshal } from './pieces/Marshal'
+// import { Emperor } from './pieces/Emperor'
+// import { Pope } from './pieces/Pope'
 
 function Mark({
   background,
@@ -53,6 +58,11 @@ export function Pieces() {
       <Sentinel />
       <Templar />
       <Legionary />
+      <Mage />
+      {/* <Assassin /> */}
+      {/* <Marshal /> */}
+      {/* <Emperor /> */}
+      {/* <Pope /> */}
     </>
   )
 }

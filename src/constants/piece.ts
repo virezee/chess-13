@@ -16,20 +16,24 @@ export const TEMPLAR = 'templar'
 export const LEGIONARY = 'legionary'
 export const REACH = {
   assassin: {
-    restricted: { reach: 6 },
-    enhanced: { reach: SIZE }
+    enhanced: { reach: SIZE },
+    restricted: { reach: 6 }
   },
   sentinel: {
-    restricted: { quiet: 3, capture: 6 },
-    enhanced: { quiet: 6, capture: SIZE }
+    enhanced: { quiet: 6, capture: SIZE },
+    restricted: { quiet: 3, capture: 6 }
+  },
+  mage: {
+    enhanced: { quiet: 2 },
+    restricted: { quiet: 1 }
   },
   herald: {
-    restricted: { diagonal: 6 },
-    enhanced: { diagonal: SIZE }
+    enhanced: { diagonal: SIZE },
+    restricted: { diagonal: 6 }
   },
   legionary: {
-    restricted: { quiet: 1 },
-    enhanced: { quiet: 2 }
+    enhanced: { quiet: 2 },
+    restricted: { quiet: 1 }
   }
 } as const satisfies Partial<Record<PieceName, Record<Zone, object>>>
 export const LEAP = {

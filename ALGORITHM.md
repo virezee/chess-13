@@ -53,10 +53,10 @@ Four kinds answer that question differently:
   A Pope on a corner has no square behind it, so the Assassin stops on the corner itself, and the
   square that must be undefended is the Pope's own, there being none past it to ask about.
 
-No leap is ever met by walking a line, so each Templar Black owns is tested on its own, from
-the square the piece list gives it. It answers yes when the offset from that square to the
-Pope's is 3 and 2, or 2 and 1 while that Templar is enhanced by its own Marshal's command
-zone. Skip the test when Black has no Templar left. Every Templar that answers yes is a
+A Templar's leap is never met by walking a line, so each Templar Black owns is tested on its
+own, from the square the piece list gives it. It answers yes when the offset from that square
+to the Pope's is 3 and 2, or 2 and 1 while that Templar is enhanced by its own Marshal's
+command zone. Skip the test when Black has no Templar left. Every Templar that answers yes is a
 checker, and the test never yields a pin, because nothing can stand in the way of a leap.
 
 The step produces:
@@ -106,7 +106,8 @@ An Assassin answers as it does in step 1, with the square one further along the 
 Emperor, empty and not defended by White, and the corner rule unchanged.
 
 Each Templar Black owns is tested from the square the piece list gives it, against the
-Emperor's square, by the offsets step 1 uses, since no leap is ever met by walking a line.
+Emperor's square, by the offsets step 1 uses, since a Templar's leap is never met by walking
+a line.
 
 The step changes one thing: the white Emperor's awake state.
 
@@ -133,15 +134,17 @@ Decide first which pieces are asked at all. With more than one checker only the 
 Mage and the Assassin can answer, so only those three are built, unless one of those checkers
 is an Assassin, and then every white piece is asked. Otherwise every white piece in the list
 is asked, except two that can produce nothing: a white Emperor still dormant, and a Templar
-that is pinned, since no leap ever lands on a pin line.
+that is pinned, since none of its leaps ever lands on a pin line.
 
 Ask each piece that survives for the moves its own rules allow, reading it as enhanced or
 restricted by the white Marshal's command zone at the square it starts from. A pinned piece is
-asked along the direction step 1 recorded for it and no other. A Mage blast carries a condition
-of its own: at least one black piece the blast can destroy must stand in its ring. A restricted
-Mage destroys everything standing there, so two more hold for it, that it may not destroy the
-white Pope and that a ring holding both Popes is not allowed. A pinned Mage still blasts,
-since the blast leaves it on its square and never opens the pin line.
+asked along the direction step 1 recorded for it and no other, and a pinned Mage is asked no
+further along that direction than the piece pinning it, since an enhanced one leaps and would
+otherwise land behind that piece and leave the line open. A Mage blast carries a condition of its own:
+at least one black piece the blast can destroy must stand in its ring. A restricted Mage
+destroys everything standing there, so two more hold for it, that it may not destroy the white
+Pope and that a ring holding both Popes is not allowed. A pinned Mage still blasts, since the
+blast leaves it on its square and never opens the pin line.
 
 Three moves come from the rights rather than from the piece alone.
 

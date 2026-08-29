@@ -28,9 +28,10 @@ function EnPassant() {
   return (
     <>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        En passant works here too. A Legionary attacking a square crossed by an enemy Legionary that
-        has just run the full four squares onto rank 7 may capture it as though it had stopped one
-        square short. The capture is legal only on the move immediately following that run.
+        En passant works here too, and only against one move: the advance that goes straight from a
+        Legionary&apos;s own starting rank to rank 7. A Legionary attacking a square that advance
+        crossed may capture it as though it had stopped one square short, on the move immediately
+        following. An advance that begins anywhere else gives nothing.
       </p>
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
         <div className='rounded border border-line px-3.5 py-3'>

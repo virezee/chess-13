@@ -66,7 +66,7 @@ g7 is the centre of the board and sits 6 ranks from either back rank, so both si
 | Sentinel  | 6 tiles without capturing, unlimited when capturing, and passes through its own pieces when closing on the Marshal | 3 tiles without capturing, 6 tiles when capturing, blocked by any piece |
 | Templar   | Leaps 3 and 2, or 2 and 1                                                                                          | Leaps 3 and 2 only                                                      |
 | Herald    | Unlimited diagonal, and the 1-tile straight step can capture                                                       | Diagonal up to 6 tiles, and the 1-tile straight step cannot capture     |
-| Mage      | The blast spares its own pieces                                                                                    | The blast destroys its own pieces as well                               |
+| Mage      | 1 tile, or 2 as a leap, and the blast spares its own pieces                                                        | 1 tile, and the blast destroys its own pieces as well                   |
 | Assassin  | Unlimited range                                                                                                    | Range 6, counting the landing tile                                      |
 
 The restricted version never carries an advantage of its own. The owner decides which pieces stand outside the command zone, so any benefit available out there would be claimed deliberately rather than suffered.
@@ -107,7 +107,7 @@ Once a direction qualifies it stays qualified for the whole of that direction's 
 
 ### Templar (T)
 
-The leaper of this game. It jumps to a fixed set of squares, and whatever lies in between is irrelevant: nothing on those squares is captured, and nothing on them blocks the jump.
+A leaper, and the one whose landing squares lie off its own lines. It jumps to a fixed set of squares, and whatever lies in between is irrelevant: nothing on those squares is captured, and nothing on them blocks the jump.
 
 | Version        | Leap                |
 | -------------- | ------------------- |
@@ -135,14 +135,14 @@ Unlike the Sentinel, the Herald's diagonal reach is the same whether or not it c
 
 ### Mage (G)
 
-Moves like a king: 1 tile in any of the 8 directions.
+Moves 1 tile in any of the 8 directions, and 2 tiles while enhanced. The 2-tile move is a leap, so the tile in between is irrelevant: nothing standing there blocks the move, and nothing standing there is captured.
 
 Its attack is a blast rather than a normal capture.
 
 - A turn is either a move or a blast, never both.
 - When it blasts, the Mage does not move and survives its own blast. It may blast every turn. The ring is the 8 surrounding tiles. From b2 that covers a1, a2, a3, b3, c3, c2, c1 and b1.
-- **Enhanced.** Only the enemy pieces in the ring are destroyed.
-- **Restricted.** Its own pieces are destroyed with them.
+- **Enhanced.** 1 tile, or 2 as a leap, and only the enemy pieces in the ring are destroyed.
+- **Restricted.** 1 tile, and its own pieces are destroyed with them.
 
 Conditions for a legal blast:
 
