@@ -1,5 +1,5 @@
 import { WHITE, BLACK } from '@/constants/player'
-import { MARSHAL, SENTINEL, MAGE, HERALD } from '@/constants/piece'
+import { MARSHAL, SENTINEL, MAGE, HERALD, LEGIONARY } from '@/constants/piece'
 import { BLAST } from '../constants/scene'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
@@ -44,7 +44,12 @@ function Enhanced() {
       />
       <Diagram
         subject='f7'
-        pieces={[place(WHITE, MAGE, 'f7', true), ...BLAST, place(WHITE, MARSHAL, 'g7', false)]}
+        pieces={[
+          place(WHITE, MAGE, 'f7', true),
+          ...BLAST,
+          place(WHITE, MARSHAL, 'g7', false),
+          place(WHITE, LEGIONARY, 'g8', true)
+        ]}
         moves={null}
         captures={null}
         marks={mageBlast(true)}
@@ -66,7 +71,12 @@ function Restricted() {
       />
       <Diagram
         subject='f7'
-        pieces={[place(WHITE, MAGE, 'f7', false), ...BLAST, place(WHITE, HERALD, 'f8', false)]}
+        pieces={[
+          place(WHITE, MAGE, 'f7', false),
+          ...BLAST,
+          place(WHITE, HERALD, 'f8', false),
+          place(WHITE, LEGIONARY, 'g8', false)
+        ]}
         moves={null}
         captures={null}
         marks={mageBlast(false)}
