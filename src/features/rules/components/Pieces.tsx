@@ -1,4 +1,4 @@
-import { SELECTED, DEST, DEST_CAPTURE } from '@/constants/style'
+import { SELECTED, DEST, DEST_CAPTURE, MARKS } from '@/constants/style'
 import { Herald } from './pieces/Herald'
 import { Sentinel } from './pieces/Sentinel'
 import { Templar } from './pieces/Templar'
@@ -19,15 +19,15 @@ function Mark({
   children: string
 }) {
   return (
-    <li className='flex items-center gap-3'>
-      <span className='size-9 shrink-0 select-none rounded-[3px] bg-square-dark outline outline-square-edge'>
+    <li className='flex items-center gap-3 odd:[&>span:first-child]:bg-square-light'>
+      <span className='size-7 shrink-0 select-none rounded-xs bg-square-dark outline outline-square-edge'>
         <span
-          className='flex h-full w-full items-center justify-center font-command text-[17px] text-square-command-ink'
+          className='flex h-full w-full items-center justify-center font-command text-[13px] text-square-command-ink'
           style={{ background }}>
           {letter}
         </span>
       </span>
-      <span className='text-[14px] leading-snug text-ink-dim'>{children}</span>
+      <span className='text-[13px] leading-snug text-ink-dim'>{children}</span>
     </li>
   )
 }
@@ -45,14 +45,24 @@ export function Pieces() {
           They are in order from the easiest to the hardest, so read them from the top the first
           time.
         </p>
-        <ul className='mt-3.5 grid gap-2.5 sm:grid-cols-2'>
-          <Mark background={DEST}>A green dot is a square the piece can move to.</Mark>
-          <Mark background={DEST_CAPTURE}>A red ring is a square where it can take a piece.</Mark>
-          <Mark background={SELECTED}>The green square is where the piece is standing.</Mark>
-          <Mark background='var(--square-command)' letter='M'>
-            The purple square is the command square, drawn on every board.
-          </Mark>
-        </ul>
+        <div className='mt-4 rounded border border-ink/20 bg-ink/5 px-3.5 py-3'>
+          <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+            How to read the boards
+          </p>
+          <ul className='mt-2.5 grid gap-2 sm:grid-cols-2'>
+            <Mark background={SELECTED}>The green square is where the piece is standing.</Mark>
+            <Mark background={DEST}>A green dot is a square the piece can move to.</Mark>
+            <Mark background={DEST_CAPTURE}>
+              A red ring is a square the piece can move to only when the move takes a piece.
+            </Mark>
+            <Mark background={MARKS.red}>
+              A red square is a piece caught in a blast (for Mage only).
+            </Mark>
+            <Mark background='var(--square-command)' letter='M'>
+              The purple square is the command square, drawn on every board.
+            </Mark>
+          </ul>
+        </div>
       </section>
       <Herald />
       <Sentinel />

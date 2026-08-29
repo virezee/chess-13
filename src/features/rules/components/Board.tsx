@@ -18,7 +18,7 @@ export function Board() {
         meet. The square in the middle of it, g7, is worth remembering. It is the command square,
         and the next section is about what standing there does.
       </p>
-      <Diagram piece={null} pieces={null} moves={null} captures={null} />
+      <Diagram subject={null} pieces={null} moves={null} captures={null} />
     </section>
   )
 }

@@ -1,6 +1,11 @@
-import { MAGE } from '@/constants/piece'
+import { WHITE, BLACK } from '@/constants/player'
+import { MARSHAL, SENTINEL, MAGE, HERALD } from '@/constants/piece'
+import { BLAST } from '../constants/scene'
+import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
 import { Zone } from './Zone'
+import { place } from '../../lib/occupant'
+import { mageReach, mageBlast } from '../../lib/reach'
 
 function Blast() {
   return (
@@ -25,6 +30,54 @@ function Blast() {
     </>
   )
 }
+function Enhanced() {
+  return (
+    <Zone isEnhanced>
+      <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
+        One square each move, or two as a leap, and the blast destroys enemy pieces only.
+      </p>
+      <Diagram
+        subject='f7'
+        pieces={[
+          place(WHITE, MAGE, 'f7', true),
+          place(WHITE, MARSHAL, 'g7', false),
+          place(BLACK, SENTINEL, 'e6', false)
+        ]}
+        moves={mageReach(true)}
+        captures={null}
+      />
+      <Diagram
+        subject='f7'
+        pieces={[place(WHITE, MAGE, 'f7', true), ...BLAST, place(WHITE, MARSHAL, 'g7', false)]}
+        moves={null}
+        captures={null}
+        marks={mageBlast(true)}
+      />
+    </Zone>
+  )
+}
+function Restricted() {
+  return (
+    <Zone isEnhanced={false}>
+      <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
+        One square each move, and the blast destroys your own pieces in the ring as well.
+      </p>
+      <Diagram
+        subject='f7'
+        pieces={[place(WHITE, MAGE, 'f7', false)]}
+        moves={mageReach(false)}
+        captures={null}
+      />
+      <Diagram
+        subject='f7'
+        pieces={[place(WHITE, MAGE, 'f7', false), ...BLAST, place(WHITE, HERALD, 'f8', false)]}
+        moves={null}
+        captures={null}
+        marks={mageBlast(false)}
+      />
+    </Zone>
+  )
+}
 export function Mage() {
   return (
     <section>
@@ -36,17 +89,9 @@ export function Mage() {
         is taken. The square it lands on must be empty. What is different is how it kills: a Mage
         never takes a piece by moving onto it. Instead it blasts everything standing next to it.
       </p>
-      <div className='mt-3 grid gap-2.5 sm:grid-cols-2'>
-        <Zone isEnhanced>
-          <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
-            One square each move, or two as a leap, and the blast destroys enemy pieces only.
-          </p>
-        </Zone>
-        <Zone isEnhanced={false}>
-          <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
-            One square each move, and the blast destroys your own pieces in the ring as well.
-          </p>
-        </Zone>
+      <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+        <Enhanced />
+        <Restricted />
       </div>
       <Blast />
     </section>

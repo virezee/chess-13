@@ -23,8 +23,8 @@ export function Sentinel() {
             your own pieces when it moves towards your Marshal.
           </p>
           <Diagram
-            piece={place(WHITE, SENTINEL, 'a1', true)}
-            pieces={[place(WHITE, MARSHAL, 'd1', false)]}
+            subject='a1'
+            pieces={[place(WHITE, SENTINEL, 'a1', true), place(WHITE, MARSHAL, 'd1', false)]}
             moves={sentinelReach(true)}
             captures={sentinelCapture(true)}
           />
@@ -35,8 +35,8 @@ export function Sentinel() {
             it, yours or theirs.
           </p>
           <Diagram
-            piece={place(WHITE, SENTINEL, 'a1', false)}
-            pieces={null}
+            subject='a1'
+            pieces={[place(WHITE, SENTINEL, 'a1', false)]}
             moves={sentinelReach(false)}
             captures={sentinelCapture(false)}
           />
@@ -48,7 +48,9 @@ export function Sentinel() {
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         Move it towards your Marshal and it passes through your own pieces, landing on any free
-        square after them. It never passes through theirs.
+        square after them. It never passes through theirs. Once it has passed through, an enemy
+        piece further along the line cannot be taken either: the move ends on the last free square
+        before that piece. Passing through and capturing never happen on the same move.
       </p>
     </section>
   )

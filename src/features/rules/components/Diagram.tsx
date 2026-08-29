@@ -1,4 +1,5 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
+import type { Step } from '@/types/game'
 import type { BoardPiece } from '../types/setup'
 import Image from 'next/image'
 import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
@@ -11,9 +12,11 @@ import {
   BUFF,
   SELECTED,
   DEST,
-  DEST_CAPTURE
+  DEST_CAPTURE,
+  MARKS
 } from '@/constants/style'
 import { translate } from '@/features/game/lib/layout'
+import { arrowPoints } from '@/features/game/lib/annotation'
 
 function Files() {
   return (
@@ -41,6 +44,35 @@ function Ranks() {
     </div>
   )
 }
+function Board({ children }: { children: ReactNode }) {
+  return (
+    <div className='@container mt-4 select-none'>
+      <div
+        className='mx-auto grid w-fit'
+        style={
+          {
+            '--square-size': `min(3rem, calc((100cqw - ${COORDS}) / ${SIZE}))`,
+            gridTemplateColumns: `${COORDS} auto`,
+            gridTemplateRows: `auto ${COORDS}`
+          } as CSSProperties
+        }>
+        <Ranks />
+        <div
+          className='pointer-events-none relative overflow-hidden rounded-[3px] outline outline-square-edge'
+          style={{
+            width: `calc(${SIZE} * ${SQUARE})`,
+            height: `calc(${SIZE} * ${SQUARE})`,
+            backgroundImage: PATTERN,
+            backgroundSize: `calc(2 * ${SQUARE}) calc(2 * ${SQUARE})`
+          }}>
+          {children}
+        </div>
+        <div />
+        <Files />
+      </div>
+    </div>
+  )
+}
 function CommandSquare() {
   return (
     <div className='absolute left-0 top-0' style={translate(COMMAND_SQUARE, false)}>
@@ -57,11 +89,6 @@ function CommandSquare() {
         </svg>
       </div>
     </div>
-  )
-}
-function Fill({ square, background }: { square: string; background: string }) {
-  return (
-    <div className='absolute left-0 top-0' style={{ ...translate(square, false), background }} />
   )
 }
 function Piece(props: BoardPiece) {
@@ -87,61 +114,59 @@ function Piece(props: BoardPiece) {
     </div>
   )
 }
-function Mover(props: BoardPiece) {
-  const { square } = props
+function Fill({ square, background }: { square: string; background: string }) {
   return (
-    <>
-      <Fill square={square} background={SELECTED} />
-      <Piece {...props} />
-    </>
+    <div className='absolute left-0 top-0' style={{ ...translate(square, false), background }} />
+  )
+}
+function Arrows({ steps }: { steps: Step[] }) {
+  return (
+    <svg
+      viewBox={`0 0 ${SIZE} ${SIZE}`}
+      className='pointer-events-none absolute inset-0'
+      aria-hidden>
+      {steps.map(step => (
+        <polygon
+          key={`${step.from}-${step.to}`}
+          points={arrowPoints(step, false)}
+          fill={MARKS.yellow}
+        />
+      ))}
+    </svg>
   )
 }
 export function Diagram({
-  piece,
+  subject,
   pieces,
   moves,
-  captures
+  captures,
+  marks,
+  arrows
 }: {
-  piece: BoardPiece | null
+  subject: string | null
   pieces: BoardPiece[] | null
   moves: string[] | null
   captures: string[] | null
+  marks?: string[]
+  arrows?: Step[]
 }) {
   return (
-    <div className='@container mt-4 select-none'>
-      <div
-        className='mx-auto grid w-fit'
-        style={
-          {
-            '--square-size': `min(3rem, calc((100cqw - ${COORDS}) / ${SIZE}))`,
-            gridTemplateColumns: `${COORDS} auto`,
-            gridTemplateRows: `auto ${COORDS}`
-          } as CSSProperties
-        }>
-        <Ranks />
-        <div
-          className='pointer-events-none relative overflow-hidden rounded-[3px] outline outline-square-edge'
-          style={{
-            width: `calc(${SIZE} * ${SQUARE})`,
-            height: `calc(${SIZE} * ${SQUARE})`,
-            backgroundImage: PATTERN,
-            backgroundSize: `calc(2 * ${SQUARE}) calc(2 * ${SQUARE})`
-          }}>
-          <CommandSquare />
-          {moves?.map(square => (
-            <Fill key={square} square={square} background={DEST} />
-          ))}
-          {captures?.map(square => (
-            <Fill key={square} square={square} background={DEST_CAPTURE} />
-          ))}
-          {pieces?.map(figure => (
-            <Piece key={figure.square} {...figure} />
-          ))}
-          {piece !== null && <Mover {...piece} />}
-        </div>
-        <div />
-        <Files />
-      </div>
-    </div>
+    <Board>
+      <CommandSquare />
+      {subject !== null && <Fill square={subject} background={SELECTED} />}
+      {moves?.map(square => (
+        <Fill key={square} square={square} background={DEST} />
+      ))}
+      {captures?.map(square => (
+        <Fill key={square} square={square} background={DEST_CAPTURE} />
+      ))}
+      {marks?.map(square => (
+        <Fill key={square} square={square} background={MARKS.red} />
+      ))}
+      {pieces?.map(figure => (
+        <Piece key={figure.square} {...figure} />
+      ))}
+      <Arrows steps={arrows ?? []} />
+    </Board>
   )
 }

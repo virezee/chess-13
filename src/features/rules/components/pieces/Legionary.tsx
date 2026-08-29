@@ -5,7 +5,7 @@ import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
 import { Zone } from './Zone'
 import { place } from '../../lib/occupant'
-import { legionaryAdvance, legionaryStep } from '../../lib/reach'
+import { legionaryAdvance, legionaryPush } from '../../lib/reach'
 
 function Advance() {
   return (
@@ -16,8 +16,8 @@ function Advance() {
         If something is in the way it stops earlier and finishes the run on a later turn.
       </p>
       <Diagram
-        piece={place(WHITE, LEGIONARY, 'e3', false)}
-        pieces={null}
+        subject='e3'
+        pieces={[place(WHITE, LEGIONARY, 'e3', false)]}
         moves={legionaryAdvance(true)}
         captures={['d4', 'f4']}
       />
@@ -36,22 +36,22 @@ function EnPassant() {
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
         <div className='rounded border border-line px-3.5 py-3'>
           <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-            White runs to e7
+            White advances to e7
           </p>
           <Diagram
-            piece={place(WHITE, LEGIONARY, 'e3', false)}
-            pieces={[place(BLACK, LEGIONARY, 'd7', false)]}
+            subject='e3'
+            pieces={[place(WHITE, LEGIONARY, 'e3', false), place(BLACK, LEGIONARY, 'd7', false)]}
             moves={legionaryAdvance(true)}
             captures={null}
           />
         </div>
         <div className='rounded border border-line px-3.5 py-3'>
           <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-            Black answers on e6
+            Black captures en passant
           </p>
           <Diagram
-            piece={place(BLACK, LEGIONARY, 'd7', false)}
-            pieces={[place(WHITE, LEGIONARY, 'e7', false)]}
+            subject='d7'
+            pieces={[place(BLACK, LEGIONARY, 'd7', false), place(WHITE, LEGIONARY, 'e7', false)]}
             moves={['d6']}
             captures={['e6']}
           />
@@ -66,8 +66,8 @@ export function Legionary() {
       <h3 className='font-reading text-[18px] leading-none text-ink'>Legionary</h3>
       <Counterpart from='pawn' to={LEGIONARY} />
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
-        The pawn of this game. Forward only, never back, and it never jumps, so anything in front of
-        it stops it.
+        The pawn of this game. Forward only, never back, and anything in front of it holds it where
+        it is.
       </p>
       <Advance />
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
@@ -76,9 +76,12 @@ export function Legionary() {
             From rank 7 onward, one or two squares forward each move.
           </p>
           <Diagram
-            piece={place(WHITE, LEGIONARY, 'e8', true)}
-            pieces={[place(WHITE, MARSHAL, COMMAND_SQUARE, false)]}
-            moves={legionaryStep(true)}
+            subject='e8'
+            pieces={[
+              place(WHITE, LEGIONARY, 'e8', true),
+              place(WHITE, MARSHAL, COMMAND_SQUARE, false)
+            ]}
+            moves={legionaryPush(true)}
             captures={['d9', 'f9']}
           />
         </Zone>
@@ -87,9 +90,9 @@ export function Legionary() {
             From rank 7 onward, one square forward each move.
           </p>
           <Diagram
-            piece={place(WHITE, LEGIONARY, 'e8', false)}
-            pieces={null}
-            moves={legionaryStep(false)}
+            subject='e8'
+            pieces={[place(WHITE, LEGIONARY, 'e8', false)]}
+            moves={legionaryPush(false)}
             captures={['d9', 'f9']}
           />
         </Zone>

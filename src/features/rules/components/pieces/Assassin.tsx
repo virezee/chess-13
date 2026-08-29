@@ -1,3 +1,1 @@
-export function Assassin() {
-    
-}
+export function Assassin() {}

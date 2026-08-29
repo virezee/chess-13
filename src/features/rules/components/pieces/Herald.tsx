@@ -23,8 +23,8 @@ export function Herald() {
             well.
           </p>
           <Diagram
-            piece={place(WHITE, HERALD, 'c3', true)}
-            pieces={[place(WHITE, MARSHAL, 'f3', false)]}
+            subject='c3'
+            pieces={[place(WHITE, HERALD, 'c3', true), place(WHITE, MARSHAL, 'f3', false)]}
             moves={heraldReach(true)}
             captures={heraldReach(true)}
           />
@@ -35,8 +35,8 @@ export function Herald() {
             there, but it cannot capture.
           </p>
           <Diagram
-            piece={place(WHITE, HERALD, 'c3', false)}
-            pieces={null}
+            subject='c3'
+            pieces={[place(WHITE, HERALD, 'c3', false)]}
             moves={heraldReach(false)}
             captures={heraldDiagonals(false)}
           />
