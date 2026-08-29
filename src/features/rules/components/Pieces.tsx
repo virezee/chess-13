@@ -43,9 +43,7 @@ function Mark({
 function Legend() {
   return (
     <div className='mt-4 rounded border border-ink/20 bg-ink/5 px-3.5 py-3'>
-      <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-        How to read the boards
-      </p>
+      <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>Legend</p>
       <ul className='mt-2.5 grid gap-2 sm:grid-cols-2'>
         <Mark background={SELECTED}>The green square is the piece being explained.</Mark>
         <Mark background={DEST}>A green dot is a square the piece can move to.</Mark>
