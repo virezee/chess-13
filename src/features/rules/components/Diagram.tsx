@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import type { Side } from '@/types/material'
+import type { BoardPiece } from '../types/setup'
 import Image from 'next/image'
 import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import {
@@ -8,82 +8,13 @@ import {
   PATTERN,
   FONT_SIZE,
   BASELINE,
+  BUFF,
   SELECTED,
   DEST,
-  DEST_CAPTURE,
-  BUFF
+  DEST_CAPTURE
 } from '@/constants/style'
-import { WHITE } from '@/constants/player'
 import { translate } from '@/features/game/lib/layout'
 
-function CommandSquare() {
-  return (
-    <div className='absolute left-0 top-0' style={translate(COMMAND_SQUARE, false)}>
-      <div className='h-full w-full bg-square-command'>
-        <svg viewBox='0 0 100 100' className='h-full w-full opacity-70' aria-hidden>
-          <text
-            x='50'
-            y={BASELINE}
-            textAnchor='middle'
-            fontSize={FONT_SIZE}
-            className='fill-square-command-ink font-command'>
-            M
-          </text>
-        </svg>
-      </div>
-    </div>
-  )
-}
-function Fill({ square, background }: { square: string; background: string }) {
-  return (
-    <div className='absolute left-0 top-0' style={{ ...translate(square, false), background }} />
-  )
-}
-function Piece({
-  square,
-  name,
-  side,
-  isBuffed
-}: {
-  square: string
-  name: string
-  side?: Side | undefined
-  isBuffed?: boolean | undefined
-}) {
-  return (
-    <div className='absolute left-0 top-0' style={translate(square, false)}>
-      {isBuffed === true && (
-        <span
-          className='absolute inset-0'
-          style={{
-            background: BUFF[side ?? WHITE],
-            clipPath: 'polygon(50% 0, 100% 50%, 50% 100%, 0 50%)'
-          }}
-        />
-      )}
-      <Image
-        src={`/${side ?? WHITE}/${name}.png`}
-        alt={name}
-        fill
-        sizes={SQUARE}
-        className='object-contain'
-      />
-    </div>
-  )
-}
-function Mover(figure: {
-  square: string
-  name: string
-  side?: Side | undefined
-  isBuffed?: boolean | undefined
-}) {
-  return (
-    <>
-      <Fill square={figure.square} background={SELECTED} />
-      <Piece {...figure} />
-    </>
-  )
-}
 function Files() {
   return (
     <div
@@ -110,16 +41,71 @@ function Ranks() {
     </div>
   )
 }
+function CommandSquare() {
+  return (
+    <div className='absolute left-0 top-0' style={translate(COMMAND_SQUARE, false)}>
+      <div className='h-full w-full bg-square-command'>
+        <svg viewBox='0 0 100 100' className='h-full w-full opacity-70' aria-hidden>
+          <text
+            x='50'
+            y={BASELINE}
+            textAnchor='middle'
+            fontSize={FONT_SIZE}
+            className='fill-square-command-ink font-command'>
+            M
+          </text>
+        </svg>
+      </div>
+    </div>
+  )
+}
+function Fill({ square, background }: { square: string; background: string }) {
+  return (
+    <div className='absolute left-0 top-0' style={{ ...translate(square, false), background }} />
+  )
+}
+function Piece(props: BoardPiece) {
+  const { side, piece, square, isEnhanced } = props
+  return (
+    <div className='absolute left-0 top-0' style={translate(square, false)}>
+      {isEnhanced && (
+        <span
+          className='absolute inset-0'
+          style={{
+            background: BUFF[side],
+            clipPath: 'polygon(50% 0, 100% 50%, 50% 100%, 0 50%)'
+          }}
+        />
+      )}
+      <Image
+        src={`/${side}/${piece}.png`}
+        alt={piece}
+        fill
+        sizes={SQUARE}
+        className='object-contain'
+      />
+    </div>
+  )
+}
+function Mover(props: BoardPiece) {
+  const { square } = props
+  return (
+    <>
+      <Fill square={square} background={SELECTED} />
+      <Piece {...props} />
+    </>
+  )
+}
 export function Diagram({
   piece,
   pieces,
   moves,
   captures
 }: {
-  piece?: { square: string; name: string; side?: Side; isBuffed?: boolean }
-  pieces?: { square: string; name: string; side?: Side; isBuffed?: boolean }[]
-  moves?: string[]
-  captures?: string[]
+  piece: BoardPiece | null
+  pieces: BoardPiece[] | null
+  moves: string[] | null
+  captures: string[] | null
 }) {
   return (
     <div className='@container mt-4 select-none'>
@@ -151,7 +137,7 @@ export function Diagram({
           {pieces?.map(figure => (
             <Piece key={figure.square} {...figure} />
           ))}
-          {piece !== undefined && <Mover {...piece} />}
+          {piece !== null && <Mover {...piece} />}
         </div>
         <div />
         <Files />

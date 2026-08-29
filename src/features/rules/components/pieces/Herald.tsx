@@ -1,51 +1,46 @@
-import Image from 'next/image'
 import { WHITE } from '@/constants/player'
-import { HERALD, MARSHAL } from '@/constants/piece'
-import { herald } from '@/features/game/engine/moves/herald'
+import { MARSHAL, HERALD } from '@/constants/piece'
 import { Diagram } from '../Diagram'
+import { Counterpart } from './Counterpart'
+import { Zone } from './Zone'
+import { place } from '../../lib/occupant'
+import { heraldReach, heraldDiagonals } from '../../lib/reach'
 
-const PIECE = { square: 'c3', name: HERALD }
-const BUFFED = { ...PIECE, isBuffed: true }
-const PIECES = [{ square: 'f3', name: MARSHAL }]
-const targets = (isEnhanced: boolean): string[] =>
-  herald(WHITE, {}, PIECE.square, isEnhanced).map(move => move.to)
-const diagonals = (isEnhanced: boolean): string[] =>
-  targets(isEnhanced).filter(square => !new Set(['b3', 'c2', 'c4', 'd3']).has(square))
 export function Herald() {
   return (
     <section>
       <h3 className='font-reading text-[18px] leading-none text-ink'>Herald</h3>
-      <div className='mt-4 flex select-none items-center justify-center gap-5'>
-        <Image src='/white/bishop.svg' alt='Bishop' width={72} height={72} />
-        <span className='text-[26px] leading-none text-ink-faint'>&rarr;</span>
-        <Image src='/white/herald.png' alt='Herald' width={72} height={72} />
-      </div>
+      <Counterpart from='bishop' to={HERALD} />
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         The bishop of this game, with one extra move: a single step straight up, down, left or
         right. That step is what lets it change square colour, so it is not stuck on one colour for
         the whole game the way a bishop is.
       </p>
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
-        <div className='rounded border border-good/60 bg-good/10 px-3.5 py-3'>
-          <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-good'>
-            Enhanced
-          </p>
+        <Zone isEnhanced>
           <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
             Diagonals with no limit, for moving and for capturing. The straight step can capture as
             well.
           </p>
-          <Diagram piece={BUFFED} pieces={PIECES} moves={targets(true)} captures={targets(true)} />
-        </div>
-        <div className='rounded border border-alert/60 bg-alert/10 px-3.5 py-3'>
-          <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-alert'>
-            Restricted
-          </p>
+          <Diagram
+            piece={place(WHITE, HERALD, 'c3', true)}
+            pieces={[place(WHITE, MARSHAL, 'f3', false)]}
+            moves={heraldReach(true)}
+            captures={heraldReach(true)}
+          />
+        </Zone>
+        <Zone isEnhanced={false}>
           <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
             Diagonals up to six squares, for moving and for capturing. The straight step is still
             there, but it cannot capture.
           </p>
-          <Diagram piece={PIECE} moves={targets(false)} captures={diagonals(false)} />
-        </div>
+          <Diagram
+            piece={place(WHITE, HERALD, 'c3', false)}
+            pieces={null}
+            moves={heraldReach(false)}
+            captures={heraldDiagonals(false)}
+          />
+        </Zone>
       </div>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         Its diagonal reach is the same whether it is moving to an empty square or taking a piece.
