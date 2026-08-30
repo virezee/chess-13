@@ -45,10 +45,8 @@ export const opening = (): Save => {
     }
   }
 }
-export const clickSquares = (occupancy: SquareOccupant, move: Move): string[] =>
-  occupancy[move.from]?.piece === LEGIONARY
-    ? [move.to]
-    : [...new Set([move.to, ...(move.captures ?? [])])]
+export const clickSquares = (move: Move): string[] =>
+  move.to === move.from ? (move.captures ?? []) : [...new Set([move.to, ...(move.captures ?? [])])]
 export const turn = (
   save: Save,
   move: Move | null

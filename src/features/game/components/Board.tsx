@@ -28,7 +28,7 @@ export function Board(props: BoardProps) {
     setMarks({})
     setArrows({})
     const reached = moves.filter(
-      move => move.from === selected && clickSquares(position.occupancy, move).includes(square)
+      move => move.from === selected && clickSquares(move).includes(square)
     )
     onPromotions(reached.length > 1 ? reached : [])
     if (reached.length === 1) {
@@ -45,9 +45,7 @@ export function Board(props: BoardProps) {
         selected={selected}
         targets={[
           ...new Set(
-            moves
-              .filter(move => move.from === selected)
-              .flatMap(move => clickSquares(position.occupancy, move))
+            moves.filter(move => move.from === selected).flatMap(move => clickSquares(move))
           )
         ]}
         marks={marks}

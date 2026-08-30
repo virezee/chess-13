@@ -121,8 +121,11 @@ export function Mage() {
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         Moves one square in any of the eight directions, and two squares while enhanced. The
         two-square move is a leap, so a piece standing on the square in between neither stops it nor
-        is taken. The square it lands on must be empty. What is different is how it kills: a Mage
-        never takes a piece by moving onto it. Instead it blasts everything standing next to it.
+        is taken. The square it lands on must be empty.
+      </p>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        What is different is how it kills: a Mage never takes a piece by moving onto it. Instead it
+        blasts everything standing next to it.
       </p>
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
         <Enhanced />
