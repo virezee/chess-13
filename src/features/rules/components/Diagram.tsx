@@ -113,12 +113,23 @@ function Piece(props: BoardPiece) {
     </div>
   )
 }
-function Fill({ square, background }: { square: string; background: string }) {
+function Fill({
+  square,
+  background,
+  clip
+}: {
+  square: string
+  background: string
+  clip?: string | undefined
+}) {
   return (
-    <div className='absolute left-0 top-0' style={{ ...translate(square, false), background }} />
+    <div
+      className='absolute left-0 top-0'
+      style={{ ...translate(square, false), background, clipPath: clip }}
+    />
   )
 }
-function Arrows({ fill, steps }: { fill: string; steps: Step[] }) {
+function Arrows({ steps, fill }: { steps: Step[]; fill: string }) {
   return (
     <svg
       viewBox={`0 0 ${SIZE} ${SIZE}`}
@@ -142,8 +153,8 @@ export function Diagram({
   pieces: BoardPiece[] | null
   moves: string[] | null
   captures: string[] | null
-  marks?: { background: string; squares: string[] }
-  arrows?: { fill: string; steps: Step[] }[]
+  marks?: { squares: string[]; background: string; clip?: string }
+  arrows?: { steps: Step[]; fill: string }[]
 }) {
   return (
     <Board>
@@ -156,12 +167,14 @@ export function Diagram({
         <Fill key={square} square={square} background={DEST_CAPTURE} />
       ))}
       {marks?.squares.map(square => (
-        <Fill key={square} square={square} background={marks.background} />
+        <Fill key={square} square={square} background={marks.background} clip={marks.clip} />
       ))}
       {pieces?.map(figure => (
         <Piece key={figure.square} {...figure} />
       ))}
-      {arrows?.map(group => <Arrows key={group.fill} fill={group.fill} steps={group.steps} />)}
+      {arrows?.map(group => (
+        <Arrows key={group.fill} fill={group.fill} steps={group.steps} />
+      ))}
     </Board>
   )
 }

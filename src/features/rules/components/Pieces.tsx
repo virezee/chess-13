@@ -6,18 +6,20 @@ import { Templar } from './pieces/Templar'
 import { Legionary } from './pieces/Legionary'
 import { Mage } from './pieces/Mage'
 import { Assassin } from './pieces/Assassin'
-// import { Marshal } from './pieces/Marshal'
+import { Marshal } from './pieces/Marshal'
 // import { Emperor } from './pieces/Emperor'
 // import { Pope } from './pieces/Pope'
 
 function Mark({
   background,
   letter,
+  clip,
   arrow,
   children
 }: {
   background?: string
   letter?: string
+  clip?: string
   arrow?: string
   children: string
 }) {
@@ -25,7 +27,7 @@ function Mark({
     <li className='flex items-center gap-3'>
       {arrow === undefined ? (
         <span className='size-7 shrink-0 select-none rounded-xs bg-square-dark outline outline-square-edge'>
-          <span className='block h-full w-full' style={{ background }}>
+          <span className='block h-full w-full' style={{ background, clipPath: clip }}>
             <svg viewBox='0 0 100 100' className='h-full w-full opacity-70' aria-hidden>
               <text
                 x='50'
@@ -64,14 +66,17 @@ function Legend() {
         <Mark arrow={MARKS.blue}>
           A blue arrow shows the piece defending a piece of the same colour.
         </Mark>
-        <Mark
-          background={`linear-gradient(to bottom right, transparent 50%, ${BUFF.white} 50%) top left/50% 50% no-repeat, linear-gradient(to bottom left, transparent 50%, ${BUFF.white} 50%) top right/50% 50% no-repeat, linear-gradient(to top right, transparent 50%, ${BUFF.white} 50%) bottom left/50% 50% no-repeat, linear-gradient(to top left, transparent 50%, ${BUFF.white} 50%) bottom right/50% 50% no-repeat`}>
+        <Mark background={BUFF.white} clip='polygon(50% 0, 100% 50%, 50% 100%, 0 50%)'>
           The badge behind a piece means it is enhanced.
         </Mark>
         <Mark background='var(--square-command)' letter='M'>
           The purple square is the command square.
         </Mark>
       </ul>
+      <p className='mt-2.5 text-[11px] leading-snug text-ink-faint'>
+        These marks belong to this page only, to make the diagrams easier to read. In a game you may
+        mark the board however you like.
+      </p>
     </div>
   )
 }
@@ -97,7 +102,7 @@ export function Pieces() {
       <Legionary />
       <Mage />
       <Assassin />
-      {/* <Marshal /> */}
+      <Marshal />
       {/* <Emperor /> */}
       {/* <Pope /> */}
     </>
