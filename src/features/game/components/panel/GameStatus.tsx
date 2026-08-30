@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Counter, Result } from '@/types/game'
 import type { GameCounters } from '@/types/panel'
+import { useEffect } from 'react'
 import { cn } from '@/lib/cn'
 
 type ControlsProps = {
@@ -170,6 +171,9 @@ export function GameStatus(
   }
 ) {
   const { counters, canSwap, result, onDecline, onAccept, ...rest } = props
+  useEffect(() => {
+    window.scrollTo({ top: canSwap ? document.body.scrollHeight : 0, behavior: 'smooth' })
+  }, [canSwap])
   return (
     <section className='overflow-hidden rounded border border-line bg-surface'>
       <header className='px-3.5 py-3'>
