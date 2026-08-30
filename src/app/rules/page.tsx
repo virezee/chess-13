@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Intro } from '@/features/rules/components/Intro'
 import { Notice } from '@/features/rules/components/Notice'
 import { Board } from '@/features/rules/components/Board'
-import { M } from '@/features/rules/components/M'
+import { CentreSquare } from '@/features/rules/components/CentreSquare'
 import { Pieces } from '@/features/rules/components/Pieces'
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export default function Rules() {
       <Intro />
       <Notice />
       <Board />
-      <M />
+      <CentreSquare />
       <Pieces />
     </main>
   )

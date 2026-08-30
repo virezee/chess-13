@@ -1,6 +1,6 @@
 import { FONT_SIZE, BASELINE } from '@/constants/style'
 
-function CommandSquare() {
+function MSquare() {
   return (
     <div className='mt-4 flex select-none justify-center'>
       <div className='h-18 w-18 rounded-[3px] bg-square-command outline outline-square-edge'>
@@ -18,7 +18,7 @@ function CommandSquare() {
     </div>
   )
 }
-export function M() {
+export function CentreSquare() {
   return (
     <section>
       <h2 className='font-reading text-[22px] leading-none text-ink'>The Command Square</h2>
@@ -27,7 +27,7 @@ export function M() {
         you own has two versions, enhanced and restricted. Which one you get depends only on how far
         that piece is standing from your own Marshal.
       </p>
-      <CommandSquare />
+      <MSquare />
       <ul className='mt-3 space-y-2 text-[15px] leading-relaxed text-ink-dim'>
         <li>
           <span className='font-semibold text-ink'>Marshal on g7.</span> Your whole army is
