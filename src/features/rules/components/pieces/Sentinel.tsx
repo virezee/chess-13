@@ -1,5 +1,5 @@
-import { WHITE } from '@/constants/player'
-import { MARSHAL, SENTINEL, TEMPLAR } from '@/constants/piece'
+import { WHITE, BLACK } from '@/constants/player'
+import { MARSHAL, SENTINEL, HERALD, TEMPLAR } from '@/constants/piece'
 import { sentinel } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
@@ -52,6 +52,52 @@ function Restricted() {
     </Zone>
   )
 }
+function Capture() {
+  return (
+    <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+      <div className='rounded border border-line px-3.5 py-3'>
+        <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+          It reaches it only by capturing
+        </p>
+        <Diagram
+          subject='a1'
+          pieces={[place(WHITE, SENTINEL, 'a1', false), place(BLACK, HERALD, 'a7', false)]}
+          {...squares(occupancy =>
+            sentinel(WHITE, { ...occupancy, a7: { side: BLACK, piece: HERALD } }, 'a1', 'd3', false)
+          )}
+        />
+      </div>
+      <div className='rounded border border-line px-3.5 py-3'>
+        <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+          It passes through, then cannot capture
+        </p>
+        <Diagram
+          subject='a1'
+          pieces={[
+            place(WHITE, SENTINEL, 'a1', true),
+            place(WHITE, MARSHAL, 'd3', false),
+            place(WHITE, HERALD, 'a3', false),
+            place(BLACK, HERALD, 'a5', false)
+          ]}
+          {...squares(occupancy =>
+            sentinel(
+              WHITE,
+              {
+                ...occupancy,
+                d3: { side: WHITE, piece: MARSHAL },
+                a3: { side: WHITE, piece: HERALD },
+                a5: { side: BLACK, piece: HERALD }
+              },
+              'a1',
+              'd3',
+              true
+            )
+          )}
+        />
+      </div>
+    </div>
+  )
+}
 export function Sentinel() {
   return (
     <section>
@@ -63,8 +109,9 @@ export function Sentinel() {
         an enemy piece far down the line is still in range.
       </p>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
-        Towards your Marshal it passes through your own pieces, never theirs. After passing through
-        it can no longer take: the move ends on the last free square before that piece.
+        It slides along a rank or a file while the line stays clear. Two of its moves carry a
+        condition: a square too far for a quiet move is still open if the move takes the piece
+        standing there, and your own pieces let it through while it heads towards your Marshal.
       </p>
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
         <Enhanced />
@@ -75,6 +122,16 @@ export function Sentinel() {
         the direction that closes the distance in files, along a file the direction that closes the
         distance in ranks. With the Marshal on d3, a Sentinel on a1 heads towards it both east and
         north.
+      </p>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        Once it has passed through it can no longer take, so the move ends on the last free square
+        before the next piece. A square that far cannot be moved to on a quiet move either, so the
+        only way to reach it is by taking the piece standing there.
+      </p>
+      <Capture />
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        A far square is open only to a capture, and a line that has already gone through your own
+        piece cannot make one at all.
       </p>
     </section>
   )
