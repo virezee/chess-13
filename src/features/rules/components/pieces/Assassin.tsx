@@ -2,13 +2,54 @@ import { WHITE, BLACK } from '@/constants/player'
 import { MARSHAL, ASSASSIN, SENTINEL, HERALD } from '@/constants/piece'
 import { MARKS } from '@/constants/style'
 import { ASSASSIN_CAPTURES, ASSASSIN_OCCUPIED, ASSASSIN_ATTACKED } from '../constants/scene'
+import { assassin } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
 import { Zone } from './Zone'
-import { assassin } from '@/features/game/engine/moves'
 import { place, occupy } from '../../lib/occupant'
 import { squares } from '../../lib/reach'
 
+function Path({ isEnhanced }: { isEnhanced: boolean }) {
+  return (
+    <Diagram
+      subject='c3'
+      pieces={[
+        place(WHITE, ASSASSIN, 'c3', isEnhanced),
+        ...(isEnhanced ? [place(WHITE, MARSHAL, 'e4', false)] : []),
+        ...ASSASSIN_CAPTURES
+      ]}
+      {...squares(occupancy =>
+        assassin(
+          WHITE,
+          isEnhanced
+            ? { ...occupancy, ...occupy(ASSASSIN_CAPTURES), e4: { side: WHITE, piece: MARSHAL } }
+            : { ...occupancy, ...occupy(ASSASSIN_CAPTURES) },
+          'c3',
+          isEnhanced
+        )
+      )}
+      moves={assassin(
+        WHITE,
+        isEnhanced
+          ? { ...occupy(ASSASSIN_CAPTURES), e4: { side: WHITE, piece: MARSHAL } }
+          : occupy(ASSASSIN_CAPTURES),
+        'c3',
+        isEnhanced
+      )
+        .filter(move => !move.captures)
+        .map(move => move.to)
+        .filter(square =>
+          ASSASSIN_CAPTURES.some(
+            victim =>
+              Math.sign((square.codePointAt(0) ?? 0) - ('c3'.codePointAt(0) ?? 0)) ===
+                Math.sign((victim.square.codePointAt(0) ?? 0) - ('c3'.codePointAt(0) ?? 0)) &&
+              Math.sign(Number(square.slice(1)) - 3) ===
+                Math.sign(Number(victim.square.slice(1)) - 3)
+          )
+        )}
+    />
+  )
+}
 function Enhanced() {
   return (
     <Zone isEnhanced>
@@ -24,27 +65,7 @@ function Enhanced() {
         )}
         captures={null}
       />
-      <Diagram
-        subject='c3'
-        pieces={[
-          place(WHITE, ASSASSIN, 'c3', true),
-          place(WHITE, MARSHAL, 'e4', false),
-          ...ASSASSIN_CAPTURES
-        ]}
-        {...squares(occupancy =>
-          assassin(
-            WHITE,
-            {
-              ...occupancy,
-              ...occupy(ASSASSIN_CAPTURES),
-              e4: { side: WHITE, piece: MARSHAL }
-            },
-            'c3',
-            true
-          )
-        )}
-        moves={null}
-      />
+      <Path isEnhanced />
     </Zone>
   )
 }
@@ -61,14 +82,7 @@ function Restricted() {
         {...squares(occupancy => assassin(WHITE, occupancy, 'c3', false))}
         captures={null}
       />
-      <Diagram
-        subject='c3'
-        pieces={[place(WHITE, ASSASSIN, 'c3', false), ...ASSASSIN_CAPTURES]}
-        {...squares(occupancy =>
-          assassin(WHITE, { ...occupancy, ...occupy(ASSASSIN_CAPTURES) }, 'c3', false)
-        )}
-        moves={null}
-      />
+      <Path isEnhanced={false} />
     </Zone>
   )
 }
@@ -84,6 +98,15 @@ function Illegal() {
           pieces={[place(WHITE, ASSASSIN, 'c3', false), ...ASSASSIN_OCCUPIED]}
           moves={null}
           captures={null}
+          arrows={[
+            {
+              fill: MARKS.red,
+              steps: [
+                { from: 'c3', to: 'c7' },
+                { from: 'c3', to: 'g3' }
+              ]
+            }
+          ]}
         />
       </div>
       <div className='rounded border border-line px-3.5 py-3'>
@@ -131,8 +154,11 @@ function Corner() {
             place(BLACK, SENTINEL, 'a5', false)
           ]}
           moves={null}
-          captures={null}
-          arrows={[{ fill: MARKS.blue, steps: [{ from: 'a5', to: 'a1' }] }]}
+          captures={['a1']}
+          arrows={[
+            { fill: MARKS.red, steps: [{ from: 'c3', to: 'a1' }] },
+            { fill: MARKS.blue, steps: [{ from: 'a5', to: 'a1' }] }
+          ]}
         />
       </div>
     </div>

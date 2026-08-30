@@ -72,7 +72,14 @@ function Capture() {
             place(WHITE, HERALD, 'b5', true),
             place(BLACK, SENTINEL, 'e8', false)
           ]}
-          moves={null}
+          moves={marshal(
+            WHITE,
+            { b5: { side: WHITE, piece: HERALD }, e8: { side: BLACK, piece: SENTINEL } },
+            'e4'
+          )
+            .filter(move => !move.captures)
+            .map(move => move.to)
+            .filter(square => square.startsWith('e') && Number(square.slice(1)) > 4)}
           captures={['e8']}
           arrows={[{ fill: MARKS.red, steps: [{ from: 'b5', to: 'e8' }] }]}
         />
@@ -84,7 +91,14 @@ function Capture() {
         <Diagram
           subject='e4'
           pieces={[place(WHITE, MARSHAL, 'e4', false), place(BLACK, SENTINEL, 'e8', false)]}
-          moves={null}
+          moves={marshal(
+            WHITE,
+            { b5: { side: WHITE, piece: HERALD }, e8: { side: BLACK, piece: SENTINEL } },
+            'e4'
+          )
+            .filter(move => !move.captures)
+            .map(move => move.to)
+            .filter(square => square.startsWith('e') && Number(square.slice(1)) > 4)}
           captures={null}
         />
       </div>
