@@ -43,6 +43,7 @@ function Enhanced() {
             true
           )
         )}
+        moves={null}
       />
     </Zone>
   )
@@ -66,6 +67,7 @@ function Restricted() {
         {...squares(occupancy =>
           assassin(WHITE, { ...occupancy, ...occupy(ASSASSIN_CAPTURES) }, 'c3', false)
         )}
+        moves={null}
       />
     </Zone>
   )
@@ -143,14 +145,21 @@ export function Assassin() {
       <Counterpart from={null} to={ASSASSIN} />
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         It travels the same eight directions as a queen, straight and diagonal, and the path has to
-        be clear. What is different is the capture: an Assassin never ends on the square of the
-        piece it takes. It passes over that piece and lands on the square immediately beyond, and
-        the piece it passed over is taken where it stood.
+        be clear.
+      </p>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        What is different is the capture: an Assassin never ends on the square of the piece it
+        takes. It passes over that piece and lands on the square immediately beyond, and the piece
+        it passed over is taken where it stood.
       </p>
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
         <Enhanced />
         <Restricted />
       </div>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        Wherever it can move it can also take, as long as the square beyond the piece is still
+        within its reach.
+      </p>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         When it takes, the square behind the piece must be empty and must not be attacked. Any piece
         standing there, of either colour, stops the capture, and so does an opponent&apos;s piece
@@ -159,6 +168,10 @@ export function Assassin() {
         back.
       </p>
       <Illegal />
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        An Assassin cannot take a piece while the square behind it is occupied, or while that square
+        is attacked by the opponent.
+      </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         Where the board ends there is no square behind, so a piece on the far rank cannot be taken
         from in front, and the Assassin has to come at it from another direction. The corners are

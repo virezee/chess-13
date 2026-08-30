@@ -19,7 +19,7 @@ function Enhanced() {
         pieces={[
           place(WHITE, SENTINEL, 'a1', true),
           place(WHITE, MARSHAL, 'd3', false),
-          place(WHITE, TEMPLAR, 'd1', false)
+          place(WHITE, TEMPLAR, 'd1', true)
         ]}
         {...squares(occupancy =>
           sentinel(
