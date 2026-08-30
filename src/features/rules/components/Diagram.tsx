@@ -12,8 +12,7 @@ import {
   BUFF,
   SELECTED,
   DEST,
-  DEST_CAPTURE,
-  MARKS
+  DEST_CAPTURE
 } from '@/constants/style'
 import { translate } from '@/features/game/lib/layout'
 import { arrowPoints } from '@/features/game/lib/annotation'
@@ -119,18 +118,14 @@ function Fill({ square, background }: { square: string; background: string }) {
     <div className='absolute left-0 top-0' style={{ ...translate(square, false), background }} />
   )
 }
-function Arrows({ steps }: { steps: Step[] }) {
+function Arrows({ fill, steps }: { fill: string; steps: Step[] }) {
   return (
     <svg
       viewBox={`0 0 ${SIZE} ${SIZE}`}
       className='pointer-events-none absolute inset-0'
       aria-hidden>
       {steps.map(step => (
-        <polygon
-          key={`${step.from}-${step.to}`}
-          points={arrowPoints(step, false)}
-          fill={MARKS.yellow}
-        />
+        <polygon key={`${step.from}-${step.to}`} points={arrowPoints(step, false)} fill={fill} />
       ))}
     </svg>
   )
@@ -147,8 +142,8 @@ export function Diagram({
   pieces: BoardPiece[] | null
   moves: string[] | null
   captures: string[] | null
-  marks?: string[]
-  arrows?: Step[]
+  marks?: { background: string; squares: string[] }
+  arrows?: { fill: string; steps: Step[] }[]
 }) {
   return (
     <Board>
@@ -160,13 +155,13 @@ export function Diagram({
       {captures?.map(square => (
         <Fill key={square} square={square} background={DEST_CAPTURE} />
       ))}
-      {marks?.map(square => (
-        <Fill key={square} square={square} background={MARKS.red} />
+      {marks?.squares.map(square => (
+        <Fill key={square} square={square} background={marks.background} />
       ))}
       {pieces?.map(figure => (
         <Piece key={figure.square} {...figure} />
       ))}
-      <Arrows steps={arrows ?? []} />
+      {arrows?.map(group => <Arrows key={group.fill} fill={group.fill} steps={group.steps} />)}
     </Board>
   )
 }

@@ -1,11 +1,11 @@
-import { SELECTED, DEST, DEST_CAPTURE, MARKS } from '@/constants/style'
+import { FONT_SIZE, BASELINE, BUFF, SELECTED, DEST, DEST_CAPTURE, MARKS } from '@/constants/style'
 import { arrowPoints } from '@/features/game/lib/annotation'
 import { Herald } from './pieces/Herald'
 import { Sentinel } from './pieces/Sentinel'
 import { Templar } from './pieces/Templar'
 import { Legionary } from './pieces/Legionary'
 import { Mage } from './pieces/Mage'
-// import { Assassin } from './pieces/Assassin'
+import { Assassin } from './pieces/Assassin'
 // import { Marshal } from './pieces/Marshal'
 // import { Emperor } from './pieces/Emperor'
 // import { Pope } from './pieces/Pope'
@@ -22,13 +22,20 @@ function Mark({
   children: string
 }) {
   return (
-    <li className='flex items-center gap-3 odd:[&>span:first-child]:bg-square-light'>
+    <li className='flex items-center gap-3'>
       {arrow === undefined ? (
         <span className='size-7 shrink-0 select-none rounded-xs bg-square-dark outline outline-square-edge'>
-          <span
-            className='flex h-full w-full items-center justify-center font-command text-[13px] text-square-command-ink'
-            style={{ background }}>
-            {letter}
+          <span className='block h-full w-full' style={{ background }}>
+            <svg viewBox='0 0 100 100' className='h-full w-full opacity-70' aria-hidden>
+              <text
+                x='50'
+                y={BASELINE}
+                textAnchor='middle'
+                fontSize={FONT_SIZE}
+                className='fill-square-command-ink font-command'>
+                {letter}
+              </text>
+            </svg>
           </span>
         </span>
       ) : (
@@ -51,14 +58,15 @@ function Legend() {
           Red corners are a square the piece can move to only when the move takes a piece.
         </Mark>
         <Mark background={MARKS.red}>A red square is a piece caught in a blast.</Mark>
-        <Mark background={MARKS.yellow}>
-          A yellow square is where the piece lands after the capture.
-        </Mark>
         <Mark arrow={MARKS.red}>
           A red arrow shows the piece attacking an opponent&apos;s piece.
         </Mark>
         <Mark arrow={MARKS.blue}>
           A blue arrow shows the piece defending a piece of the same colour.
+        </Mark>
+        <Mark
+          background={`linear-gradient(to bottom right, transparent 50%, ${BUFF.white} 50%) top left/50% 50% no-repeat, linear-gradient(to bottom left, transparent 50%, ${BUFF.white} 50%) top right/50% 50% no-repeat, linear-gradient(to top right, transparent 50%, ${BUFF.white} 50%) bottom left/50% 50% no-repeat, linear-gradient(to top left, transparent 50%, ${BUFF.white} 50%) bottom right/50% 50% no-repeat`}>
+          The badge behind a piece means it is enhanced.
         </Mark>
         <Mark background='var(--square-command)' letter='M'>
           The purple square is the command square.
@@ -88,7 +96,7 @@ export function Pieces() {
       <Templar />
       <Legionary />
       <Mage />
-      {/* <Assassin /> */}
+      <Assassin />
       {/* <Marshal /> */}
       {/* <Emperor /> */}
       {/* <Pope /> */}

@@ -1,5 +1,6 @@
 import { WHITE, BLACK } from '@/constants/player'
 import { MARSHAL, SENTINEL, MAGE, HERALD, LEGIONARY } from '@/constants/piece'
+import { MARKS } from '@/constants/style'
 import { BLAST } from '../constants/scene'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
@@ -52,7 +53,7 @@ function Enhanced() {
         ]}
         moves={null}
         captures={null}
-        marks={mageBlast(true)}
+        marks={{ background: MARKS.red, squares: mageBlast(true) }}
       />
     </Zone>
   )
@@ -79,7 +80,7 @@ function Restricted() {
         ]}
         moves={null}
         captures={null}
-        marks={mageBlast(false)}
+        marks={{ background: MARKS.red, squares: mageBlast(false) }}
       />
     </Zone>
   )

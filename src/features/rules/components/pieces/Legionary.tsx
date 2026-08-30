@@ -15,12 +15,19 @@ function Advance() {
         up to rank 7 and no further, which is a run of four squares from where it starts the game.
         If something is in the way it stops earlier and finishes the run on a later turn.
       </p>
-      <Diagram
-        subject='e3'
-        pieces={[place(WHITE, LEGIONARY, 'e3', false)]}
-        moves={legionaryAdvance(true)}
-        captures={['d4', 'f4']}
-      />
+      <div className='mt-3 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+        <div className='mx-auto rounded border border-line px-3.5 py-3 sm:w-[calc(50%-0.3125rem)]'>
+          <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+            Advance below rank 7
+          </p>
+          <Diagram
+            subject='e3'
+            pieces={[place(WHITE, LEGIONARY, 'e3', false)]}
+            moves={legionaryAdvance(true)}
+            captures={['d4', 'f4']}
+          />
+        </div>
+      </div>
     </>
   )
 }
