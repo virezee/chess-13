@@ -2,29 +2,36 @@ import { WHITE, BLACK } from '@/constants/player'
 import { MARSHAL, SENTINEL, MAGE, HERALD, LEGIONARY } from '@/constants/piece'
 import { MARKS } from '@/constants/style'
 import { BLAST } from '../constants/scene'
+import { mage } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
 import { Zone } from './Zone'
-import { place } from '../../lib/occupant'
-import { mageReach, mageBlast } from '../../lib/reach'
+import { place, occupy } from '../../lib/occupant'
+import { squares } from '../../lib/reach'
 
-function Blast() {
+function Leap() {
   return (
-    <>
-      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
-        The eight squares around the Mage are its ring. A turn is either a move or a blast, never
-        both. When it blasts it stays where it is and comes through its own blast unharmed, and it
-        may blast again the turn after.
-      </p>
-      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        A blast needs at least one enemy piece in the ring. An empty ring is not allowed, and
-        neither is a ring holding only your own pieces, because either one would be a wasted turn.
-      </p>
-      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        A Mage that is taken does not explode. The blast only ever happens on its own turn, as the
-        move you choose, so taking a Mage costs nothing extra.
-      </p>
-    </>
+    <Diagram
+      subject='f7'
+      pieces={[
+        place(WHITE, MAGE, 'f7', true),
+        place(WHITE, MARSHAL, 'f8', false),
+        place(BLACK, SENTINEL, 'e6', false)
+      ]}
+      {...squares(occupancy =>
+        mage(
+          WHITE,
+          {
+            ...occupancy,
+            f8: { side: WHITE, piece: MARSHAL },
+            e6: { side: BLACK, piece: SENTINEL }
+          },
+          'f7',
+          true
+        )
+      )}
+      captures={null}
+    />
   )
 }
 function Enhanced() {
@@ -33,27 +40,33 @@ function Enhanced() {
       <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
         One square each move, or two as a leap, and the blast destroys enemy pieces only.
       </p>
-      <Diagram
-        subject='f7'
-        pieces={[
-          place(WHITE, MAGE, 'f7', true),
-          place(WHITE, MARSHAL, 'g7', false),
-          place(BLACK, SENTINEL, 'e6', false)
-        ]}
-        moves={mageReach(true)}
-        captures={null}
-      />
+      <Leap />
       <Diagram
         subject='f7'
         pieces={[
           place(WHITE, MAGE, 'f7', true),
           ...BLAST,
-          place(WHITE, MARSHAL, 'g7', false),
+          place(WHITE, MARSHAL, 'f8', false),
           place(WHITE, LEGIONARY, 'g8', true)
         ]}
         moves={null}
         captures={null}
-        marks={{ background: MARKS.red, squares: mageBlast(true) }}
+        marks={{
+          background: MARKS.red,
+          squares: squares(occupancy =>
+            mage(
+              WHITE,
+              {
+                ...occupancy,
+                ...occupy(BLAST),
+                f8: { side: WHITE, piece: MARSHAL },
+                g8: { side: WHITE, piece: LEGIONARY }
+              },
+              'f7',
+              true
+            )
+          ).captures
+        }}
       />
     </Zone>
   )
@@ -67,7 +80,7 @@ function Restricted() {
       <Diagram
         subject='f7'
         pieces={[place(WHITE, MAGE, 'f7', false)]}
-        moves={mageReach(false)}
+        {...squares(occupancy => mage(WHITE, occupancy, 'f7', false))}
         captures={null}
       />
       <Diagram
@@ -80,7 +93,22 @@ function Restricted() {
         ]}
         moves={null}
         captures={null}
-        marks={{ background: MARKS.red, squares: mageBlast(false) }}
+        marks={{
+          background: MARKS.red,
+          squares: squares(occupancy =>
+            mage(
+              WHITE,
+              {
+                ...occupancy,
+                ...occupy(BLAST),
+                f8: { side: WHITE, piece: HERALD },
+                g8: { side: WHITE, piece: LEGIONARY }
+              },
+              'f7',
+              false
+            )
+          ).captures
+        }}
       />
     </Zone>
   )
@@ -100,7 +128,15 @@ export function Mage() {
         <Enhanced />
         <Restricted />
       </div>
-      <Blast />
+      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
+        The eight squares around the Mage are its ring. A turn is either a move or a blast, never
+        both. When it blasts it stays where it is and comes through its own blast unharmed, and it
+        may blast again the turn after.
+      </p>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        A blast needs at least one enemy piece in the ring. An empty ring is not allowed, and
+        neither is a ring holding only your own pieces, because either one would be a wasted turn.
+      </p>
     </section>
   )
 }

@@ -1,10 +1,12 @@
 import { WHITE } from '@/constants/player'
 import { MARSHAL, TEMPLAR } from '@/constants/piece'
+import { COMMAND_SQUARE } from '@/constants/board'
+import { templar } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
 import { Zone } from './Zone'
 import { place } from '../../lib/occupant'
-import { templarLeap } from '../../lib/reach'
+import { squares } from '../../lib/reach'
 
 export function Templar() {
   return (
@@ -22,10 +24,19 @@ export function Templar() {
             the other, which is the knight leap of chess.
           </p>
           <Diagram
-            subject='g7'
-            pieces={[place(WHITE, TEMPLAR, 'g7', true), place(WHITE, MARSHAL, 'g6', false)]}
-            moves={templarLeap(true)}
-            captures={templarLeap(true)}
+            subject={COMMAND_SQUARE}
+            pieces={[
+              place(WHITE, TEMPLAR, COMMAND_SQUARE, true),
+              place(WHITE, MARSHAL, 'g6', false)
+            ]}
+            {...squares(occupancy =>
+              templar(
+                WHITE,
+                { ...occupancy, g6: { side: WHITE, piece: MARSHAL } },
+                COMMAND_SQUARE,
+                true
+              )
+            )}
           />
         </Zone>
         <Zone isEnhanced={false}>
@@ -33,10 +44,9 @@ export function Templar() {
             One leap shape only, three squares one way and two the other. The knight leap is gone.
           </p>
           <Diagram
-            subject='g7'
-            pieces={[place(WHITE, TEMPLAR, 'g7', false)]}
-            moves={templarLeap(false)}
-            captures={templarLeap(false)}
+            subject={COMMAND_SQUARE}
+            pieces={[place(WHITE, TEMPLAR, COMMAND_SQUARE, false)]}
+            {...squares(occupancy => templar(WHITE, occupancy, COMMAND_SQUARE, false))}
           />
         </Zone>
       </div>

@@ -1,14 +1,15 @@
 import { WHITE, BLACK } from '@/constants/player'
-import { ASSASSIN, MARSHAL, SENTINEL, HERALD } from '@/constants/piece'
+import { MARSHAL, ASSASSIN, SENTINEL, HERALD } from '@/constants/piece'
 import { MARKS } from '@/constants/style'
 import { ASSASSIN_CAPTURES, ASSASSIN_OCCUPIED, ASSASSIN_ATTACKED } from '../constants/scene'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
 import { Zone } from './Zone'
-import { place } from '../../lib/occupant'
-import { assassinReach, assassinMoves } from '../../lib/reach'
+import { assassin } from '@/features/game/engine/moves'
+import { place, occupy } from '../../lib/occupant'
+import { squares } from '../../lib/reach'
 
-function WholeLine() {
+function Enhanced() {
   return (
     <Zone isEnhanced>
       <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
@@ -18,7 +19,9 @@ function WholeLine() {
       <Diagram
         subject='c3'
         pieces={[place(WHITE, ASSASSIN, 'c3', true), place(WHITE, MARSHAL, 'e4', false)]}
-        moves={assassinReach(true)}
+        {...squares(occupancy =>
+          assassin(WHITE, { ...occupancy, e4: { side: WHITE, piece: MARSHAL } }, 'c3', true)
+        )}
         captures={null}
       />
       <Diagram
@@ -28,13 +31,23 @@ function WholeLine() {
           place(WHITE, MARSHAL, 'e4', false),
           ...ASSASSIN_CAPTURES
         ]}
-        moves={assassinMoves(true, false)}
-        captures={assassinMoves(true, true)}
+        {...squares(occupancy =>
+          assassin(
+            WHITE,
+            {
+              ...occupancy,
+              ...occupy(ASSASSIN_CAPTURES),
+              e4: { side: WHITE, piece: MARSHAL }
+            },
+            'c3',
+            true
+          )
+        )}
       />
     </Zone>
   )
 }
-function SixSquares() {
+function Restricted() {
   return (
     <Zone isEnhanced={false}>
       <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
@@ -44,19 +57,20 @@ function SixSquares() {
       <Diagram
         subject='c3'
         pieces={[place(WHITE, ASSASSIN, 'c3', false)]}
-        moves={assassinReach(false)}
+        {...squares(occupancy => assassin(WHITE, occupancy, 'c3', false))}
         captures={null}
       />
       <Diagram
         subject='c3'
         pieces={[place(WHITE, ASSASSIN, 'c3', false), ...ASSASSIN_CAPTURES]}
-        moves={assassinMoves(false, false)}
-        captures={assassinMoves(false, true)}
+        {...squares(occupancy =>
+          assassin(WHITE, { ...occupancy, ...occupy(ASSASSIN_CAPTURES) }, 'c3', false)
+        )}
       />
     </Zone>
   )
 }
-function Refused() {
+function Illegal() {
   return (
     <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
       <div className='rounded border border-line px-3.5 py-3'>
@@ -86,16 +100,6 @@ function Refused() {
         />
       </div>
     </div>
-  )
-}
-function Edge() {
-  return (
-    <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-      Where the board ends there is no square behind, so a piece on the far rank cannot be taken
-      from in front, and the Assassin has to come at it from another direction. The corners are the
-      exception, having nothing behind them at all: a piece on a corner is taken the ordinary way,
-      with the Assassin ending on the corner, which still must not be attacked.
-    </p>
   )
 }
 function Corner() {
@@ -144,8 +148,8 @@ export function Assassin() {
         the piece it passed over is taken where it stood.
       </p>
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
-        <WholeLine />
-        <SixSquares />
+        <Enhanced />
+        <Restricted />
       </div>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         When it takes, the square behind the piece must be empty and must not be attacked. Any piece
@@ -154,8 +158,13 @@ export function Assassin() {
         lines like any other piece. It takes one piece a move, and only where nothing can take it
         back.
       </p>
-      <Refused />
-      <Edge />
+      <Illegal />
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        Where the board ends there is no square behind, so a piece on the far rank cannot be taken
+        from in front, and the Assassin has to come at it from another direction. The corners are
+        the exception, having nothing behind them at all: a piece on a corner is taken the ordinary
+        way, with the Assassin ending on the corner, which still must not be attacked.
+      </p>
       <Corner />
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         On a corner the square it takes on and the square it lands on are the same, so that one

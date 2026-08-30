@@ -1,10 +1,11 @@
 import { WHITE } from '@/constants/player'
 import { MARSHAL, HERALD } from '@/constants/piece'
+import { herald } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
 import { Zone } from './Zone'
 import { place } from '../../lib/occupant'
-import { heraldReach, heraldDiagonals } from '../../lib/reach'
+import { squares } from '../../lib/reach'
 
 export function Herald() {
   return (
@@ -25,8 +26,9 @@ export function Herald() {
           <Diagram
             subject='c3'
             pieces={[place(WHITE, HERALD, 'c3', true), place(WHITE, MARSHAL, 'f3', false)]}
-            moves={heraldReach(true)}
-            captures={heraldReach(true)}
+            {...squares(occupancy =>
+              herald(WHITE, { ...occupancy, f3: { side: WHITE, piece: MARSHAL } }, 'c3', true)
+            )}
           />
         </Zone>
         <Zone isEnhanced={false}>
@@ -37,8 +39,7 @@ export function Herald() {
           <Diagram
             subject='c3'
             pieces={[place(WHITE, HERALD, 'c3', false)]}
-            moves={heraldReach(false)}
-            captures={heraldDiagonals(false)}
+            {...squares(occupancy => herald(WHITE, occupancy, 'c3', false))}
           />
         </Zone>
       </div>
