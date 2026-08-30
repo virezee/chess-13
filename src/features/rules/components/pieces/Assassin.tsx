@@ -103,18 +103,19 @@ function Corner() {
     <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
       <div className='rounded border border-line px-3.5 py-3'>
         <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-          The corner may be taken
+          Capturing on a corner
         </p>
         <Diagram
           subject='c3'
           pieces={[place(WHITE, ASSASSIN, 'c3', false), place(BLACK, SENTINEL, 'a1', false)]}
           moves={null}
           captures={['a1']}
+          arrows={[{ fill: MARKS.red, steps: [{ from: 'c3', to: 'a1' }] }]}
         />
       </div>
       <div className='rounded border border-line px-3.5 py-3'>
         <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-          The corner is attacked by the opponent
+          The capture is not allowed
         </p>
         <Diagram
           subject='c3'
@@ -124,7 +125,7 @@ function Corner() {
             place(BLACK, SENTINEL, 'a5', false)
           ]}
           moves={null}
-          captures={['a1']}
+          captures={null}
           arrows={[{ fill: MARKS.blue, steps: [{ from: 'a5', to: 'a1' }] }]}
         />
       </div>
@@ -156,6 +157,10 @@ export function Assassin() {
       <Refused />
       <Edge />
       <Corner />
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        On a corner the square it takes on and the square it lands on are the same, so that one
+        square carries both conditions at once.
+      </p>
     </section>
   )
 }
