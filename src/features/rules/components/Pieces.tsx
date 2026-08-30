@@ -48,7 +48,7 @@ function Legend() {
         <Mark background={SELECTED}>The green square is the piece being explained.</Mark>
         <Mark background={DEST}>A green dot is a square the piece can move to.</Mark>
         <Mark background={DEST_CAPTURE}>
-          A red circle is a square the piece can move to only when the move takes a piece.
+          Red corners are a square the piece can move to only when the move takes a piece.
         </Mark>
         <Mark background={MARKS.red}>A red square is a piece caught in a blast.</Mark>
         <Mark background={MARKS.yellow}>
