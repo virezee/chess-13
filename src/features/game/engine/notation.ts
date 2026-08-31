@@ -30,7 +30,7 @@ export const notation = (position: Position, move: Move): string => {
     mover.piece === MARSHAL &&
     move.captures !== undefined &&
     state.riposte &&
-    threats(position, side, {}, false, move.to).length === 0
+    threats(position, side, {}, false, move.to, true).length === 0
       ? ' rip.'
       : ''
   const promSlots =

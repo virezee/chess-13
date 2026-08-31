@@ -54,7 +54,7 @@ function Enhanced() {
   return (
     <Zone isEnhanced>
       <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
-        The line has no limit. It moves as far along it as the path stays clear, and it takes a
+        The line has no limit. It moves as far along it as the path stays clear, and it captures a
         piece standing anywhere on that same line.
       </p>
       <Diagram
@@ -73,8 +73,8 @@ function Restricted() {
   return (
     <Zone isEnhanced={false}>
       <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
-        The line is cut to six squares. It moves up to six, and it takes only a piece close enough
-        that the whole capture stays inside those six.
+        The line is cut to six squares. It moves up to six, and it captures only a piece close
+        enough that the whole capture stays inside those six.
       </p>
       <Diagram
         subject='c3'
@@ -175,38 +175,38 @@ export function Assassin() {
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         What is different is the capture: an Assassin never ends on the square of the piece it
-        takes. It passes over that piece and lands on the square immediately beyond, and the piece
-        it passed over is taken where it stood.
+        captures. It passes over that piece and lands on the square immediately beyond, and the
+        piece it passed over is captured where it stood.
       </p>
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
         <Enhanced />
         <Restricted />
       </div>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        Wherever it can move it can also take, as long as the square beyond the piece is still
+        Wherever it can move it can also capture, as long as the square beyond the piece is still
         within its reach.
       </p>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
-        When it takes, the square behind the piece must be empty and must not be attacked. Any piece
-        standing there, of either colour, stops the capture, and so does an opponent&apos;s piece
-        attacking that square. Moving without taking is not bound by this: an Assassin walks its
-        lines like any other piece. It takes one piece a move, and only where nothing can take it
-        back.
+        When it captures, the square behind the piece must be empty and must not be attacked. Any
+        piece standing there, of either colour, stops the capture, and so does an opponent&apos;s
+        piece attacking that square. Moving without capturing is not bound by this: an Assassin
+        walks its lines like any other piece. It captures one piece a move.
       </p>
       <Illegal />
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        An Assassin cannot take a piece while the square behind it is occupied, or while that square
-        is attacked by the opponent.
+        An Assassin cannot capture a piece while the square behind it is occupied, or while that
+        square is attacked by the opponent.
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        Where the board ends there is no square behind, so a piece on the far rank cannot be taken
-        from in front, and the Assassin has to come at it from another direction. The corners are
-        the exception, having nothing behind them at all: a piece on a corner is taken the ordinary
-        way, with the Assassin ending on the corner, which still must not be attacked.
+        Where the board ends there is no square behind, so a piece on the far rank cannot be
+        captured from in front, and the Assassin has to come at it from another direction. The
+        corners are the exception, having nothing behind them at all: a piece on a corner is
+        captured the ordinary way, with the Assassin ending on the corner, which still must not be
+        attacked.
       </p>
       <Corner />
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        On a corner the square it takes on and the square it lands on are the same, so that one
+        On a corner the square it captures on and the square it lands on are the same, so that one
         square carries both conditions at once.
       </p>
     </section>

@@ -181,7 +181,7 @@ export const legality = (position: Position): Move[] => {
       move.captures &&
       !state.riposte &&
       occupancy[move.to]?.piece !== POPE &&
-      threats(position, side, {}, false, move.to).length === 0
+      threats(position, side, {}, false, move.to, true).length === 0
     )
       return false
     return !(

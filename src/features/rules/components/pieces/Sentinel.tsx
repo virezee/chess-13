@@ -11,8 +11,8 @@ function Enhanced() {
   return (
     <Zone isEnhanced>
       <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
-        Six squares on a quiet move, no limit when it takes, and it passes through your own pieces
-        towards your Marshal.
+        Six squares on a quiet move, no limit when it captures, and it passes through your own
+        pieces towards your Marshal.
       </p>
       <Diagram
         subject='a1'
@@ -42,7 +42,7 @@ function Restricted() {
   return (
     <Zone isEnhanced={false}>
       <p className='mt-2 text-[15px] leading-relaxed text-ink-dim'>
-        Three squares on a quiet move, six when it takes, and any piece blocks it.
+        Three squares on a quiet move, six when it captures, and any piece blocks it.
       </p>
       <Diagram
         subject='a1'
@@ -76,7 +76,7 @@ function Capture() {
           pieces={[
             place(WHITE, SENTINEL, 'a1', true),
             place(WHITE, MARSHAL, 'd3', false),
-            place(WHITE, HERALD, 'a3', false),
+            place(WHITE, HERALD, 'a3', true),
             place(BLACK, HERALD, 'a5', false)
           ]}
           {...squares(occupancy =>
@@ -105,12 +105,12 @@ export function Sentinel() {
       <Counterpart from='rook' to={SENTINEL} />
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         The rook of this game. Straight lines only, and the path has to be clear. How far it goes
-        depends on whether the move takes something: a capture reaches further than a quiet move, so
-        an enemy piece far down the line is still in range.
+        depends on whether the move captures: a capture reaches further than a quiet move, so an
+        enemy piece far down the line is still in range.
       </p>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         It slides along a rank or a file while the line stays clear. Two of its moves carry a
-        condition: a square too far for a quiet move is still open if the move takes the piece
+        condition: a square too far for a quiet move is still open if the move captures the piece
         standing there, and your own pieces let it through while it heads towards your Marshal.
       </p>
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
@@ -124,9 +124,9 @@ export function Sentinel() {
         north.
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        Once it has passed through it can no longer take, so the move ends on the last free square
-        before the next piece. A square that far cannot be moved to on a quiet move either, so the
-        only way to reach it is by taking the piece standing there.
+        Once it has passed through it can no longer capture, so the move ends on the last free
+        square before the next piece. A square that far cannot be moved to on a quiet move either,
+        so the only way to reach it is by capturing the piece standing there.
       </p>
       <Capture />
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>

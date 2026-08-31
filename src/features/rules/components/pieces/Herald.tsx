@@ -44,7 +44,7 @@ export function Herald() {
         </Zone>
       </div>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
-        Its diagonal reach is the same whether it is moving to an empty square or taking a piece.
+        Its diagonal reach is the same whether it is moving to an empty square or capturing a piece.
       </p>
     </section>
   )

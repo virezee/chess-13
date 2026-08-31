@@ -45,7 +45,7 @@ const isLandingClear = (
   const key = `${side}${square}`
   if (chain.includes(key)) return true
   return (
-    threats(board, side === WHITE ? BLACK : WHITE, hopped(view, square), false, dest, [
+    threats(board, side === WHITE ? BLACK : WHITE, hopped(view, square), false, dest, false, [
       ...chain,
       key
     ]).length === 0
@@ -81,7 +81,7 @@ const leapers = (
 }
 export const isReachable = (
   piece: Piece,
-  dormant: boolean,
+  isDormant: boolean,
   isDiagonal: boolean,
   rankStep: number,
   enhanced: boolean,
@@ -91,7 +91,7 @@ export const isReachable = (
     case POPE:
       return distance === 1
     case EMPEROR:
-      return piece.awake === true || dormant
+      return piece.awake === true || isDormant
     case SENTINEL:
       return !isDiagonal && distance <= REACH.sentinel[enhanced ? ENHANCED : RESTRICTED].capture
     case HERALD:
@@ -126,8 +126,9 @@ export const threats = (
   board: Board,
   side: Side,
   view: View = {},
-  dormant: boolean,
+  isDormant: boolean,
   square: string,
+  isLandingAttacked = false,
   chain: readonly string[] = []
 ): string[] => {
   const { pieces, occupancy } = board
@@ -156,13 +157,13 @@ export const threats = (
           : makeSquare({ file: target.file - fileStep, rank: target.rank - rankStep })
         if (
           isAssassinReachable(occupancy, view, square, fileStep, rankStep, enhanced, distance) &&
-          isLandingClear(board, side, view, square, dest, chain)
+          (isLandingAttacked || isLandingClear(board, side, view, square, dest, chain))
         )
           attackers.push(attacker)
       } else if (occupant.piece === MAGE) {
         const isInRing = Math.max(Math.abs(popeSq.file - file), Math.abs(popeSq.rank - rank)) === 1
         if (distance === 1 && (enhanced || !(isEnemyPope && isInRing))) attackers.push(attacker)
-      } else if (isReachable(occupant, dormant, isDiagonal, rankStep, enhanced, distance))
+      } else if (isReachable(occupant, isDormant, isDiagonal, rankStep, enhanced, distance))
         attackers.push(attacker)
       break
     }

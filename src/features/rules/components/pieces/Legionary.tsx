@@ -78,7 +78,7 @@ function Push() {
       </div>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         Both boards start from the same square, so the enhanced zone gains a tempo, and either way
-        taking is one square diagonally forward like a pawn.
+        capturing is one square diagonally forward like a pawn.
       </p>
     </>
   )
@@ -140,7 +140,7 @@ function EnPassant() {
       </div>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         The right is gone the moment it is not used: play anything else and that square can no
-        longer be taken.
+        longer be captured.
       </p>
     </>
   )

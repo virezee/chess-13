@@ -1,5 +1,14 @@
 import { WHITE, BLACK } from '@/constants/player'
-import { MARSHAL, SENTINEL, HERALD } from '@/constants/piece'
+import {
+  POPE,
+  MARSHAL,
+  ASSASSIN,
+  SENTINEL,
+  MAGE,
+  HERALD,
+  TEMPLAR,
+  LEGIONARY
+} from '@/constants/piece'
 import { FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import { BUFF, MARKS } from '@/constants/style'
 import { marshal } from '@/features/game/engine/moves'
@@ -105,6 +114,108 @@ function Capture() {
     </div>
   )
 }
+function Ring() {
+  return (
+    <div className='rounded border border-line px-3.5 py-3'>
+      <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+        The Mage attacks everything next to it
+      </p>
+      <Diagram
+        subject='g1'
+        pieces={[
+          place(WHITE, MARSHAL, 'g1', false),
+          place(WHITE, MAGE, 'h12', false),
+          place(BLACK, HERALD, 'g12', false)
+        ]}
+        moves={null}
+        captures={['g12']}
+        marks={{ background: MARKS.red, squares: ['g12'] }}
+        arrows={[{ fill: MARKS.red, steps: [{ from: 'g1', to: 'g12' }] }]}
+      />
+    </div>
+  )
+}
+function Blast() {
+  return (
+    <div className='rounded border border-line px-3.5 py-3'>
+      <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+        The Marshal can capture what the Mage cannot blast
+      </p>
+      <Diagram
+        subject='g1'
+        pieces={[
+          place(WHITE, MARSHAL, 'g1', false),
+          place(WHITE, MAGE, 'h12', false),
+          place(WHITE, POPE, 'i12', false),
+          place(BLACK, HERALD, 'g12', false)
+        ]}
+        moves={null}
+        captures={['g12']}
+        arrows={[{ fill: MARKS.red, steps: [{ from: 'g1', to: 'g12' }] }]}
+      />
+    </div>
+  )
+}
+function Landing() {
+  return (
+    <div className='rounded border border-line px-3.5 py-3'>
+      <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+        The Marshal can capture, the square behind is only attacked
+      </p>
+      <Diagram
+        subject='m7'
+        pieces={[
+          place(WHITE, MARSHAL, 'm7', false),
+          place(WHITE, ASSASSIN, 'c3', false),
+          place(BLACK, LEGIONARY, 'c7', false),
+          place(BLACK, TEMPLAR, 'f10', false)
+        ]}
+        moves={null}
+        captures={['c7']}
+        arrows={[
+          {
+            fill: MARKS.red,
+            steps: [
+              { from: 'm7', to: 'c7' },
+              { from: 'c3', to: 'c7' }
+            ]
+          },
+          { fill: MARKS.blue, steps: [{ from: 'f10', to: 'c8' }] }
+        ]}
+      />
+    </div>
+  )
+}
+function Occupied() {
+  return (
+    <div className='rounded border border-line px-3.5 py-3'>
+      <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+        The Marshal cannot capture, the square behind is occupied
+      </p>
+      <Diagram
+        subject='m7'
+        pieces={[
+          place(WHITE, MARSHAL, 'm7', false),
+          place(WHITE, ASSASSIN, 'c3', false),
+          place(BLACK, LEGIONARY, 'c7', false),
+          place(BLACK, TEMPLAR, 'c8', false)
+        ]}
+        moves={null}
+        captures={null}
+      />
+    </div>
+  )
+}
+function Exception() {
+  return (
+    <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+      <Ring />
+      <Blast />
+      <Landing />
+      <Occupied />
+    </div>
+  )
+}
 export function Marshal() {
   return (
     <section>
@@ -135,10 +246,30 @@ export function Marshal() {
         has falls on the capture instead.
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        Capturing is the half that is held back. The Marshal only takes a piece one of your other
+        Capturing is the half that is held back. The Marshal only captures a piece one of your other
         pieces is already attacking, and without that the capture is simply not available.
       </p>
       <Capture />
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        The line to the Sentinel is the same either way. What decides the capture is whether
+        anything else of yours is aiming at that square.
+      </p>
+      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
+        The Mage and the Assassin are the hard ones to read. Both attack in their own way, and it
+        takes a second look to tell whether a piece is attacked by them. In the two positions here
+        it is, so the Marshal may capture.
+      </p>
+      <Exception />
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        A Mage attacks every square around it, near or far from the Marshal, so anything standing
+        beside it is open to the Marshal.
+      </p>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        An Assassin attacks along its line as soon as the square behind the piece is empty. If that
+        square is attacked, the Marshal still captures and the Assassin cannot: that is the
+        Assassin&apos;s own problem. If the square is occupied there is no attack, and neither of
+        them can capture.
+      </p>
     </section>
   )
 }

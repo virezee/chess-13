@@ -15,7 +15,7 @@ export function Templar() {
       <Counterpart from='knight' to={TEMPLAR} />
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         The knight of this game. Every move is a leap, so the pieces in between do not matter, and
-        the piece it lands on is the piece it takes.
+        the piece it lands on is the piece it captures.
       </p>
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
         <Zone isEnhanced>
