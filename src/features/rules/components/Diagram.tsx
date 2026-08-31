@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
-import type { Step } from '@/types/game'
-import type { BoardPiece } from '../types/setup'
+import type { Trace, Step } from '@/types/game'
+import type { BoardPiece, DiagramMarks } from '../types/setup'
 import Image from 'next/image'
 import { SIZE, FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import {
@@ -12,10 +12,12 @@ import {
   BUFF,
   SELECTED,
   DEST,
-  DEST_CAPTURE
+  DEST_CAPTURE,
+  STAGGER
 } from '@/constants/style'
 import { translate } from '@/features/game/lib/layout'
 import { arrowPoints } from '@/features/game/lib/annotation'
+import { cn } from '@/lib/cn'
 
 function Files() {
   return (
@@ -90,10 +92,15 @@ function CommandSquare() {
     </div>
   )
 }
-function Piece(props: BoardPiece) {
-  const { side, piece, square, isEnhanced } = props
+function Piece(props: BoardPiece & { isAnimated: boolean }) {
+  const { side, piece, square, isEnhanced, isAnimated } = props
   return (
-    <div className='absolute left-0 top-0' style={translate(square, false)}>
+    <div
+      className={cn(
+        'absolute left-0 top-0',
+        isAnimated && 'transition-transform duration-200 ease-out'
+      )}
+      style={translate(square, false)}>
       {isEnhanced && (
         <span
           className='absolute inset-0'
@@ -129,6 +136,21 @@ function Fill({
     />
   )
 }
+function Subject({ square }: { square: string | null }) {
+  if (square === null) return null
+  return <Fill square={square} background={SELECTED} />
+}
+function Moves({ squares }: { squares: string[] | null }) {
+  return squares?.map(square => <Fill key={square} square={square} background={DEST} />)
+}
+function Captures({ squares }: { squares: string[] | null }) {
+  return squares?.map(square => <Fill key={square} square={square} background={DEST_CAPTURE} />)
+}
+function Marks({ marks }: { marks: DiagramMarks | undefined }) {
+  return marks?.squares.map(square => (
+    <Fill key={square} square={square} background={marks.background} clip={marks.clip} />
+  ))
+}
 function Arrows({ steps, fill }: { steps: Step[]; fill: string }) {
   return (
     <svg
@@ -147,30 +169,39 @@ export function Diagram({
   moves,
   captures,
   marks,
-  arrows
+  arrows,
+  isAnimated = false,
+  trace
 }: {
   subject: string | null
   pieces: BoardPiece[] | null
   moves: string[] | null
   captures: string[] | null
-  marks?: { squares: string[]; background: string; clip?: string }
+  marks?: DiagramMarks
   arrows?: { steps: Step[]; fill: string }[]
+  isAnimated?: boolean
+  trace?: Trace[] | undefined
 }) {
   return (
     <Board>
       <CommandSquare />
-      {subject !== null && <Fill square={subject} background={SELECTED} />}
-      {moves?.map(square => (
-        <Fill key={square} square={square} background={DEST} />
-      ))}
-      {captures?.map(square => (
-        <Fill key={square} square={square} background={DEST_CAPTURE} />
-      ))}
-      {marks?.squares.map(square => (
-        <Fill key={square} square={square} background={marks.background} clip={marks.clip} />
+      <Subject square={subject} />
+      <Moves squares={moves} />
+      <Captures squares={captures} />
+      <Marks marks={marks} />
+      {trace?.map(({ square, delay, colour }) => (
+        <div
+          key={`${square}-${delay}`}
+          className='absolute left-0 top-0'
+          style={{
+            ...translate(square, false),
+            background: colour,
+            animation: `chase ${STAGGER.duration}ms ease-out ${delay}ms both`
+          }}
+        />
       ))}
       {pieces?.map(figure => (
-        <Piece key={figure.square} {...figure} />
+        <Piece key={`${figure.side}${figure.piece}`} {...figure} isAnimated={isAnimated} />
       ))}
       {arrows?.map(group => (
         <Arrows key={group.fill} fill={group.fill} steps={group.steps} />

@@ -1,7 +1,7 @@
 import { WHITE, BLACK } from '@/constants/player'
 import { MARSHAL, ASSASSIN, SENTINEL, HERALD } from '@/constants/piece'
 import { MARKS } from '@/constants/style'
-import { ASSASSIN_CAPTURES, ASSASSIN_OCCUPIED, ASSASSIN_ATTACKED } from '../constants/scene'
+import { ASSASSIN_CAPTURES, ASSASSIN_OCCUPIED, ASSASSIN_ATTACKED } from '../../constants/scene'
 import { assassin } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
@@ -187,15 +187,13 @@ export function Assassin() {
         within its reach.
       </p>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
-        When it captures, the square behind the piece must be empty and must not be attacked. Any
-        piece standing there, of either colour, stops the capture, and so does an opponent&apos;s
-        piece attacking that square. Moving without capturing is not bound by this: an Assassin
-        walks its lines like any other piece. It captures one piece a move.
+        When it captures, the square behind the piece must be empty and must not be attacked. The
+        condition is on the capture alone, a quiet move lands wherever the line is clear. It
+        captures one piece a move.
       </p>
       <Illegal />
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        An Assassin cannot capture a piece while the square behind it is occupied, or while that
-        square is attacked by the opponent.
+        Not one of the pieces under attack here is defended, and not one of them can be captured.
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         Where the board ends there is no square behind, so a piece on the far rank cannot be
@@ -206,8 +204,8 @@ export function Assassin() {
       </p>
       <Corner />
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        On a corner the square it captures on and the square it lands on are the same, so that one
-        square carries both conditions at once.
+        On a corner the piece it captures stands on the square it lands on, so the only condition
+        left is that nothing attacks that square.
       </p>
     </section>
   )

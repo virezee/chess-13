@@ -1,7 +1,7 @@
 import { WHITE, BLACK } from '@/constants/player'
 import { MARSHAL, SENTINEL, MAGE, HERALD, LEGIONARY } from '@/constants/piece'
 import { MARKS } from '@/constants/style'
-import { BLAST } from '../constants/scene'
+import { BLAST } from '../../constants/scene'
 import { mage } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
