@@ -269,6 +269,10 @@ function Arrival() {
 function Riposte() {
   return (
     <>
+      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
+        The Marshal has one special right of its own. Lose a piece on a square it has a clear line
+        to, and for one move it captures on those lines with nothing of yours attacking the piece.
+      </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         Watch the square the piece falls on. The Marshal sweeps its eight lines outward, and the
         capture only counts if that square is one of them. Anything standing in between, yours or
@@ -291,7 +295,7 @@ function Riposte() {
           subject='g5'
           pieces={[
             place(WHITE, MARSHAL, 'g5', false),
-            place(WHITE, HERALD, 'k9', false),
+            place(WHITE, HERALD, 'k9', true),
             place(BLACK, SENTINEL, 'm10', false),
             place(WHITE, LEGIONARY, 'l10', false)
           ]}
@@ -306,13 +310,39 @@ function Riposte() {
     </>
   )
 }
+function SelfCapture() {
+  return (
+    <div className='mt-3 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+      <div className='mx-auto sm:w-[calc(50%-0.3125rem)]'>
+        <Animation
+          caption='The Mage blasts its own pieces along with the enemy'
+          subject='c7'
+          pieces={[
+            place(WHITE, MARSHAL, 'm7', false),
+            place(WHITE, MAGE, 'c7', false),
+            place(WHITE, LEGIONARY, 'd7', false),
+            place(WHITE, TEMPLAR, 'b8', false),
+            place(BLACK, SENTINEL, 'd6', false),
+            place(BLACK, HERALD, 'b7', false),
+            place(BLACK, LEGIONARY, 'c8', false)
+          ]}
+          move={{ from: 'c7', to: 'c7', captures: ['d7', 'b8', 'd6', 'b7', 'c8'] }}
+          trace={null}
+        />
+      </div>
+    </div>
+  )
+}
 function EnPrise() {
   return (
     <>
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
-        The riposte is not always triggered. Anything standing between the Marshal and the square
-        where your piece died cuts the line, and an Assassin that lands there does that to itself.
+        The riposte is not always triggered. A Mage that kills your own piece in its ring gives you
+        nothing, since only a capture by the opponent creates the right. Anything standing between
+        the Marshal and the square where your piece died cuts the line as well, and an Assassin that
+        lands there does that to itself.
       </p>
+      <SelfCapture />
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
         <Animation
           caption='The Assassin lands on the line and cuts it'
@@ -331,17 +361,18 @@ function EnPrise() {
           pieces={[
             place(WHITE, MARSHAL, 'g7', false),
             place(BLACK, ASSASSIN, 'a3', false),
-            place(WHITE, LEGIONARY, 'f8', false)
+            place(WHITE, LEGIONARY, 'f8', true)
           ]}
           move={{ from: 'a3', to: 'g9', captures: ['f8'] }}
           trace={EN_PRISE_FLAG}
         />
       </div>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        The Assassin is safe only when it blocks the Marshal&apos;s path to the square where the
-        capture happened. If it does not, the Marshal may take it, and this is the one time an
-        Assassin can be captured right after capturing, since the riposte creates an attack the
-        landing square did not have before.
+        A Mage blasting its own never opens a riposte, whatever the Marshal sees. The Assassin is
+        safe only when it blocks the Marshal&apos;s path to the square where the capture happened.
+        If it does not, the Marshal may take it, and this is the one time an Assassin can be
+        captured right after capturing, since the riposte creates an attack the landing square did
+        not have before.
       </p>
     </>
   )
@@ -361,10 +392,6 @@ export function Marshal() {
       <Adjacent />
       <Arrival />
       <h4 className='mt-6 font-reading text-[14px] leading-none text-ink'>Riposte</h4>
-      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
-        The Marshal has one special right of its own. Lose a piece on a square it has a clear line
-        to, and for one move it captures on those lines with nothing of yours attacking the piece.
-      </p>
       <Riposte />
       <EnPrise />
     </section>
