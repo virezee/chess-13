@@ -212,6 +212,34 @@ function Assassin() {
     </>
   )
 }
+function Marshal() {
+  return (
+    <>
+      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
+        The Marshal is the opposite case. Against an ordinary piece it captures only what one of its
+        own pieces already attacks, but the Pope is exempt, so a clear line to it is already check.
+      </p>
+      <div className='mt-3 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+        <div className='mx-auto rounded border border-line px-3.5 py-3 sm:w-[calc(50%-0.3125rem)]'>
+          <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+            The Marshal checks on its own
+          </p>
+          <Diagram
+            subject='c7'
+            pieces={[place(BLACK, MARSHAL, 'c7', false), place(WHITE, POPE, 'g7', false)]}
+            moves={null}
+            captures={null}
+            marks={{ background: CHECK, squares: ['g7'] }}
+          />
+        </div>
+      </div>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        The Marshal has no second attacker on the board and the Pope is attacked all the same. The
+        Pope has to step off the line, something has to block it, or the Marshal has to be captured.
+      </p>
+    </>
+  )
+}
 function Check() {
   return (
     <>
@@ -222,6 +250,7 @@ function Check() {
       </p>
       <Mage />
       <Assassin />
+      <Marshal />
     </>
   )
 }

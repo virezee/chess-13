@@ -98,15 +98,6 @@ function Illegal() {
           pieces={[place(WHITE, ASSASSIN, 'c3', false), ...ASSASSIN_OCCUPIED]}
           moves={null}
           captures={null}
-          arrows={[
-            {
-              fill: MARKS.red,
-              steps: [
-                { from: 'c3', to: 'c7' },
-                { from: 'c3', to: 'g3' }
-              ]
-            }
-          ]}
         />
       </div>
       <div className='rounded border border-line px-3.5 py-3'>
