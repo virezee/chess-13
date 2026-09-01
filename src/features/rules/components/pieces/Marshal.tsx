@@ -13,7 +13,7 @@ import {
 } from '@/constants/piece'
 import { FILES, RANKS, COMMAND_SQUARE } from '@/constants/board'
 import { BUFF, MARKS } from '@/constants/style'
-import { RIPOSTE_FLAG, EN_PRISE_FLAG } from '../../constants/scene'
+import { RIPOSTE_FLAG, RIPOSTE_BLAST, RIPOSTE_EN_PRISE } from '../../constants/scene'
 import { marshal } from '@/features/game/engine/moves'
 import { isEnhanced } from '@/features/game/engine/generate'
 import { Diagram } from '../Diagram'
@@ -310,26 +310,39 @@ function Riposte() {
     </>
   )
 }
-function SelfCapture() {
+function Blast() {
   return (
-    <div className='mt-3 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
-      <div className='mx-auto sm:w-[calc(50%-0.3125rem)]'>
-        <Animation
-          caption='The Mage blasts its own pieces along with the enemy'
-          subject='c7'
-          pieces={[
-            place(WHITE, MARSHAL, 'm7', false),
-            place(WHITE, MAGE, 'c7', false),
-            place(WHITE, LEGIONARY, 'd7', false),
-            place(WHITE, TEMPLAR, 'b8', false),
-            place(BLACK, SENTINEL, 'd6', false),
-            place(BLACK, HERALD, 'b7', false),
-            place(BLACK, LEGIONARY, 'c8', false)
-          ]}
-          move={{ from: 'c7', to: 'c7', captures: ['d7', 'b8', 'd6', 'b7', 'c8'] }}
-          trace={null}
-        />
-      </div>
+    <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+      <Animation
+        caption='The blast comes from your own Mage'
+        subject='c7'
+        pieces={[
+          place(WHITE, MARSHAL, 'm7', false),
+          place(WHITE, MAGE, 'c7', false),
+          place(WHITE, LEGIONARY, 'd7', false),
+          place(WHITE, TEMPLAR, 'b8', false),
+          place(BLACK, SENTINEL, 'd6', false),
+          place(BLACK, HERALD, 'b7', false),
+          place(BLACK, LEGIONARY, 'c8', false)
+        ]}
+        move={{ from: 'c7', to: 'c7', captures: ['d7', 'b8', 'd6', 'b7', 'c8'] }}
+        trace={null}
+      />
+      <Animation
+        caption='The same blast comes from the opponent'
+        subject='c7'
+        pieces={[
+          place(WHITE, MARSHAL, 'm7', false),
+          place(BLACK, MAGE, 'c7', false),
+          place(WHITE, LEGIONARY, 'd7', false),
+          place(WHITE, TEMPLAR, 'b8', false),
+          place(BLACK, SENTINEL, 'd6', false),
+          place(BLACK, HERALD, 'b7', false),
+          place(BLACK, LEGIONARY, 'c8', false)
+        ]}
+        move={{ from: 'c7', to: 'c7', captures: ['d7', 'b8', 'd6', 'b7', 'c8'] }}
+        trace={RIPOSTE_BLAST}
+      />
     </div>
   )
 }
@@ -342,7 +355,7 @@ function EnPrise() {
         the Marshal and the square where your piece died cuts the line as well, and an Assassin that
         lands there does that to itself.
       </p>
-      <SelfCapture />
+      <Blast />
       <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
         <Animation
           caption='The Assassin lands on the line and cuts it'
@@ -356,7 +369,7 @@ function EnPrise() {
           trace={null}
         />
         <Animation
-          caption='The Assassin lands where the Marshal can take it'
+          caption='The Assassin lands where the Marshal can capture it'
           subject='g7'
           pieces={[
             place(WHITE, MARSHAL, 'g7', false),
@@ -364,13 +377,13 @@ function EnPrise() {
             place(WHITE, LEGIONARY, 'f8', true)
           ]}
           move={{ from: 'a3', to: 'g9', captures: ['f8'] }}
-          trace={EN_PRISE_FLAG}
+          trace={RIPOSTE_EN_PRISE}
         />
       </div>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         A Mage blasting its own never opens a riposte, whatever the Marshal sees. The Assassin is
         safe only when it blocks the Marshal&apos;s path to the square where the capture happened.
-        If it does not, the Marshal may take it, and this is the one time an Assassin can be
+        If it does not, the Marshal may capture it, and this is the one time an Assassin can be
         captured right after capturing, since the riposte creates an attack the landing square did
         not have before.
       </p>

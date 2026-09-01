@@ -1,6 +1,15 @@
 import type { State } from '@/types/game'
 import { WHITE, BLACK } from '@/constants/player'
-import { POPE, MARSHAL, ASSASSIN, SENTINEL, HERALD, TEMPLAR, LEGIONARY } from '@/constants/piece'
+import {
+  POPE,
+  MARSHAL,
+  ASSASSIN,
+  SENTINEL,
+  MAGE,
+  HERALD,
+  TEMPLAR,
+  LEGIONARY
+} from '@/constants/piece'
 import { position } from '@/features/game/engine/position'
 import { riposteFlag } from '@/features/game/lib/trace'
 import { place } from '../lib/occupant'
@@ -50,7 +59,19 @@ export const RIPOSTE_FLAG = riposteFlag(
     RIPOSTE_STATE
   )
 )
-export const EN_PRISE_FLAG = riposteFlag(
+export const RIPOSTE_BLAST = riposteFlag(
+  position(
+    WHITE,
+    {
+      a1: { side: WHITE, piece: POPE },
+      m7: { side: WHITE, piece: MARSHAL },
+      c7: { side: BLACK, piece: MAGE },
+      a13: { side: BLACK, piece: POPE }
+    },
+    RIPOSTE_STATE
+  )
+)
+export const RIPOSTE_EN_PRISE = riposteFlag(
   position(
     WHITE,
     {
