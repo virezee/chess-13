@@ -1,5 +1,6 @@
+// oxlint-disable eslint/max-lines
 import { WHITE, BLACK } from '@/constants/player'
-import { POPE, MARSHAL, ASSASSIN, SENTINEL, MAGE } from '@/constants/piece'
+import { POPE, EMPEROR, MARSHAL, ASSASSIN, SENTINEL, MAGE, HERALD } from '@/constants/piece'
 import { CHECK, MARKS } from '@/constants/style'
 import { pope } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
@@ -240,6 +241,39 @@ function Marshal() {
     </>
   )
 }
+function Emperor() {
+  return (
+    <>
+      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
+        A dormant Emperor cannot be captured, but it can be attacked, and attacking it wakes the
+        Emperor on the opponent&apos;s turn. If it attacks your Pope from where it stands, the Pope
+        falls that same turn, so the move never appears.
+      </p>
+      <div className='mt-3 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+        <div className='mx-auto rounded border border-line px-3.5 py-3 sm:w-[calc(50%-0.3125rem)]'>
+          <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+            One square of the line is missing
+          </p>
+          <Diagram
+            subject='h7'
+            pieces={[
+              place(WHITE, HERALD, 'h7', false),
+              place(WHITE, POPE, 'f1', false),
+              place(BLACK, EMPEROR, 'f13', false)
+            ]}
+            moves={['i8', 'k10', 'l11', 'm12']}
+            captures={null}
+          />
+        </div>
+      </div>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        The diagonal is clear the whole way, so nothing on the board blocks the square that is
+        missing. What takes it out is the file the Emperor and the Pope share, since a Herald
+        landing there wakes the Emperor onto the Pope.
+      </p>
+    </>
+  )
+}
 function Check() {
   return (
     <>
@@ -251,6 +285,7 @@ function Check() {
       <Mage />
       <Assassin />
       <Marshal />
+      <Emperor />
     </>
   )
 }
