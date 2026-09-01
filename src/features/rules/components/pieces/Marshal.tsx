@@ -272,6 +272,8 @@ function Riposte() {
       <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
         The Marshal has one special right of its own. Lose a piece on a square it has a clear line
         to, and for one move it captures on those lines with nothing of yours attacking the piece.
+        The right holds only on the move immediately following, and after that the Marshal again
+        captures only what your other pieces attack.
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         Watch the square the piece falls on. The Marshal sweeps its eight lines outward, and the

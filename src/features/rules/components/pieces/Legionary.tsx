@@ -1,6 +1,6 @@
+import { COMMAND_SQUARE } from '@/constants/board'
 import { WHITE, BLACK } from '@/constants/player'
 import { MARSHAL, LEGIONARY } from '@/constants/piece'
-import { COMMAND_SQUARE } from '@/constants/board'
 import { legionary } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'

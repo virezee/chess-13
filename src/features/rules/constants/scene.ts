@@ -2,6 +2,7 @@ import type { State } from '@/types/game'
 import { WHITE, BLACK } from '@/constants/player'
 import {
   POPE,
+  EMPEROR,
   MARSHAL,
   ASSASSIN,
   SENTINEL,
@@ -11,10 +12,10 @@ import {
   LEGIONARY
 } from '@/constants/piece'
 import { position } from '@/features/game/engine/position'
-import { riposteFlag } from '@/features/game/lib/trace'
+import { emperorFlag, riposteFlag } from '@/features/game/lib/trace'
 import { place } from '../lib/occupant'
 
-const RIPOSTE_STATE: State = {
+const FLAG_STATE: State = {
   awake: { [WHITE]: false, [BLACK]: false },
   riposte: true,
   castlingSide: {
@@ -46,7 +47,7 @@ export const ASSASSIN_ATTACKED = [
   place(BLACK, SENTINEL, 'c7', false),
   place(BLACK, HERALD, 'e6', false)
 ]
-export const LOOP = { duration: 1000, delay: 200 }
+export const LOOP = { duration: 2000, delay: 200 }
 export const RIPOSTE_FLAG = riposteFlag(
   position(
     WHITE,
@@ -56,7 +57,7 @@ export const RIPOSTE_FLAG = riposteFlag(
       l10: { side: BLACK, piece: SENTINEL },
       m13: { side: BLACK, piece: POPE }
     },
-    RIPOSTE_STATE
+    FLAG_STATE
   )
 )
 export const RIPOSTE_BLAST = riposteFlag(
@@ -68,7 +69,7 @@ export const RIPOSTE_BLAST = riposteFlag(
       c7: { side: BLACK, piece: MAGE },
       a13: { side: BLACK, piece: POPE }
     },
-    RIPOSTE_STATE
+    FLAG_STATE
   )
 )
 export const RIPOSTE_EN_PRISE = riposteFlag(
@@ -80,6 +81,33 @@ export const RIPOSTE_EN_PRISE = riposteFlag(
       g9: { side: BLACK, piece: ASSASSIN },
       a12: { side: BLACK, piece: POPE }
     },
-    RIPOSTE_STATE
+    FLAG_STATE
+  )
+)
+export const EMPEROR_FLAG = emperorFlag(
+  position(
+    WHITE,
+    {
+      a1: { side: WHITE, piece: POPE },
+      g2: { side: WHITE, piece: EMPEROR, awake: false },
+      m1: { side: WHITE, piece: MARSHAL },
+      g12: { side: BLACK, piece: SENTINEL },
+      h12: { side: BLACK, piece: MARSHAL },
+      a13: { side: BLACK, piece: POPE }
+    },
+    FLAG_STATE
+  )
+)
+export const EMPEROR_EN_PRISE = emperorFlag(
+  position(
+    WHITE,
+    {
+      a1: { side: WHITE, piece: POPE },
+      g2: { side: WHITE, piece: EMPEROR, awake: false },
+      m1: { side: WHITE, piece: MARSHAL },
+      k6: { side: BLACK, piece: ASSASSIN },
+      a13: { side: BLACK, piece: POPE }
+    },
+    FLAG_STATE
   )
 )

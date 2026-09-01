@@ -7,7 +7,7 @@ import { Legionary } from './pieces/Legionary'
 import { Mage } from './pieces/Mage'
 import { Assassin } from './pieces/Assassin'
 import { Marshal } from './pieces/Marshal'
-// import { Emperor } from './pieces/Emperor'
+import { Emperor } from './pieces/Emperor'
 // import { Pope } from './pieces/Pope'
 
 function Mark({
@@ -103,7 +103,7 @@ export function Pieces() {
       <Mage />
       <Assassin />
       <Marshal />
-      {/* <Emperor /> */}
+      <Emperor />
       {/* <Pope /> */}
     </>
   )
