@@ -1,3 +1,4 @@
+// oxlint-disable import/max-dependencies
 import { FONT_SIZE, BASELINE, BUFF, SELECTED, DEST, DEST_CAPTURE, MARKS } from '@/constants/style'
 import { arrowPoints } from '@/features/game/lib/annotation'
 import { Herald } from './pieces/Herald'
@@ -8,7 +9,7 @@ import { Mage } from './pieces/Mage'
 import { Assassin } from './pieces/Assassin'
 import { Marshal } from './pieces/Marshal'
 import { Emperor } from './pieces/Emperor'
-// import { Pope } from './pieces/Pope'
+import { Pope } from './pieces/Pope'
 
 function Mark({
   background,
@@ -104,7 +105,7 @@ export function Pieces() {
       <Assassin />
       <Marshal />
       <Emperor />
-      {/* <Pope /> */}
+      <Pope />
     </>
   )
 }

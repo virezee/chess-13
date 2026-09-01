@@ -201,7 +201,11 @@ export function Diagram({
         />
       ))}
       {pieces?.map(figure => (
-        <Piece key={`${figure.side}${figure.piece}`} {...figure} isAnimated={isAnimated} />
+        <Piece
+          key={`${figure.side}${figure.piece}${isAnimated ? '' : figure.square}`}
+          {...figure}
+          isAnimated={isAnimated}
+        />
       ))}
       {arrows?.map(group => (
         <Arrows key={group.fill} fill={group.fill} steps={group.steps} />
