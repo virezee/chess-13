@@ -183,7 +183,7 @@ function Adjacent() {
         </div>
         <div className='rounded border border-line px-3.5 py-3'>
           <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-            The Marshal can capture what the Mage cannot blast
+            The Marshal captures though the Mage cannot blast
           </p>
           <Diagram
             subject='g1'

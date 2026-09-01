@@ -193,7 +193,9 @@ export function Assassin() {
       </p>
       <Illegal />
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
-        Not one of the pieces under attack here is defended, and not one of them can be captured.
+        Neither piece under attack here is defended, and neither can be captured. The square behind
+        one is occupied and the square behind the other is defended, and either alone makes the
+        capture illegal.
       </p>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         Where the board ends there is no square behind, so a piece on the far rank cannot be
