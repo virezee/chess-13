@@ -79,6 +79,18 @@ function NoProgress() {
     </>
   )
 }
+function Material() {
+  return (
+    <>
+      <h3 className='mt-6 font-reading text-[18px] leading-none text-ink'>Insufficient Material</h3>
+      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
+        This one is read narrowly for now. The game is drawn on it only when the two Popes are the
+        last pieces on the board, and every other thin position is played out. Which material cannot
+        force mate here has not been settled yet.
+      </p>
+    </>
+  )
+}
 export function Result() {
   return (
     <section>
@@ -91,6 +103,7 @@ export function Result() {
       <Stalemate />
       <Repetition />
       <NoProgress />
+      <Material />
     </section>
   )
 }
