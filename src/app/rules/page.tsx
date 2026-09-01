@@ -7,6 +7,7 @@ import { Pieces } from '@/features/rules/components/Pieces'
 import { Promotion } from '@/features/rules/components/Promotion'
 import { PieceValues } from '@/features/rules/components/PieceValues'
 import { Result } from '@/features/rules/components/Result'
+import { SwapRule } from '@/features/rules/components/SwapRule'
 
 export const metadata: Metadata = {
   title: 'Rules'
@@ -22,6 +23,7 @@ export default function Rules() {
       <Promotion />
       <PieceValues />
       <Result />
+      <SwapRule />
     </main>
   )
 }
