@@ -5,6 +5,7 @@ import { Board } from '@/features/rules/components/Board'
 import { CentreSquare } from '@/features/rules/components/CentreSquare'
 import { Pieces } from '@/features/rules/components/Pieces'
 import { Promotion } from '@/features/rules/components/Promotion'
+import { PieceValues } from '@/features/rules/components/PieceValues'
 
 export const metadata: Metadata = {
   title: 'Rules'
@@ -18,6 +19,7 @@ export default function Rules() {
       <CentreSquare />
       <Pieces />
       <Promotion />
+      <PieceValues />
     </main>
   )
 }
