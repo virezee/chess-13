@@ -1,5 +1,6 @@
-import { WHITE } from '@/constants/player'
-import { POPE, SENTINEL } from '@/constants/piece'
+import { WHITE, BLACK } from '@/constants/player'
+import { POPE, MARSHAL, SENTINEL, MAGE } from '@/constants/piece'
+import { CHECK } from '@/constants/style'
 import { pope } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
@@ -46,6 +47,77 @@ function Castling() {
     </>
   )
 }
+function BlastDiagram() {
+  return (
+    <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+      <div className='rounded border border-line px-3.5 py-3'>
+        <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+          The Mage stands next to the Pope
+        </p>
+        <Diagram
+          subject='h7'
+          pieces={[place(WHITE, POPE, 'g7', false), place(BLACK, MAGE, 'h7', false)]}
+          moves={null}
+          captures={null}
+          marks={{ background: CHECK, squares: ['g7'] }}
+        />
+      </div>
+      <div className='rounded border border-line px-3.5 py-3'>
+        <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+          Its own Pope shares the ring
+        </p>
+        <Diagram
+          subject='h7'
+          pieces={[
+            place(WHITE, POPE, 'g7', false),
+            place(BLACK, MAGE, 'h7', false),
+            place(BLACK, POPE, 'i7', false)
+          ]}
+          moves={null}
+          captures={null}
+        />
+      </div>
+    </div>
+  )
+}
+function Check() {
+  return (
+    <>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        A Mage never captures by moving, so the check is the square it stands on. Next to the Pope
+        is already check, since the blast on its next turn takes it where it stands. A restricted
+        Mage with its own Pope in the same ring gives none, because that blast is not allowed and
+        nothing is threatened.
+      </p>
+      <BlastDiagram />
+      <div className='mt-3 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+        <div className='mx-auto rounded border border-line px-3.5 py-3 sm:w-[calc(50%-0.3125rem)]'>
+          <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+            The Marshal turns the Mage enhanced
+          </p>
+          <Diagram
+            subject='h7'
+            pieces={[
+              place(WHITE, POPE, 'g7', false),
+              place(BLACK, MAGE, 'h7', true),
+              place(BLACK, POPE, 'i7', false),
+              place(BLACK, MARSHAL, 'i8', false)
+            ]}
+            moves={null}
+            captures={null}
+            marks={{ background: CHECK, squares: ['g7'] }}
+          />
+        </div>
+      </div>
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        The Mage stands on the same square in all three. What decides is whether its own Pope shares
+        the ring, since the blast that would deliver the check is the blast it is forbidden to play.
+        Bring the Marshal close and the Mage is enhanced, so the blast passes over its own Pope and
+        the check stands again.
+      </p>
+    </>
+  )
+}
 export function Pope() {
   return (
     <section>
@@ -80,6 +152,7 @@ export function Pope() {
         Three pieces are read differently, the Mage, the Assassin and the Marshal, since each of
         them attacks on terms of its own.
       </p>
+      <Check />
     </section>
   )
 }

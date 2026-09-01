@@ -33,11 +33,11 @@ export function Animation({
       <Diagram
         subject={subject}
         pieces={pieces
-          .filter(figure => !isPlayed || !move.captures?.includes(figure.square))
-          .map(figure =>
-            isPlayed && figure.square === move.from
-              ? place(figure.side, figure.piece, move.to, figure.isEnhanced)
-              : figure
+          .filter(occupant => !isPlayed || !move.captures?.includes(occupant.square))
+          .map(occupant =>
+            isPlayed && occupant.square === move.from
+              ? place(occupant.side, occupant.piece, move.to, occupant.isEnhanced)
+              : occupant
           )}
         moves={null}
         captures={null}

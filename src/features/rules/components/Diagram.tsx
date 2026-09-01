@@ -17,6 +17,7 @@ import {
 } from '@/constants/style'
 import { translate } from '@/features/game/lib/layout'
 import { arrowPoints } from '@/features/game/lib/annotation'
+import { pieceKey } from '../lib/occupant'
 import { cn } from '@/lib/cn'
 
 function Files() {
@@ -200,12 +201,8 @@ export function Diagram({
           }}
         />
       ))}
-      {pieces?.map(figure => (
-        <Piece
-          key={`${figure.side}${figure.piece}${isAnimated ? '' : figure.square}`}
-          {...figure}
-          isAnimated={isAnimated}
-        />
+      {pieces?.map((occupant, index) => (
+        <Piece key={pieceKey(pieces, occupant, index)} {...occupant} isAnimated={isAnimated} />
       ))}
       {arrows?.map(group => (
         <Arrows key={group.fill} fill={group.fill} steps={group.steps} />
