@@ -1,6 +1,6 @@
 import { WHITE, BLACK } from '@/constants/player'
-import { POPE, MARSHAL, SENTINEL, MAGE } from '@/constants/piece'
-import { CHECK } from '@/constants/style'
+import { POPE, MARSHAL, ASSASSIN, SENTINEL, MAGE } from '@/constants/piece'
+import { CHECK, MARKS } from '@/constants/style'
 import { pope } from '@/features/game/engine/moves'
 import { Diagram } from '../Diagram'
 import { Counterpart } from './Counterpart'
@@ -80,7 +80,30 @@ function BlastDiagram() {
     </div>
   )
 }
-function Check() {
+function EnhancedBlastDiagram() {
+  return (
+    <div className='mt-3 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+      <div className='mx-auto rounded border border-line px-3.5 py-3 sm:w-[calc(50%-0.3125rem)]'>
+        <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+          The Marshal turns the Mage enhanced
+        </p>
+        <Diagram
+          subject='h7'
+          pieces={[
+            place(WHITE, POPE, 'g7', false),
+            place(BLACK, MAGE, 'h7', true),
+            place(BLACK, POPE, 'i7', false),
+            place(BLACK, MARSHAL, 'i8', false)
+          ]}
+          moves={null}
+          captures={null}
+          marks={{ background: CHECK, squares: ['g7'] }}
+        />
+      </div>
+    </div>
+  )
+}
+function Mage() {
   return (
     <>
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
@@ -90,31 +113,115 @@ function Check() {
         nothing is threatened.
       </p>
       <BlastDiagram />
-      <div className='mt-3 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
-        <div className='mx-auto rounded border border-line px-3.5 py-3 sm:w-[calc(50%-0.3125rem)]'>
-          <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
-            The Marshal turns the Mage enhanced
-          </p>
-          <Diagram
-            subject='h7'
-            pieces={[
-              place(WHITE, POPE, 'g7', false),
-              place(BLACK, MAGE, 'h7', true),
-              place(BLACK, POPE, 'i7', false),
-              place(BLACK, MARSHAL, 'i8', false)
-            ]}
-            moves={null}
-            captures={null}
-            marks={{ background: CHECK, squares: ['g7'] }}
-          />
-        </div>
-      </div>
+      <EnhancedBlastDiagram />
       <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
         The Mage stands on the same square in all three. What decides is whether its own Pope shares
         the ring, since the blast that would deliver the check is the blast it is forbidden to play.
         Bring the Marshal close and the Mage is enhanced, so the blast passes over its own Pope and
         the check stands again.
       </p>
+    </>
+  )
+}
+function ArrivalDiagram() {
+  return (
+    <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+      <div className='rounded border border-line px-3.5 py-3'>
+        <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+          The square behind the Pope is occupied
+        </p>
+        <Diagram
+          subject='c7'
+          pieces={[
+            place(BLACK, ASSASSIN, 'c7', false),
+            place(WHITE, POPE, 'g7', false),
+            place(WHITE, SENTINEL, 'h7', false)
+          ]}
+          moves={null}
+          captures={null}
+        />
+      </div>
+      <div className='rounded border border-line px-3.5 py-3'>
+        <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+          The square behind the Pope is attacked
+        </p>
+        <Diagram
+          subject='c7'
+          pieces={[
+            place(BLACK, ASSASSIN, 'c7', false),
+            place(WHITE, POPE, 'g7', false),
+            place(WHITE, SENTINEL, 'h10', false)
+          ]}
+          moves={null}
+          captures={['h7']}
+          arrows={[
+            { fill: MARKS.red, steps: [{ from: 'c7', to: 'g7' }] },
+            { fill: MARKS.blue, steps: [{ from: 'h10', to: 'h7' }] }
+          ]}
+        />
+      </div>
+    </div>
+  )
+}
+function EdgeDiagram() {
+  return (
+    <div className='mt-3 grid gap-2.5 sm:grid-cols-2 lg:-mx-8 xl:-mx-24 2xl:-mx-32'>
+      <div className='rounded border border-line px-3.5 py-3'>
+        <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+          The Pope stands on the far rank
+        </p>
+        <Diagram
+          subject='g9'
+          pieces={[place(BLACK, ASSASSIN, 'g9', false), place(WHITE, POPE, 'g13', false)]}
+          moves={null}
+          captures={null}
+        />
+      </div>
+      <div className='rounded border border-line px-3.5 py-3'>
+        <p className='text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint'>
+          The Pope stands on a corner
+        </p>
+        <Diagram
+          subject='d4'
+          pieces={[place(BLACK, ASSASSIN, 'd4', false), place(WHITE, POPE, 'a1', false)]}
+          moves={null}
+          captures={['a1']}
+          marks={{ background: CHECK, squares: ['a1'] }}
+          arrows={[{ fill: MARKS.red, steps: [{ from: 'd4', to: 'a1' }] }]}
+        />
+      </div>
+    </div>
+  )
+}
+function Assassin() {
+  return (
+    <>
+      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
+        For the Assassin the check is on the square behind the Pope. There is none if that square is
+        occupied, or if the Pope&apos;s side attacks that square, and on the far rank there is no
+        square behind at all. Only on a corner does it land where the Pope stands.
+      </p>
+      <ArrivalDiagram />
+      <EdgeDiagram />
+      <p className='mt-2.5 text-[15px] leading-relaxed text-ink-dim'>
+        What decides the check is the square behind the Pope, never the line the Assassin stands on.
+        As long as that square is empty and the Pope&apos;s side does not attack it, an Assassin far
+        down the line threatens as much as one standing beside the Pope. Only the corner asks for no
+        square behind at all, and there the Assassin ends where the Pope stood.
+      </p>
+    </>
+  )
+}
+function Check() {
+  return (
+    <>
+      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
+        Check works as it does in chess. A piece attacks the Pope, and the reply has to answer it.
+        Three pieces are read differently, the Mage, the Assassin and the Marshal, since each of
+        them attacks on terms of its own.
+      </p>
+      <Mage />
+      <Assassin />
     </>
   )
 }
@@ -147,11 +254,6 @@ export function Pope() {
       <h4 className='mt-6 font-reading text-[14px] leading-none text-ink'>Castling</h4>
       <Castling />
       <h4 className='mt-6 font-reading text-[14px] leading-none text-ink'>Check</h4>
-      <p className='mt-3 text-[15px] leading-relaxed text-ink-dim'>
-        Check works as it does in chess. A piece attacks the Pope, and the reply has to answer it.
-        Three pieces are read differently, the Mage, the Assassin and the Marshal, since each of
-        them attacks on terms of its own.
-      </p>
       <Check />
     </section>
   )
