@@ -9,8 +9,18 @@ import { PieceValues } from '@/features/rules/components/PieceValues'
 import { Result } from '@/features/rules/components/Result'
 import { SwapRule } from '@/features/rules/components/SwapRule'
 
+const DESCRIPTION =
+  'Full rules for Chess 13: Epoch. The command zone, all nine pieces, promotion, the swap rule, and how games end.'
 export const metadata: Metadata = {
-  title: 'Rules'
+  title: 'Rules',
+  description: DESCRIPTION,
+  alternates: { canonical: '/rules' },
+  openGraph: {
+    type: 'article',
+    url: '/rules',
+    title: 'Chess 13: Epoch Rules',
+    description: DESCRIPTION
+  }
 }
 export default function Rules() {
   return (
