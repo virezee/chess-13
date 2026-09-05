@@ -26,5 +26,6 @@
     "oxlint": "^1.80.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
-  }
+  },
+  "packageManager": "bun@1.4.2"
 }
