@@ -26,10 +26,10 @@ So most turns come down to the same question. Use the Marshal as an attacking pi
 | --------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Pope      | King              | Unchanged. Castles with a Sentinel and travels three files.                                                                                         |
 | Emperor   | Queen             | Starts dormant. Cannot move, cannot be captured, still blocks lines. Wakes when your Marshal dies or when it is attacked at the start of your turn. |
-| Marshal   | none              | Moves like a queen, but only captures a piece another of your pieces already attacks. The enemy Pope is exempt. Carries the command zone.           |
-| Assassin  | none              | Captures by leaping over the victim and landing on the square beyond, which must be empty and undefended.                                           |
+| Marshal   | None              | Moves like a queen, but only captures a piece another of your pieces already attacks. The enemy Pope is exempt. Carries the command zone.           |
+| Assassin  | None              | Captures by leaping over the victim and landing on the square beyond, which must be empty and undefended.                                           |
 | Sentinel  | Rook              | Captures further than it can move quietly. While enhanced it passes through your own pieces when heading toward your Marshal.                       |
-| Mage      | none              | Never captures by moving. It blasts every square around it. Restricted, the blast kills your own pieces too.                                        |
+| Mage      | None              | Never captures by moving. It blasts every square around it. Restricted, the blast kills your own pieces too.                                        |
 | Herald    | Bishop            | Bishop plus one orthogonal step, so it can change square colour.                                                                                    |
 | Templar   | Knight            | Restricted it has only the (3,2) leap. Enhanced it gains the ordinary knight leap as well.                                                          |
 | Legionary | Pawn              | Advances any distance up to rank 7, then one square at a time, or two while enhanced.                                                               |
@@ -50,7 +50,7 @@ Each side starts with 26 pieces: a full back rank of nine kinds, and thirteen Le
 
 ## Development
 
-Requires [Bun](https://bun.sh).
+Requires [Bun](https://bun.com).
 
 ```bash
 bun i
