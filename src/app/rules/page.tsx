@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/rules' },
   openGraph: {
     type: 'article',
+    siteName: 'Chess 13: Epoch',
     url: '/rules',
     title: 'Chess 13: Epoch Rules',
     description: DESCRIPTION

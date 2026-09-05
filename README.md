@@ -3,6 +3,7 @@
 Chess on a 13 x 13 board with nine piece types and one commander that decides how strong the rest of your army is.
 
 **Play it: https://chess-13-epoch.vercel.app**
+
 **Full rules: https://chess-13-epoch.vercel.app/rules**
 
 Two players, one screen. Free, runs in the browser, no account and no install.
@@ -52,7 +53,7 @@ Each side starts with 26 pieces: a full back rank of nine kinds, and thirteen Le
 Requires [Bun](https://bun.sh).
 
 ```bash
-bun install
+bun i
 bun dev          # http://localhost:3000
 bun run lint
 bun run format:check
